@@ -3,6 +3,7 @@ package com.example.yike.data
 import com.example.yike.R
 
 data class ActivityDetail(
+    val id:Int,
     val title:String,
     val organizer:Organization,
     val img:Int,
@@ -16,6 +17,7 @@ data class ActivityDetail(
 )
 
 val test = ActivityDetail(
+    1,
     "数据库入门",
     SSE,
     R.drawable.database,
@@ -30,6 +32,7 @@ val test = ActivityDetail(
 
 val activityDetailList = listOf<ActivityDetail>(
     ActivityDetail(
+        0,
         "数据库入门",
         SSE,
         R.drawable.database,
@@ -42,6 +45,7 @@ val activityDetailList = listOf<ActivityDetail>(
         listOf("学术","软件学院","数据库")
     ),
     ActivityDetail(
+        1,
         "嘉定之星",
         TJELE,
         R.drawable.jiaxing,
@@ -54,6 +58,7 @@ val activityDetailList = listOf<ActivityDetail>(
         listOf("学术","软件学院","数据库")
     ),
     ActivityDetail(
+        2,
         "济学外语",
         TJStudent,
         R.drawable.language,
@@ -66,6 +71,7 @@ val activityDetailList = listOf<ActivityDetail>(
         listOf("学术","软件学院","数据库")
     ),
     ActivityDetail(
+        3,
         "社彩之夜",
         TJSC,
         R.drawable.sczy,
@@ -78,6 +84,7 @@ val activityDetailList = listOf<ActivityDetail>(
         listOf("学术","软件学院","数据库")
     ),
     ActivityDetail(
+        4,
         "数据库入门",
         SSE,
         R.drawable.database,
@@ -90,6 +97,7 @@ val activityDetailList = listOf<ActivityDetail>(
         listOf("学术","软件学院","数据库")
     ),
     ActivityDetail(
+        5,
         "嘉定之星",
         TJELE,
         R.drawable.jiaxing,
@@ -102,6 +110,7 @@ val activityDetailList = listOf<ActivityDetail>(
         listOf("学术","软件学院","数据库")
     ),
     ActivityDetail(
+        8,
         "济学外语",
         TJStudent,
         R.drawable.language,
@@ -114,6 +123,7 @@ val activityDetailList = listOf<ActivityDetail>(
         listOf("学术","软件学院","数据库")
     ),
     ActivityDetail(
+        9,
         "社彩之夜",
         TJSC,
         R.drawable.sczy,

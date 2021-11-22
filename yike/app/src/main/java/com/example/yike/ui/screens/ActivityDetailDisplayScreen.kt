@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,26 +21,26 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.yike.R
 import com.example.yike.activity.ActivityDetailActivity
 import com.example.yike.data.activityDetailList
 
-@Preview
+
 @Composable
-fun ActivityDetailDisplayScreen(){
+fun ActivityDetailDisplayScreen(id:Int){
     LazyColumn(Modifier){
         item {
-            PictureDisplay()
+            PictureDisplay(id)
         }
     }
 }
 
 
 @Composable
-fun up(){
-
+private fun Up(upPress: () -> Unit) {
 }
 
 @Composable
@@ -47,7 +50,9 @@ fun header(){
 
 
 @Composable
-fun PictureDisplay(){
+fun PictureDisplay(id: Int){
+    val item = activityDetailList[id]
+    Text(text = item.title)
     LazyRow(Modifier){
         items(activityDetailList) {
             PictureItem(it.img)

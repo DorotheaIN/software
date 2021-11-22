@@ -11,10 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -30,21 +27,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.yike.R
 import com.example.yike.activity.ActivityDetailActivity
 import com.example.yike.data.ActivityDetail
 import com.example.yike.data.activityDetailList
 
 
-@Preview
+
 @Composable
-fun ActivityScreen(){
+fun ActivityScreen(navController: NavController){
     LazyColumn(Modifier){
         item {
             ActivityTable()
         }
         items(activityDetailList){
-            ActivityItemS(it)
+            ActivityItemS(it,navController)
         }
     }
 }
@@ -61,60 +60,69 @@ fun ActivityTable(){
 
 
 @Composable
-fun ActivityItemS(item: ActivityDetail){
-    Column() {
-        Image(
-            modifier = Modifier
-                .fillMaxSize()
-                .size(600.dp, 170.dp)
-                .clickable { },
-            painter = painterResource(item.img),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth
-        )
-        Box(
-            modifier = Modifier
-                .size(550.dp, 85.dp)
-                .padding(3.dp, 0.dp)
-                .clickable { }
-                .background(Color.White)
-        ){
-            Row(modifier = Modifier.padding(all = 8.dp)) {
-                Image(
-                    painter = painterResource(item.organizer.img),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(0.dp, 5.dp)
-                        .size(55.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .fillMaxSize()
+fun ActivityItemS(item: ActivityDetail,navController: NavController){
+    Surface(
+        shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
+        elevation = 5.dp,
+        modifier = Modifier.padding(0.dp,5.dp).fillMaxWidth()
+    ) {
+        Column() {
+            Image(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .size(600.dp, 170.dp)
+                    .clickable {
+                          navController.navigate("activitydetail_screen/${item.id}")
+                    },
+                painter = painterResource(item.img),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth
+            )
+            Box(
+                modifier = Modifier
+                    .size(550.dp, 85.dp)
+                    .padding(3.dp, 0.dp)
+                    .clickable { }
+                    .background(Color.White)
+            ){
+                Row(modifier = Modifier.padding(all = 8.dp)) {
+                    Image(
+                        painter = painterResource(item.organizer.img),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(0.dp, 5.dp)
+                            .size(55.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .fillMaxSize()
 //                .border(1.5.dp, MaterialTheme.colors.secondary, RoundedCornerShape(7.dp))
-                )
-                Spacer(modifier = Modifier.width(15.dp))
-
-                Column (modifier = Modifier.size(300.dp,65.dp)){
-                    Text(
-                        text = item.title,
-                        color = Color.Black,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                     )
+                    Spacer(modifier = Modifier.width(15.dp))
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Column (modifier = Modifier.size(300.dp,65.dp)){
+                        Text(
+                            text = item.title,
+                            color = Color.Black,
+                            style = MaterialTheme.typography.h6,
+                            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                        )
 
-                    Text(
-                        text = item.organizer.name,
-                        color = Color(0xFF7A7A7A),
-                        style = MaterialTheme.typography.caption
-                    )
-                }
-                Spacer(modifier = Modifier.width(15.dp))
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(Icons.Filled.Add,null)
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = item.organizer.name,
+                            color = Color(0xFF7A7A7A),
+                            style = MaterialTheme.typography.caption
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(15.dp))
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(Icons.Filled.Add,null)
+                    }
                 }
             }
         }
     }
+
 
 }
 
