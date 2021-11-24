@@ -16,6 +16,15 @@ data class ActivityDetail(
     val genres:List<String>
 )
 
+fun getActivityDetail(id:Int) : ActivityDetail? {
+    for(i in activityDetailList){
+        if(i.id == id){
+            return i
+        }
+    }
+    return null
+}
+
 val test = ActivityDetail(
     1,
     "数据库入门",
