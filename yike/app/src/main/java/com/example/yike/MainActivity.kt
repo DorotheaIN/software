@@ -3,14 +3,21 @@ package com.example.yike
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.example.yike.ui.theme.YikeTheme
+import com.example.yike.view.DiscussScreen
+import com.example.yike.viewModel.LoginViewModel
+import com.example.yike.viewModel.UserInfo
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             YikeTheme {
                 val navController = rememberNavController()
@@ -20,35 +27,27 @@ class MainActivity : ComponentActivity() {
                     startDestination = "login",
                     route = "root"
                 ) {
-                    composable("question") {
-                        QuestionScreen()
-                    }
                     composable("welcome") {
                         WelcomeScreen(navController)
                     }
                     composable("login") {
-                        LoginScreen(navController)
+                        LoginScreen { navController.navigate("discuss") }
                     }
                     composable("discuss") {
-//                        val homeViewModel: HomeViewModel = hiltNavGraphViewModel()
-//                        val uiState by homeViewModel.uiState.collectAsState()
-//                        val plantList = homeViewModel.pagedPlants
-//
-//                        HomeScreen(uiState = uiState) { plant ->
-//                            navController.navigate("plant/${plant.id}")
-//                        }
                         DiscussScreen(navController)
                     }
 //                    composable(
-//                        route = "plant/{id}",
-//                        arguments = listOf(navArgument("id") { type = NavType.IntType })
-//                    ) {
-//                        val plantViewModel: QuestionViewModel = hiltNavGraphViewModel()
-//                        val plant: Plant by plantViewModel.plantDetails.collectAsState(Plant(0))
-//
-//                        QuestionScreen(plant = plant)
+//                        route = "question/{questionId}",
+//                        arguments = listOf(navArgument("questionId") { type = NavType.IntType })) {
+//                            val questionId = it.arguments?.getString("questionId")?:""
+//                            QuestionScreen()
 //                    }
+                    composable(
+                        route = "question") {
+                        QuestionScreen()
+                    }
                 }
+
             }
         }
     }
