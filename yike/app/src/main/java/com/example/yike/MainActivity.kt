@@ -19,6 +19,7 @@ import androidx.navigation.navArgument
 import com.example.yike.data.ActivityDetail
 import com.example.yike.data.activityDetailList
 import com.example.yike.ui.screens.ActivityDetailDisplayScreen
+import com.example.yike.ui.screens.ActivityPublishScreen
 import com.example.yike.ui.screens.ActivityScreen
 import com.example.yike.ui.screens.HomeScreen
 import com.example.yike.ui.theme.YikeTheme
@@ -57,7 +58,7 @@ fun YikeUI(){
                 ActivityScreen(navController = navController)
             }
             composable("person_screen"){
-
+                ActivityPublishScreen(navController = navController)
             }
             composable(
                 "activitydetail_screen/{id}",
@@ -66,7 +67,7 @@ fun YikeUI(){
                     entry->
                 val id = entry.arguments?.getInt("id")
                 if (id != null) {
-                    ActivityDetailDisplayScreen(id)
+                    ActivityDetailDisplayScreen(id,navController = navController)
                 }
             }
         }

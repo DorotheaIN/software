@@ -12,10 +12,10 @@ import androidx.navigation.compose.composable
 import com.example.yike.R
 
 sealed class Screen(val route: String, @StringRes val resourceId: Int,val name: String) {
-    object Share : Screen("share", R.string.app_name,"分享")
-    object Talk : Screen("question", R.string.bottom_sheet_behavior,"讨论")
-    object Activity: Screen("activity", R.string.app_name,"活动")
-    object PersonInfo: Screen("info", R.string.app_name,"主页")
+    object Share : Screen("share_screen", R.string.app_name,"分享")
+    object Talk : Screen("question_screen", R.string.bottom_sheet_behavior,"讨论")
+    object Activity: Screen("activity_screen", R.string.app_name,"活动")
+    object PersonInfo: Screen("person_screen", R.string.app_name,"主页")
 }
 
 

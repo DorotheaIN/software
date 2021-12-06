@@ -64,4 +64,5 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.navigation:navigation-compose:2.4.0-beta02"
     implementation "com.google.accompanist:accompanist-insets:0.21.2-beta"
+//    implementation("io.coil-kt:coil:1.3.2")
 }

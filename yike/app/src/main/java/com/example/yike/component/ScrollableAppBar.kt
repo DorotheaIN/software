@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -38,7 +39,12 @@ fun ScrollableAppBar(
     modifier: Modifier = Modifier,
     title: String = stringResource(id = R.string.app_name), //默认为应用名
     navigationIcon: @Composable (() -> Unit) =
-        { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "ArrowBack",tint = Color.White) }, //默认为返回键
+        { Icon(imageVector = Icons.Filled.ArrowBack,
+            modifier = Modifier.clickable {
+
+            },
+            contentDescription = "ArrowBack",
+            tint = Color.White) }, //默认为返回键
     @DrawableRes backgroundImageId:Int, // 背景图片
     background: Color = MaterialTheme.colors.primary,
     scrollableAppBarHeight: Dp, //ScrollableAppBar高度
@@ -72,7 +78,7 @@ fun ScrollableAppBar(
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFF7F6351), Color(0x807F6351)),
+                        colors = listOf(Color(0xFFC5C0EB), Color(0x8094BBEB)),
                         start = Offset(0f, Float.POSITIVE_INFINITY),
                         end = Offset(Float.POSITIVE_INFINITY, 0f)
                     )
@@ -110,7 +116,7 @@ fun ScrollableAppBar(
                     },
                 contentAlignment = Alignment.CenterStart
             ) {
-                Text(text = title,color = Color.White,modifier = Modifier.padding(start = 20.dp),fontSize = 20.sp)
+                Text(text = title,color = Color(0xFFFFFFFF),modifier = Modifier.padding(start = 20.dp),fontSize = 23.sp,fontWeight = FontWeight.Bold)
             }
         }
 

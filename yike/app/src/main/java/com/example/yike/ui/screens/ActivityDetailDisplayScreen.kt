@@ -1,21 +1,25 @@
 package com.example.yike.ui.screens
 
 import android.app.Activity
+import android.graphics.fonts.FontFamily
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -28,6 +32,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.yike.R
 import com.example.yike.component.ScrollableAppBar
 import com.example.yike.data.ActivityDetail
@@ -38,7 +43,17 @@ import com.google.accompanist.insets.statusBarsHeight
 
 
 @Composable
-fun ActivityDetailDisplayScreen(id:Int){
+fun NaviIcon(navController: NavController){
+    Icon(imageVector = Icons.Filled.ArrowBack,
+        modifier = Modifier.clickable {
+            navController.navigate("activity_screen")
+        },
+        contentDescription = "ArrowBack",
+        tint = Color.White)
+}
+
+@Composable
+fun ActivityDetailDisplayScreen(id:Int,navController: NavController){
     val result = getActivityDetail(id)
     var activityDetail = test
     if(result != null){
@@ -70,6 +85,7 @@ fun ActivityDetailDisplayScreen(id:Int){
                 }
             }
         }
+
         Box(
             Modifier
                 .fillMaxSize()
@@ -86,17 +102,634 @@ fun ActivityDetailDisplayScreen(id:Int){
                         .fillMaxWidth()
                         .padding(16.dp))
                 }
-
             }
             ScrollableAppBar(
                 title = activityDetail.title,
+                navigationIcon = { NaviIcon(navController = navController) },
                 scrollableAppBarHeight = 170.dp,
                 toolbarOffsetHeightPx = toolbarOffsetHeightPx,
                 backgroundImageId = activityDetail.img
             )
+//            Box(
+//                modifier = Modifier
+//                    .background(Color(0xFFFFFDFD))
+//                    .fillMaxWidth()
+//                    .border(1.dp, Color(0xFFE4E4E4), RoundedCornerShape(7.dp))
+//                    .align(Alignment.BottomCenter)
+//            ){
+//                Bottom(activityDetail)
+//            }
+        }
+
+    }
+}
+
+
+@Composable
+fun Bottom(activityDetail: ActivityDetail){
+    Row() {
+        SubscribeItem(activityDetail)
+        LikeItem(activityDetail)
+        EvaluateItem(activityDetail)
+    }
+}
+
+@Composable
+fun LikeItem(activityDetail: ActivityDetail){
+    var likenum = activityDetail.likeNum
+    var selected by remember{mutableStateOf(false)}
+    var change by remember{mutableStateOf(false)}
+    val buttonSize by animateDpAsState(
+        targetValue = if(change) 45.dp else 32.dp
+    )
+    if(buttonSize == 45.dp) {
+        change = false
+    }
+    Box(
+        modifier = Modifier.padding(30.dp,5.dp)
+    ){
+        Row(){
+            IconButton(onClick = {
+                likenum = likenum+1
+                change = true
+                selected = !selected
+            }) {
+                Icon(painter = painterResource(id = if(selected) R.drawable.like_selected else R.drawable.like),
+                    contentDescription = null,
+                    modifier = Modifier.size(buttonSize),
+                    tint = if(selected) Color.Red else Color.Gray
+                )
+            }
+            Box(){
+                Text(
+                    text = likenum.toString(),
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+            }
+
         }
     }
 }
+
+
+@Composable
+fun EvaluateItem(activityDetail: ActivityDetail){
+    var evaluationList = activityDetail.evaluationList
+    Box(
+        modifier = Modifier.padding(30.dp,5.dp)
+    ){
+        Row(){
+            IconButton(onClick = {
+                /////////
+            }) {
+                Icon(painter = painterResource(id = R.drawable.review),
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    tint = Color(0xFFB0B8C0)
+                )
+            }
+            Box(){
+                Text(
+                    text = evaluationList.size.toString(),
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+            }
+
+        }
+    }
+}
+
+
+@Composable
+fun SubscribeItem(activityDetail: ActivityDetail){
+    var subscriberList = activityDetail.subscriberList
+    var selected by remember{mutableStateOf(false)}
+    var change by remember{mutableStateOf(false)}
+    val buttonSize by animateDpAsState(
+        targetValue = if(change) 45.dp else 32.dp
+    )
+    if(buttonSize == 45.dp) {
+        change = false
+    }
+    Box(
+        modifier = Modifier.padding(30.dp,5.dp)
+    ){
+        Row(){
+            IconButton(onClick = {
+                /////////////////?????????????????
+                change = true
+                selected = !selected
+            }) {
+                Icon(painter = painterResource(id = if(selected) R.drawable.collect_selected else R.drawable.collect),
+                    contentDescription = null,
+                    modifier = Modifier.size(buttonSize),
+                    tint = if(selected) Color(0xFFEEBB21) else Color.Gray
+                )
+            }
+            Box(){
+                Text(
+                    text = "报名",
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun PictureDisplay(item:ActivityDetail){
+    LazyRow(Modifier){
+        items(activityDetailList) {
+            PictureItem(it.img)
+        }
+    }
+}
+
+@Composable
+fun PictureItem(img:Int){
+    Box(
+        modifier = Modifier
+            .size(400.dp, 150.dp)
+            .padding(0.dp, 10.dp)
+            .background(Color.White)
+    ){
+        Image(
+            modifier = Modifier
+                .fillMaxSize()
+                .size(300.dp, 100.dp)
+                .clickable { },
+            painter = painterResource(img),
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth
+        )
+    }
+}
+
+@Composable
+fun BasicInfoDisplay(item:ActivityDetail){
+    Box(){
+        Column(
+            modifier = Modifier.padding(9.dp,3.dp,9.dp,3.dp)
+        ) {
+            //基本信息
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
+                Text(
+                    text = "基本信息",
+                    color = Color.Black,
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                )
+            }
+            Row() {
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium){
+                    Image(
+                        painter = painterResource(R.drawable.time),
+                        contentDescription = "time",
+                        modifier = Modifier
+                            .size(52.dp, 44.dp)
+                            .padding(16.dp, 12.dp, 8.dp, 12.dp)
+                    )
+                    Text(
+                        text = "日期：",
+                        color = Color.DarkGray,
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    )
+                    Text(
+                        text = item.date,
+                        color = Color.DarkGray,
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    )
+                }
+            }
+            Row() {
+                Image(
+                    painter = painterResource(R.drawable.place),
+                    contentDescription = "place",
+                    modifier = Modifier
+                        .size(52.dp, 44.dp)
+                        .padding(16.dp, 12.dp, 8.dp, 12.dp)
+                )
+                Text(
+                    text = "地点：",
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+                Text(
+                    text = item.place,
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+            }
+            Row() {
+                Image(
+                    painter = painterResource(R.drawable.tag),
+                    contentDescription = "form",
+                    modifier = Modifier
+                        .size(52.dp, 44.dp)
+                        .padding(16.dp, 12.dp, 8.dp, 12.dp)
+                )
+                Text(
+                    text = "形式：",
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+                Text(
+                    text = item.form,
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Divider(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(start = 18.dp, end = 18.dp),
+                //颜色
+                color = Color.LightGray,
+            )
+        }
+
+    }
+}
+
+@Composable
+fun IntroductionDisplay(item:ActivityDetail){
+    Box() {
+        Column(
+            modifier = Modifier.padding(9.dp,3.dp,9.dp,3.dp)
+        ){
+            GenresRow(item.genres)
+            Text(
+                text = item.introduction,
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Divider(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(start = 18.dp, end = 18.dp),
+                //颜色
+                color = Color.LightGray,
+            )
+        }
+    }
+}
+
+@Composable
+fun ContentDisplay(item:ActivityDetail){
+    Box() {
+        Column(
+            modifier = Modifier.padding(9.dp,3.dp,9.dp,3.dp)
+        ){
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
+                Text(
+                    text = "活动内容",
+                    color = Color.Black,
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                )
+            }
+            Text(
+                text = item.content,
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Divider(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(start = 18.dp, end = 18.dp),
+                //颜色
+                color = Color.LightGray,
+            )
+        }
+    }
+}
+
+@Composable
+fun LighteningDisplay(item: ActivityDetail){
+    Box() {
+        Column(
+            modifier = Modifier.padding(9.dp,3.dp,9.dp,3.dp)
+        ){
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
+                Text(
+                    text = "活动亮点",
+                    color = Color.Black,
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                )
+            }
+            Text(
+                text = item.lightening,
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Divider(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(start = 18.dp, end = 18.dp),
+                //颜色
+                color = Color.LightGray,
+            )
+        }
+    }
+}
+
+@Composable
+fun GenresRow(list:List<String>){
+    LazyRow(contentPadding = PaddingValues(8.dp,8.dp,8.dp,0.dp)){
+        items(list){ it->
+            Text(
+                text = it,
+                color = Color(0xFF5B96FC),
+                style = MaterialTheme.typography.body2,
+                modifier = Modifier
+                    .padding(12.dp, 0.dp, 0.dp, 0.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(Color(0xFFD0E7FF))
+                    .padding(7.dp, 4.dp)
+            )
+        }
+    }
+}
+
+
+@Composable
+fun InfoDisplay(item:ActivityDetail){
+    IntroductionDisplay(item)
+    BasicInfoDisplay(item)
+    ContentDisplay(item)
+    LighteningDisplay(item)
+}
+
+@Composable
+fun IntroductionDisplayPrview(){
+    val item = test
+    Box() {
+        Column(){
+            GenresRowPreview()
+            Text(
+                text = item.introduction,
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Divider(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(start = 18.dp, end = 18.dp),
+                //颜色
+                color = Color.LightGray,
+            )
+        }
+    }
+}
+
+
+
+@Composable
+fun BasicInfoDisplayPreview(){
+    val item = test
+    Box(){
+        Column(
+            modifier = Modifier.padding(9.dp)
+        ) {
+            //基本信息
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
+                Text(
+                    text = "基本信息",
+                    color = Color.Black,
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                )
+            }
+            Row() {
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium){
+                    Image(
+                        painter = painterResource(R.drawable.time),
+                        contentDescription = "time",
+                        modifier = Modifier
+                            .size(52.dp, 44.dp)
+                            .padding(16.dp, 12.dp, 8.dp, 12.dp)
+                    )
+                    Text(
+                        text = "日期：",
+                        color = Color.DarkGray,
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    )
+                    Text(
+                        text = item.date,
+                        color = Color.DarkGray,
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    )
+                }
+            }
+            Row() {
+                Image(
+                    painter = painterResource(R.drawable.place),
+                    contentDescription = "place",
+                    modifier = Modifier
+                        .size(52.dp, 44.dp)
+                        .padding(16.dp, 12.dp, 8.dp, 12.dp)
+                )
+                Text(
+                    text = "地点：",
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+                Text(
+                    text = item.place,
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+            }
+            Row() {
+                Image(
+                    painter = painterResource(R.drawable.tag),
+                    contentDescription = "form",
+                    modifier = Modifier
+                        .size(52.dp, 44.dp)
+                        .padding(16.dp, 12.dp, 8.dp, 12.dp)
+                )
+                Text(
+                    text = "形式：",
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+                Text(
+                    text = item.form,
+                    color = Color.DarkGray,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Divider(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(start = 18.dp, end = 18.dp),
+                //颜色
+                color = Color.LightGray,
+            )
+        }
+
+    }
+//    Surface(
+//        shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
+//        elevation = 5.dp,
+//        modifier = Modifier
+//            .padding(0.dp, 7.dp)
+//            .fillMaxWidth()
+//    ){
+//
+//    }
+}
+
+@Composable
+fun ContentDisplayPreview(){
+    val item = test
+    Box() {
+        Column(
+            modifier = Modifier.padding(9.dp)
+        ){
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
+                Text(
+                    text = "活动内容",
+                    color = Color.Black,
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                )
+            }
+            Text(
+                text = item.content,
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Divider(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(start = 18.dp, end = 18.dp),
+                //颜色
+                color = Color.LightGray,
+            )
+        }
+    }
+}
+
+
+
+
+@Composable
+fun LighteningDisplayPreview(){
+    val item = test
+    Box() {
+        Column(
+            modifier = Modifier.padding(9.dp)
+        ){
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
+                Text(
+                    text = "活动亮点",
+                    color = Color.Black,
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                )
+            }
+            Text(
+                text = item.lightening,
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Divider(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(start = 18.dp, end = 18.dp),
+                //颜色
+                color = Color.LightGray,
+            )
+        }
+    }
+}
+
+
+
+@Composable
+fun GenresRowPreview(){
+    val list = test.genres
+    LazyRow(contentPadding = PaddingValues(12.dp,8.dp,8.dp,0.dp)){
+        items(list){ it->
+            Text(
+                text = it,
+                color = Color(0xFF5C63E6),
+                style = MaterialTheme.typography.body2,
+                modifier = Modifier
+                    .padding(8.dp, 0.dp, 0.dp, 0.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(Color(0xFFE1E3FD))
+                    .padding(7.dp, 4.dp)
+            )
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -189,133 +822,3 @@ fun ActivityTopItem(item:ActivityDetail){
     }
 }
 
-@Preview
-@Composable
-fun ActivityTopItemPreview(){
-    val item = test
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(170.dp)){
-        Image(
-            painter = painterResource(item.img),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(Color(0xFF7F6351), Color(0x807F6351)),
-                    start = Offset(0f, Float.POSITIVE_INFINITY),
-                    end = Offset(Float.POSITIVE_INFINITY, 0f)
-                )
-            )
-        ) {
-            Spacer(modifier = Modifier.statusBarsHeight())
-            Spacer(modifier = Modifier.height(64.dp))
-            Text(
-                text = item.title,
-                color = Color.White,
-                style = MaterialTheme.typography.h5,
-                modifier = Modifier.padding(16.dp, 8.dp)
-            )
-            Text(
-                text = item.organizer.name,
-                color = Color.White,
-                style = MaterialTheme.typography.body2,
-                modifier = Modifier.padding(16.dp, 0.dp)
-            )
-        }
-    }
-}
-
-
-@Composable
-fun PictureDisplay(item:ActivityDetail){
-    LazyRow(Modifier){
-        items(activityDetailList) {
-            PictureItem(it.img)
-        }
-    }
-}
-
-@Composable
-fun PictureItem(img:Int){
-    Box(
-        modifier = Modifier
-            .size(400.dp, 150.dp)
-            .padding(0.dp, 10.dp)
-            .background(Color.White)
-    ){
-        Image(
-            modifier = Modifier
-                .fillMaxSize()
-                .size(300.dp, 100.dp)
-                .clickable { },
-            painter = painterResource(img),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth
-        )
-    }
-}
-
-@Composable
-fun InfoDisplay(item:ActivityDetail){
-    Surface(
-        shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
-        elevation = 5.dp,
-        modifier = Modifier
-            .padding(0.dp, 7.dp)
-            .fillMaxWidth()
-    ){
-        Box(){
-            Column() {
-                //基本信息
-                Text(
-                    text = "基本信息",
-                    color = Color.Black,
-                    style = MaterialTheme.typography.h3,
-                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                )
-                Row() {
-                    Text(
-                        text = "日期：",
-                        color = Color.LightGray,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                    )
-                    Text(
-                        text = item.date,
-                        color = Color.LightGray,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                    )
-                }
-                Row() {
-                    Text(
-                        text = "地点：",
-                        color = Color.LightGray,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                    )
-                    Text(
-                        text = item.place,
-                        color = Color.LightGray,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                    )
-                }
-            }
-        }
-    }
-//    Text(text = item.title)
-//    Text(text = item.organizer.name)
-//    Text(text = item.date)
-//    Text(text = item.place)
-//    Text(text = item.form)
-//    Text(text = item.introduction)
-//    Text(text = item.content)
-//    Text(text = item.lightening)
-
-}
