@@ -9,9 +9,9 @@ data class Organization(
 )
 
 val SSE = Organization(
-    "同济软件",
+    "同济小软件",
     R.drawable.sse,
-    ""
+    "同济大学软件学院学生会"
 )
 
 val TJELE = Organization(

@@ -110,15 +110,15 @@ fun ActivityDetailDisplayScreen(id:Int,navController: NavController){
                 toolbarOffsetHeightPx = toolbarOffsetHeightPx,
                 backgroundImageId = activityDetail.img
             )
-//            Box(
-//                modifier = Modifier
-//                    .background(Color(0xFFFFFDFD))
-//                    .fillMaxWidth()
-//                    .border(1.dp, Color(0xFFE4E4E4), RoundedCornerShape(7.dp))
-//                    .align(Alignment.BottomCenter)
-//            ){
-//                Bottom(activityDetail)
-//            }
+            Box(
+                modifier = Modifier
+                    .background(Color(0xFFFFFDFD))
+                    .fillMaxWidth()
+                    .border(1.dp, Color(0xFFE4E4E4), RoundedCornerShape(7.dp))
+                    .align(Alignment.BottomCenter)
+            ){
+                Bottom(activityDetail)
+            }
         }
 
     }

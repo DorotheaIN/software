@@ -18,10 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.yike.data.ActivityDetail
 import com.example.yike.data.activityDetailList
-import com.example.yike.ui.screens.ActivityDetailDisplayScreen
-import com.example.yike.ui.screens.ActivityPublishScreen
-import com.example.yike.ui.screens.ActivityScreen
-import com.example.yike.ui.screens.HomeScreen
+import com.example.yike.ui.screens.*
 import com.example.yike.ui.theme.YikeTheme
 
 class MainActivity : ComponentActivity() {
@@ -32,8 +29,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
 
 
 
@@ -52,7 +47,7 @@ fun YikeUI(){
 
             }
             composable("question_screen"){
-
+                OrganizationScreen()
             }
             composable("activity_screen"){
                 ActivityScreen(navController = navController)
