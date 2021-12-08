@@ -4,7 +4,9 @@ package com.example.yike.viewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.example.yike.data.ActivityDetail
 import com.example.yike.data.Organization
+import com.example.yike.data.activityDetailList
 import com.example.yike.service.ActivityRepository
 
 data class Evaluation(
@@ -36,11 +38,16 @@ class ActivityViewModel(): ViewModel() {
     private val isInit = MutableLiveData<Boolean>(false)
 
     //界面变量
-    val questionList = Transformations.switchMap(isInit) {
+    val activityList = Transformations.switchMap(isInit) {
         ActivityRepository.getActivityList()
     }
     //用户方法：
     fun init() {
         isInit.value = true
     }
+
+
+
+
 }
+

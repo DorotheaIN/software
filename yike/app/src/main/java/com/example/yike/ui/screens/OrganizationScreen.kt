@@ -10,9 +10,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -32,11 +32,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.yike.R
 import com.example.yike.data.*
 
 @Composable
-fun OrganizationScreen(){
+fun OrganizationScreen(navController: NavController){
     Surface(
         elevation = 5.dp,
         modifier = Modifier
@@ -49,10 +50,10 @@ fun OrganizationScreen(){
                 header()
             }
             item{
-                PublishItem()
+                PublishItem(navController)
             }
             item{
-                ActivityPublishList(activityDetailList = activityDetailList)
+                ActivityPublishList(activityDetailList,navController)
             }
 //        items(activityDetailList){
 //            Surface(
@@ -123,7 +124,7 @@ fun header(){
 
                         Text(
                             text = organization.describtion,
-                            color = Color(0x75FFFFFF),
+                            color = Color(0x7EFFFFFF),
                             style = MaterialTheme.typography.caption
                         )
                     }
@@ -149,18 +150,19 @@ fun header(){
 
 @Composable
 fun ActivityPublishList(
-    activityDetailList:List<ActivityDetail>
+    activityDetailList:List<ActivityDetail>,
+    navController: NavController
 ){
     Column() {
         activityDetailList.forEach {item->
-            ActivityPublishedItem(item = item)
+            ActivityPublishedItem(item = item,navController)
         }
 
     }
 }
 
 @Composable
-fun ActivityPublishedItem(item:ActivityDetail){
+fun ActivityPublishedItem(item:ActivityDetail,navController: NavController){
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
@@ -185,6 +187,7 @@ fun ActivityPublishedItem(item:ActivityDetail){
                         Column(
                             modifier = Modifier
                                 .weight(1F)
+                                .clickable {  }
                         ) {
                             Text(
                                 text = item.title,
@@ -202,20 +205,24 @@ fun ActivityPublishedItem(item:ActivityDetail){
                         }
                         Column() {
                             Icon(
-                                painterResource(id = R.drawable.more),
+                                Icons.Outlined.Edit,
                                 contentDescription = "Follow",
                                 modifier = Modifier
                                     .size(30.dp)
                                     .padding(5.dp, 0.dp)
+                                    .clickable {
+                                        navController.navigate("activity_edit/${item.id}")
+                                    }
                             )
                         }
                         Column() {
                             Icon(
-                                painterResource(id = R.drawable.delete),
+                                Icons.Outlined.Delete,
                                 contentDescription = "Follow",
                                 modifier = Modifier
                                     .size(30.dp)
                                     .padding(5.dp, 0.dp)
+                                    .clickable {  }
                             )
                         }
                     }
@@ -230,9 +237,9 @@ fun ActivityPublishedItem(item:ActivityDetail){
 
 }
 
-@Preview
+
 @Composable
-fun PublishItem(){
+fun PublishItem(navController: NavController){
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
@@ -243,6 +250,9 @@ fun PublishItem(){
         Box(
             Modifier
                 .padding(148.dp,10.dp)
+                .clickable {
+                    navController.navigate("activity_publish")
+                }
         ){
             Column(
                 modifier = Modifier

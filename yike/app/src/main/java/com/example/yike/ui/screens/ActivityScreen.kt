@@ -13,20 +13,30 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
+import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import com.example.yike.data.ActivityDetail
 import com.example.yike.data.activityDetailList
-
+import com.example.yike.viewModel.Activity
+import com.example.yike.viewModel.ActivityViewModel
 
 
 @Composable
 fun ActivityScreen(navController: NavController){
+    val activityViewModel = ActivityViewModel()
+    val activityList = activityViewModel.activityList.observeAsState()
+    ActivityScreenContent(navController,activityList.value)
+}
+
+@Composable
+fun ActivityScreenContent(navController: NavController,activityList:ArrayList<Activity>?){
     LazyColumn(Modifier){
         item {
             ActivityTable()
@@ -53,7 +63,9 @@ fun ActivityItem(item: ActivityDetail,navController: NavController){
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
-        modifier = Modifier.padding(0.dp,7.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(0.dp, 7.dp)
+            .fillMaxWidth()
     ) {
         Column() {
             Image(
@@ -61,7 +73,7 @@ fun ActivityItem(item: ActivityDetail,navController: NavController){
                     .fillMaxSize()
                     .size(600.dp, 170.dp)
                     .clickable {
-                          navController.navigate("activitydetail_screen/${item.id}")
+                        navController.navigate("activitydetail_screen/${item.id}")
                     },
                 painter = painterResource(item.img),
                 contentDescription = null,

@@ -47,13 +47,27 @@ fun YikeUI(){
 
             }
             composable("question_screen"){
-                OrganizationScreen()
+                OrganizationScreen(navController = navController)
             }
             composable("activity_screen"){
                 ActivityScreen(navController = navController)
             }
             composable("person_screen"){
+//                ActivityPublishScreen(navController = navController)
+            }
+            composable("activity_publish"){
                 ActivityPublishScreen(navController = navController)
+            }
+            composable(
+                "activity_edit/{id}",
+                arguments = listOf(navArgument("id"){type = NavType.IntType})
+            ){
+                    entry->
+                val id = entry.arguments?.getInt("id")
+                if (id != null) {
+                    ActivityCorrectScreen(id,navController = navController)
+                }
+
             }
             composable(
                 "activitydetail_screen/{id}",

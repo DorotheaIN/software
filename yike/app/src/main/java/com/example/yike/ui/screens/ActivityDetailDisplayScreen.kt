@@ -52,6 +52,8 @@ fun NaviIcon(navController: NavController){
         tint = Color.White)
 }
 
+
+
 @Composable
 fun ActivityDetailDisplayScreen(id:Int,navController: NavController){
     val result = getActivityDetail(id)
@@ -59,6 +61,19 @@ fun ActivityDetailDisplayScreen(id:Int,navController: NavController){
     if(result != null){
         activityDetail = result
     }
+    Scaffold(
+        bottomBar = {
+            Bottom(activityDetail)
+        },
+        content = {
+            ActivityDetailScreenContent(activityDetail, navController)
+        }
+    )
+
+}
+
+@Composable
+fun ActivityDetailScreenContent(activityDetail: ActivityDetail,navController: NavController){
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
@@ -85,7 +100,6 @@ fun ActivityDetailDisplayScreen(id:Int,navController: NavController){
                 }
             }
         }
-
         Box(
             Modifier
                 .fillMaxSize()
@@ -97,10 +111,13 @@ fun ActivityDetailDisplayScreen(id:Int,navController: NavController){
                 item {
                     InfoDisplay(item = activityDetail)
                 }
-                items(100) { index ->
-                    Text("I'm item $index", modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp))
+//                items(100) { index ->
+//                    Text("I'm item $index", modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(16.dp))
+//                }
+                item {
+                    Spacer(modifier = Modifier.height(60.dp))
                 }
             }
             ScrollableAppBar(
@@ -110,15 +127,7 @@ fun ActivityDetailDisplayScreen(id:Int,navController: NavController){
                 toolbarOffsetHeightPx = toolbarOffsetHeightPx,
                 backgroundImageId = activityDetail.img
             )
-            Box(
-                modifier = Modifier
-                    .background(Color(0xFFFFFDFD))
-                    .fillMaxWidth()
-                    .border(1.dp, Color(0xFFE4E4E4), RoundedCornerShape(7.dp))
-                    .align(Alignment.BottomCenter)
-            ){
-                Bottom(activityDetail)
-            }
+
         }
 
     }
@@ -127,7 +136,11 @@ fun ActivityDetailDisplayScreen(id:Int,navController: NavController){
 
 @Composable
 fun Bottom(activityDetail: ActivityDetail){
-    Row() {
+    Row(
+        Modifier
+            .background(Color.White)
+            .border(1.dp, Color(0xFFE4E4E4), RoundedCornerShape(7.dp))
+    ) {
         SubscribeItem(activityDetail)
         LikeItem(activityDetail)
         EvaluateItem(activityDetail)
@@ -462,7 +475,8 @@ fun LighteningDisplay(item: ActivityDetail){
 }
 
 @Composable
-fun GenresRow(list:List<String>){
+fun GenresRow(genres:String){
+    val list = genres.split(',')
     LazyRow(contentPadding = PaddingValues(8.dp,8.dp,8.dp,0.dp)){
         items(list){ it->
             Text(
@@ -697,7 +711,7 @@ fun LighteningDisplayPreview(){
 
 @Composable
 fun GenresRowPreview(){
-    val list = test.genres
+    val list = test.genres.split(',')
     LazyRow(contentPadding = PaddingValues(12.dp,8.dp,8.dp,0.dp)){
         items(list){ it->
             Text(
