@@ -1,4 +1,4 @@
-package com.example.yike
+package com.example.yike.component
 
 
 import androidx.compose.foundation.layout.fillMaxWidth

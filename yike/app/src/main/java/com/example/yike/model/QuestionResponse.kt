@@ -14,5 +14,5 @@ import com.example.yike.viewModel.Question
 //  }]
 //
 //}
-data class QuestionResponse(val status: String, val result: ArrayList<Question>)
+data class QuestionResponse(val status: Int, val result: ArrayList<Question>)
 //

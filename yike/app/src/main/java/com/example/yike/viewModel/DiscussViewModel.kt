@@ -1,41 +1,34 @@
 package com.example.yike.viewModel
 
 import androidx.lifecycle.*
-import com.example.yike.DiscussRepository
-import com.example.yike.DiscussViewState
-import com.example.yike.InMemoryDiscussService
-import com.example.yike.service.LoginRepository
 import com.example.yike.service.QuestionRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 data class Question(val id: String, val title: String, val description: String,
                     val followNum: Int, val answerNum: Int)
 
-class DiscussViewModel(): ViewModel() {
-
-//    val questionList: MutableLiveData<ArrayList<Question>>? = null
-//
-//    val isLoading = true
-//
-//    init {
-//        questionList = QuestionRepository.getQuestionList()
-//        isLoading = false
-//    }
+//为了方便调用 使用了单例
+//可以考虑引入ROOM之类的
+class DiscussViewModel: ViewModel() {
 
     //观察对象：
-    private val isInit = MutableLiveData<Boolean>(false)
+    private val _isGet = MutableLiveData<Boolean>()
 
     //界面变量
-    val questionList = Transformations.switchMap(isInit) {
+    val questionList = Transformations.switchMap(_isGet) {
         QuestionRepository.getQuestionList()
     }
+    val isGet: MutableLiveData<Boolean> = _isGet
 
     //用户方法：
-    fun init() {
-        isInit.value = true
+
+    fun getQuestionList() {
+        _isGet.value = true
+        println("refresh")
     }
+
+//    fun getQuestionById(id: String) {
+//        return
+//    }
 
 
 //    private val _viewState = MutableStateFlow(DiscussViewState()) //可观测对象

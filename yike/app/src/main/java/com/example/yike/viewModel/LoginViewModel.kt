@@ -5,7 +5,7 @@ import com.example.yike.service.LoginRepository
 
 
 data class LoginInput(val userName: String, val passWord: String)
-data class UserInfo(val userId: String, val userName: String, val passWord: String, val userStatus: Boolean)
+data class UserInfo(val userId: String = "", val userName: String = "", val userStatus: String = "Undefined")
 
 class LoginViewModel: ViewModel() {
     //观察对象：
@@ -24,6 +24,7 @@ class LoginViewModel: ViewModel() {
     fun checkLoginStatus(userName: String, passWord: String) {
         loginLiveData.value = LoginInput(userName, passWord)
     }
+
 }
 
 

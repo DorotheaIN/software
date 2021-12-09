@@ -1,4 +1,4 @@
-package com.example.yike
+package com.example.yike.view
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -23,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.yike.R
+import com.example.yike.component.PrimaryButton
 import com.example.yike.ui.theme.Pink900
 import com.example.yike.ui.theme.White
 import com.example.yike.ui.theme.YikeTheme

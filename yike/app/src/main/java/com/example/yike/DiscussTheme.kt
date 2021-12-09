@@ -15,11 +15,3 @@ val defaultDiscussThemes = listOf(
     DiscussTheme(R.drawable.statements, "Statements")
 )
 
-val defaultDiscussItems = listOf(
-    DiscussTheme(R.drawable.monstera, "Monstera"),
-    DiscussTheme(R.drawable.aglaonema, "Aglaonema"),
-    DiscussTheme(R.drawable.peace_lily, "Peace lily"),
-    DiscussTheme(R.drawable.fiddle_leaf, "Fiddle leaf tree"),
-    DiscussTheme(R.drawable.snake_plant, "Snake plant"),
-    DiscussTheme(R.drawable.pothos, "Pothos"),
-)

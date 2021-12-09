@@ -1,9 +1,6 @@
-package com.example.yike
+package com.example.yike.view
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -13,23 +10,77 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.yike.ui.theme.YikeTheme
+import com.example.yike.component.AnswerCard
+import com.example.yike.viewModel.Answer
+import com.example.yike.viewModel.Question
+import com.example.yike.viewModel.QuestionViewModel
 
 @Composable
 fun QuestionScreen(
-
+    viewModel: QuestionViewModel
 ) {
-    val answer = AnswerData.answers
+    val isGet = viewModel.isGet.observeAsState()
+    if (isGet.value != true) {
+        viewModel.getAnswerList()
+    } else {
+        val answerList = viewModel.answerList.observeAsState()
+        QuestionScreenScaffold(answerList.value, viewModel.getQuestionBody())
+    }
+//    val answer = AnswerData.answers
+//    Scaffold(
+//        topBar = {
+//            TopBar()
+//        }
+//    ) {
+//        QuestionScreenContent(answer)
+//    }
+}
+
+@Composable
+private fun QuestionScreenScaffold(
+    answerList: ArrayList<Answer>?,
+    questionBody: Question?
+//    routeEvent: (q: Question) -> Unit
+) {
     Scaffold(
+        bottomBar = {
+//            BottomBar(navController)
+        },
         topBar = {
             TopBar()
         }
+    ) { paddingValues ->
+        if (answerList == null || questionBody == null) {
+            QuestionScreenLoader(paddingValues)
+        } else {
+            QuestionScreenContent(
+                answerList,
+                questionBody,
+                paddingValues,
+//                routeEvent
+            )
+        }
+    }
+}
+
+@Composable
+private fun QuestionScreenLoader(
+    paddingValues: PaddingValues
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
     ) {
-        QuestionScreenContent(answer)
+        CircularProgressIndicator(
+            modifier = Modifier
+                .wrapContentSize()
+                .align(Alignment.Center)
+        )
     }
 }
 
@@ -67,8 +118,10 @@ private fun TopBar() {
 
 @Composable
 private fun QuestionScreenContent(
-    question: List<Answer>
-) {
+    answerList: ArrayList<Answer>,
+    questionBody: Question,
+    paddingValues: PaddingValues,
+    ) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -79,20 +132,23 @@ private fun QuestionScreenContent(
                 .verticalScroll(rememberScrollState())
         ) {
             QuestionSection(
+                questionBody
             )
 
             UserOperationSection(
             )
 
             AnswerListSection(
-                question
+                answerList
             )
         }
     }
 }
 
 @Composable
-private fun QuestionSection() {
+private fun QuestionSection(
+    questionBody: Question
+) {
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
@@ -100,12 +156,12 @@ private fun QuestionSection() {
     ) {
         Column{
             Text(
-                "A very very very very very very very very very very very very very very Long Title",
+                text = questionBody.title,
                 style = MaterialTheme.typography.h3
             )
 
             Text(//折叠的
-                "Content",
+                text = questionBody.description,
                 style = MaterialTheme.typography.h6
             )
         }
@@ -157,7 +213,7 @@ private fun UserOperationSection() {
 
 @Composable
 private fun AnswerListSection(
-    answerModel : List<Answer>
+    answerList: ArrayList<Answer>
 ) {
 //    LazyColumn {
 //        items(answerModel) { answer ->
@@ -165,19 +221,19 @@ private fun AnswerListSection(
 //        }
 //    }
     Column() {
-        answerModel.forEach{answer ->
+        answerList.forEach{answer ->
             AnswerCard(answerInfo = answer)
         }
     }
 }
 
-@Preview(
-    name = "Day Mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-)
-@Composable
-private fun QuestionScreenPreview() {
-    YikeTheme {
-        QuestionScreen()
-    }
-}
+//@Preview(
+//    name = "Day Mode",
+//    uiMode = Configuration.UI_MODE_NIGHT_NO,
+//)
+//@Composable
+//private fun QuestionScreenPreview() {
+//    YikeTheme {
+//        QuestionScreen()
+//    }
+//}

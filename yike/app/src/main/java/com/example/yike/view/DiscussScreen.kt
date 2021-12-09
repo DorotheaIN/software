@@ -14,49 +14,52 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.yike.DiscussTheme
-import com.example.yike.ListForItem
-import com.example.yike.ThemeCard
+import com.example.yike.component.ThemeCard
+import com.example.yike.component.QuestionList
 import com.example.yike.defaultDiscussThemes
 import com.example.yike.viewModel.DiscussViewModel
+import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.Question
 
 @Composable
 fun DiscussScreen(
-    navController: NavController
+    viewModel: DiscussViewModel,
+    routeEvent: (q: Question) -> Unit
 ) {
-    val viewModel = DiscussViewModel()
-    val questionList = viewModel.questionList.observeAsState()
-    DiscussScreenScaffold(questionList.value,navController)
+    val isGet = viewModel.isGet.observeAsState()
+    if (isGet.value != true) {
+        viewModel.getQuestionList()
+    } else {
+        val questionList = viewModel.questionList.observeAsState()
+        DiscussScreenScaffold(questionList.value, routeEvent)
+    }
 }
 
 @Composable
 private fun DiscussScreenScaffold(
     questionList: ArrayList<Question>?,
-    navController: NavController
+    routeEvent: (q: Question) -> Unit
 ) {
     Scaffold(
         bottomBar = {
-            BottomBar(navController)
+//            BottomBar(navController)
         }
     ) { paddingValues ->
         if (questionList == null) {
             DiscussScreenLoader(paddingValues)
         } else {
+            GlobalViewModel.updataQuestionList(questionList)
             DiscussScreenContent(
                 paddingValues,
                 questionList,
+                routeEvent
             )
         }
     }
@@ -142,6 +145,7 @@ private fun RowScope.BottomButton(
 private fun DiscussScreenContent(
     paddingValues: PaddingValues,
     questionList: ArrayList<Question>,
+    routeEvent: (q: Question) -> Unit
 ) {
     Surface(
         color = MaterialTheme.colors.background,
@@ -163,7 +167,8 @@ private fun DiscussScreenContent(
             )
 
             DiscussItemsSection(
-                questionList
+                questionList,
+                routeEvent
             )
         }
     }
@@ -171,7 +176,8 @@ private fun DiscussScreenContent(
 
 @Composable
 private fun DiscussItemsSection(
-    items: ArrayList<Question>
+    items: ArrayList<Question>,
+    routeEvent: (q: Question) -> Unit
 ) {
 
 //    val newitems = items.asFlow()
@@ -217,7 +223,12 @@ private fun DiscussItemsSection(
             .padding(bottom = 16.dp),
     ) {
         items.forEach{item ->
-            ListForItem(item = item)
+            QuestionList(
+                item = item,
+                onClick = {
+                    // 是否要顺便将GlobalVM中存储的回答置空？
+                    item?.let(routeEvent)
+                })
         }
     }
 

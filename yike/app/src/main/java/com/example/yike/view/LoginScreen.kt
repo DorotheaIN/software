@@ -1,7 +1,6 @@
-package com.example.yike
+package com.example.yike.view
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,23 +15,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
-import com.example.yike.ui.theme.YikeTheme
+import com.example.yike.EmailState
+import com.example.yike.PasswordInputState
+import com.example.yike.component.PrimaryButton
+import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.LoginViewModel
 import com.example.yike.viewModel.UserInfo
 
 
 @Composable
-fun LoginScreen(routeEvent: () -> Unit = {}) {
-    val viewModel = LoginViewModel()
+fun LoginScreen(viewModel: LoginViewModel, routeEvent: () -> Unit = {}) {
     val userInfo = viewModel.userInfo.observeAsState()
     LoginContent(userInfo = userInfo.value, routeEvent) {
         viewModel.checkLoginStatus("Tom", "123")
@@ -42,8 +39,13 @@ fun LoginScreen(routeEvent: () -> Unit = {}) {
 @Composable
 private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {}, clickEvent: () -> Unit = {}) {
     val loginStatus = userInfo?.userStatus
-    println(loginStatus)
-    if(loginStatus == true) run(routeEvent)
+    if(loginStatus != "Undefined") {
+        if (userInfo != null) {
+            GlobalViewModel.updateUserInfo(userId = userInfo.userId, userName =  userInfo.userName,
+                userStatus = userInfo.userStatus)
+            run(routeEvent)
+        }
+    }
     Surface(
         color = MaterialTheme.colors.background,
         modifier = Modifier

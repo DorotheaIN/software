@@ -14,19 +14,18 @@ object LoginRepository {
     fun checkLoginStatus(userName: String, passWord: String) = liveData(Dispatchers.IO) {
         val result = try {
             val loginResponse = Network.getLoginStatus(userName, passWord)
-//            val loginResponse = Network.getLoginStatus()
-            if (loginResponse.status == "ok") {
+//            val testResponse = Network.getTest()
+            if (loginResponse.status == 200) {
                 UserInfo(loginResponse.result.userId, loginResponse.result.userName,
-                    loginResponse.result.passWord, loginResponse.result.userStatus)
+                    loginResponse.result.userStatus)
+//                UserInfo(testResponse.result, "1", "user")
             } else {
                 println("response status is not ok")
-                UserInfo("", userName,
-                    passWord, false)
+                UserInfo()
             }
         } catch (e: Exception){
             println(e)
-            UserInfo("", userName,
-                passWord, false)
+            UserInfo()
         }
         emit(result)
     }
@@ -36,8 +35,26 @@ object QuestionRepository {
     fun getQuestionList() = liveData(Dispatchers.IO) {
         val result = try {
             val questionList = Network.getQuestionList()
-            if (questionList.status == "ok") {
+            if (questionList.status == 200) {
                 questionList.result
+            } else {
+                println("response status is not ok")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}
+
+object AnswerRepository {
+    fun getAnswerList() = liveData(Dispatchers.IO) {
+        val result = try {
+            val answerList = Network.getAnswerList()
+            if (answerList.status == 200) {
+                answerList.result
             } else {
                 println("response status is not ok")
                 null

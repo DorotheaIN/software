@@ -1,26 +1,17 @@
-package com.example.yike
+package com.example.yike.component
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.QuestionAnswer
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import java.util.*
+import com.example.yike.R
+import com.example.yike.viewModel.Answer
 
 @Composable
 fun AnswerCard(
@@ -34,10 +25,10 @@ fun AnswerCard(
         Row(
             modifier = Modifier.padding(all = 8.dp) // 在我们的 Card 周围添加 padding
         ) {
-            UserAvatar(avatar = answerInfo.images)
+            UserAvatar(avatar = R.drawable.fiddle_leaf)
             Spacer(Modifier.padding(horizontal = 8.dp)) // 添加一个空的控件用来填充水平间距，设置 padding 为 8.dp
             Column {
-                Text(text = answerInfo.name)
+                Text(text = answerInfo.userInfo.name)
                 Spacer(Modifier.padding(vertical = 4.dp))
                 AnswerContent(content = answerInfo.content)
             }
