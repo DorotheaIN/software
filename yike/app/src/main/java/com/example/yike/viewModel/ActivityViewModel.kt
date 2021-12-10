@@ -1,36 +1,53 @@
 package com.example.yike.viewModel
 
-
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.example.yike.data.ActivityDetail
-import com.example.yike.data.Organization
 import com.example.yike.data.activityDetailList
 import com.example.yike.service.ActivityRepository
+import com.example.yike.ui.screens.ActivityCorrectScreen
 
-data class Evaluation(
-    val evaluaterName:String,
-    val description:String,
-    val score:Int
+
+
+//data class Organization(
+//    val username:String,
+//    val avator:String,
+//    val introduction:String
+//)
+
+data class Organization(
+    val id: Int,
+    val status:Int,
+    val introduction:String,
+    val avator:String,
+    val username:String,
 )
 
+//data class Activity(
+//    val id:Int,
+//    val title:String,
+//    val organizer: Organization,
+//    val img:String
+//)
+
 data class Activity(
-    val id:Int,
     val title:String,
-    val organizer: Organization,
-    val img:Int,
+    val img:String,
     val date:String,
     val place:String,
     val form:String,
-    val capacity:Int,
     val introduction:String,
     val content:String,
-    val genres:List<String>,
-    var status:Int,
+    val genres:String,
     var likeNum:Int,
-    var subscriberNum:Int,
+    val capacity:Int,
+    var status:Int,
+    var subscriberNum:Int,/////////////
+    val organizer: Organization,
+    val id:Int,
 )
+
 
 
 class ActivityViewModel(): ViewModel() {
@@ -45,8 +62,17 @@ class ActivityViewModel(): ViewModel() {
     fun init() {
         isInit.value = true
     }
-
-
+//
+//    private val like = Transformations.switchMap(isInit) {
+//        Activity
+//    }
+//
+//    //查询是否建立点赞关系  起始和结束api
+//    private val like = MutableLiveData<Boolean>(false)
+//
+//    fun clicklikeButton(){
+//        like.value = !like.value!!
+//    }
 
 
 }

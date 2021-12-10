@@ -16,6 +16,7 @@ fun TitleTextField(initial: String,enabled:Boolean){
     val requiredState = remember{
         RequiredInputState()
     }
+//    mutablemap
     if(!requiredState.hasEverBeenFocused){
         requiredState.text = initial
     }

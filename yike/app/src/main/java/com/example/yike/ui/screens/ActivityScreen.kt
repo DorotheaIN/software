@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.core.content.FileProvider
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
+import com.example.yike.R
 import com.example.yike.data.ActivityDetail
 import com.example.yike.data.activityDetailList
 import com.example.yike.viewModel.Activity
@@ -31,6 +33,7 @@ import com.example.yike.viewModel.ActivityViewModel
 @Composable
 fun ActivityScreen(navController: NavController){
     val activityViewModel = ActivityViewModel()
+    activityViewModel.init()
     val activityList = activityViewModel.activityList.observeAsState()
     ActivityScreenContent(navController,activityList.value)
 }
@@ -41,8 +44,17 @@ fun ActivityScreenContent(navController: NavController,activityList:ArrayList<Ac
         item {
             ActivityTable()
         }
-        items(activityDetailList){
-            ActivityItem(it,navController)
+        item(activityList){
+            Column(){
+                if (activityList != null) {
+                    activityList.forEach{
+                        ActivityItem(it,{activityID ->  navController.navigate("activitydetail_screen/${activityID}")})
+                    }
+                }
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(60.dp))
         }
     }
 }
@@ -59,7 +71,11 @@ fun ActivityTable(){
 
 
 @Composable
-fun ActivityItem(item: ActivityDetail,navController: NavController){
+fun ActivityItem(
+    item: Activity,
+//    navController: NavController,
+    Onclick:(activityID:Int)->Unit
+){
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
@@ -73,9 +89,10 @@ fun ActivityItem(item: ActivityDetail,navController: NavController){
                     .fillMaxSize()
                     .size(600.dp, 170.dp)
                     .clickable {
-                        navController.navigate("activitydetail_screen/${item.id}")
+                        Onclick(item.id)
+//                        navController.navigate("activitydetail_screen/${item.id}")
                     },
-                painter = painterResource(item.img),
+                painter = rememberImagePainter(item.img),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
             )
@@ -88,7 +105,7 @@ fun ActivityItem(item: ActivityDetail,navController: NavController){
             ){
                 Row(modifier = Modifier.padding(all = 8.dp)) {
                     Image(
-                        painter = painterResource(item.organizer.img),
+                        painter = rememberImagePainter(item.organizer.avator),
                         contentDescription = null,
                         modifier = Modifier
                             .padding(0.dp, 5.dp)
@@ -110,7 +127,7 @@ fun ActivityItem(item: ActivityDetail,navController: NavController){
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = item.organizer.name,
+                            text = item.organizer.username,
                             color = Color(0xFF7A7A7A),
                             style = MaterialTheme.typography.caption
                         )

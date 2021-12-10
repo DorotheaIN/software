@@ -1,11 +1,11 @@
 package com.example.yike.service
 
-import com.example.yike.model.ActivityResponse
+import com.example.yike.model.*
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
 import retrofit2.http.Query
-import com.example.yike.model.LoginResponse
-import com.example.yike.model.QuestionResponse
 
 interface UserService {
     @GET("login")//path看swagger
@@ -14,6 +14,23 @@ interface UserService {
     @GET("discuss")//path看swagger
     fun getQuestionList(): Call<QuestionResponse>
 
-    @GET("activity")//获取所有活动
+    @GET("getAllActivities")//获取所有活动
     fun getActivityList(): Call<ActivityResponse>
+
+    @GET("getActivityDetail")
+    fun getActivityDetail(@Query("ID") activityID: Int):Call<ActivityDetailResponse>
+
+    @GET("getReviewsByActivity")
+    fun getEvaluationList(@Query("ID") activityID: Int):Call<EvaluationListResponse>
+
+    @GET("getActivityListByOrganization")
+    fun getActivityListByOrganization(@Query("o") organizationID: Int):Call<ActivityResponse>
+
+    @GET("getRecommendActivity")
+    fun getActivityRecommended(@Query("ID") userID: String) :Call<ActivityResponse>
+
+    @POST("likeActivity")
+    @Multipart
+    fun postLikeActivity(@Query("activityID") activityID:Int,@Query("individualUserID") userID:String): Call<LikeResponse>
+
 }

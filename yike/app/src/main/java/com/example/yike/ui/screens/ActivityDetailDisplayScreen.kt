@@ -1,6 +1,6 @@
 package com.example.yike.ui.screens
 
-import android.app.Activity
+
 import android.graphics.fonts.FontFamily
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
@@ -13,9 +13,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -33,12 +35,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.yike.R
 import com.example.yike.component.ScrollableAppBar
-import com.example.yike.data.ActivityDetail
-import com.example.yike.data.activityDetailList
 import com.example.yike.data.getActivityDetail
-import com.example.yike.data.test
+import com.example.yike.viewModel.Activity
+import com.example.yike.viewModel.ActivityDetail
+import com.example.yike.viewModel.ActivityDetailViewModel
+import com.example.yike.viewModel.Evaluation
 import com.google.accompanist.insets.statusBarsHeight
 
 
@@ -56,99 +60,122 @@ fun NaviIcon(navController: NavController){
 
 @Composable
 fun ActivityDetailDisplayScreen(id:Int,navController: NavController){
-    val result = getActivityDetail(id)
-    var activityDetail = test
-    if(result != null){
-        activityDetail = result
-    }
+    val activityDetailViewModel = ActivityDetailViewModel()
+    activityDetailViewModel.init(id)
+    val activityDetail = activityDetailViewModel.activityDetail.observeAsState()
+    val evaluationList = activityDetailViewModel.evaluationList.observeAsState()
+    val activityRecommendedList = activityDetailViewModel.activityRecommendedList.observeAsState()
+//    val result = getActivityDetail(id)
+//    var activityDetail = test
+//    if(result != null){
+//        activityDetail = result
+//    }
     Scaffold(
         bottomBar = {
-            Bottom(activityDetail)
+            activityDetail.value?.let { Bottom(it,evaluationList.value) }
         },
         content = {
-            ActivityDetailScreenContent(activityDetail, navController)
+            ActivityDetailScreenContent(activityDetail.value,navController,evaluationList.value,activityRecommendedList.value)
         }
     )
 
 }
 
 @Composable
-fun ActivityDetailScreenContent(activityDetail: ActivityDetail,navController: NavController){
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colors.background
-    ) {
-        // ToolBar 最大向上位移量
-        // 56.dp 参考自 androidx.compose.material AppBar.kt 里面定义的 private val AppBarHeight = 56.dp
-        val maxUpPx = with(LocalDensity.current) { 170.dp.roundToPx().toFloat() - 56.dp.roundToPx().toFloat() }
-        // ToolBar 最小向上位移量
-        val minUpPx = 0f
-        // 偏移折叠工具栏上移高度
-        val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }
-        // 现在，让我们创建与嵌套滚动系统的连接并聆听子 LazyColumn 中发生的滚动
-        val nestedScrollConnection = remember {
-            object : NestedScrollConnection {
-                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                    // try to consume before LazyColumn to collapse toolbar if needed, hence pre-scroll
-                    val delta = available.y
-                    val newOffset = toolbarOffsetHeightPx.value + delta
-                    toolbarOffsetHeightPx.value = newOffset.coerceIn(-maxUpPx, minUpPx)
-                    // here's the catch: let's pretend we consumed 0 in any case, since we want
-                    // LazyColumn to scroll anyway for good UX
-                    // We're basically watching scroll without taking it
-                    return Offset.Zero
-                }
-            }
-        }
-        Box(
-            Modifier
-                .fillMaxSize()
-                // attach as a parent to the nested scroll system
-                .nestedScroll(nestedScrollConnection)
+fun ActivityDetailScreenContent(
+    activityDetail: ActivityDetail?,
+    navController: NavController,
+    evaluationList:ArrayList<Evaluation>?,
+    activityList:ArrayList<Activity>?
+){
+    if(activityDetail!=null){
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
         ) {
-            // our list with build in nested scroll support that will notify us about its scroll
-            LazyColumn(contentPadding = PaddingValues(top = 170.dp)) {
-                item {
-                    InfoDisplay(item = activityDetail)
-                }
-//                items(100) { index ->
-//                    Text("I'm item $index", modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(16.dp))
-//                }
-                item {
-                    Spacer(modifier = Modifier.height(60.dp))
+            // ToolBar 最大向上位移量
+            // 56.dp 参考自 androidx.compose.material AppBar.kt 里面定义的 private val AppBarHeight = 56.dp
+            val maxUpPx = with(LocalDensity.current) { 170.dp.roundToPx().toFloat() - 56.dp.roundToPx().toFloat() }
+            // ToolBar 最小向上位移量
+            val minUpPx = 0f
+            // 偏移折叠工具栏上移高度
+            val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }
+            // 现在，让我们创建与嵌套滚动系统的连接并聆听子 LazyColumn 中发生的滚动
+            val nestedScrollConnection = remember {
+                object : NestedScrollConnection {
+                    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                        // try to consume before LazyColumn to collapse toolbar if needed, hence pre-scroll
+                        val delta = available.y
+                        val newOffset = toolbarOffsetHeightPx.value + delta
+                        toolbarOffsetHeightPx.value = newOffset.coerceIn(-maxUpPx, minUpPx)
+                        // here's the catch: let's pretend we consumed 0 in any case, since we want
+                        // LazyColumn to scroll anyway for good UX
+                        // We're basically watching scroll without taking it
+                        return Offset.Zero
+                    }
                 }
             }
-            ScrollableAppBar(
-                title = activityDetail.title,
-                navigationIcon = { NaviIcon(navController = navController) },
-                scrollableAppBarHeight = 170.dp,
-                toolbarOffsetHeightPx = toolbarOffsetHeightPx,
-                backgroundImageId = activityDetail.img
-            )
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    // attach as a parent to the nested scroll system
+                    .nestedScroll(nestedScrollConnection)
+            ) {
+                // our list with build in nested scroll support that will notify us about its scroll
+                LazyColumn(contentPadding = PaddingValues(top = 170.dp)) {
+                    item {
+                        InfoDisplay(item = activityDetail)
+                    }
+                    if(activityList!=null){
+                        item{
+                            ActivityRecommendedDisplay(activityList)
+                        }
+                    }
+                    if(evaluationList != null){
+                        item{
+                            EvaluationDiplay(evaluationList)
+                        }
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(60.dp))
+                    }
+                }
+                ScrollableAppBar(
+                    title = activityDetail.title,
+                    navigationIcon = { NaviIcon(navController = navController) },
+                    scrollableAppBarHeight = 170.dp,
+                    toolbarOffsetHeightPx = toolbarOffsetHeightPx,
+                    backgroundImg = activityDetail.img
+                )
+
+            }
 
         }
-
     }
+
 }
 
 
 @Composable
-fun Bottom(activityDetail: ActivityDetail){
+fun Bottom(activityDetail: ActivityDetail,evaluationList: ArrayList<Evaluation>?){
     Row(
         Modifier
             .background(Color.White)
             .border(1.dp, Color(0xFFE4E4E4), RoundedCornerShape(7.dp))
     ) {
-        SubscribeItem(activityDetail)
-        LikeItem(activityDetail)
-        EvaluateItem(activityDetail)
+        SubscribeIcon(activityDetail)
+        LikeIcon(activityDetail)
+        if(evaluationList != null){
+            EvaluateIcon(evaluationList.size)
+        }else {
+            EvaluateIcon(0)
+        }
+
     }
 }
 
 @Composable
-fun LikeItem(activityDetail: ActivityDetail){
+fun LikeIcon(activityDetail: ActivityDetail){
     var likenum = activityDetail.likeNum
     var selected by remember{mutableStateOf(false)}
     var change by remember{mutableStateOf(false)}
@@ -188,8 +215,7 @@ fun LikeItem(activityDetail: ActivityDetail){
 
 
 @Composable
-fun EvaluateItem(activityDetail: ActivityDetail){
-    var evaluationList = activityDetail.evaluationList
+fun EvaluateIcon(evaluationNum:Int){
     Box(
         modifier = Modifier.padding(30.dp,5.dp)
     ){
@@ -205,7 +231,7 @@ fun EvaluateItem(activityDetail: ActivityDetail){
             }
             Box(){
                 Text(
-                    text = evaluationList.size.toString(),
+                    text = evaluationNum.toString(),
                     color = Color.DarkGray,
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
@@ -218,8 +244,8 @@ fun EvaluateItem(activityDetail: ActivityDetail){
 
 
 @Composable
-fun SubscribeItem(activityDetail: ActivityDetail){
-    var subscriberList = activityDetail.subscriberList
+fun SubscribeIcon(activityDetail: ActivityDetail){
+    var subscriberList = activityDetail.subscriberNum
     var selected by remember{mutableStateOf(false)}
     var change by remember{mutableStateOf(false)}
     val buttonSize by animateDpAsState(
@@ -256,17 +282,10 @@ fun SubscribeItem(activityDetail: ActivityDetail){
 }
 
 
-@Composable
-fun PictureDisplay(item:ActivityDetail){
-    LazyRow(Modifier){
-        items(activityDetailList) {
-            PictureItem(it.img)
-        }
-    }
-}
+
 
 @Composable
-fun PictureItem(img:Int){
+fun PictureItem(item: Activity){
     Box(
         modifier = Modifier
             .size(400.dp, 150.dp)
@@ -278,7 +297,7 @@ fun PictureItem(img:Int){
                 .fillMaxSize()
                 .size(300.dp, 100.dp)
                 .clickable { },
-            painter = painterResource(img),
+            painter = rememberImagePainter(item.img),
             contentDescription = null,
             contentScale = ContentScale.FillWidth
         )
@@ -441,26 +460,27 @@ fun ContentDisplay(item:ActivityDetail){
 }
 
 @Composable
-fun LighteningDisplay(item: ActivityDetail){
+fun ActivityRecommendedDisplay(activityList:ArrayList<Activity>){
     Box() {
         Column(
             modifier = Modifier.padding(9.dp,3.dp,9.dp,3.dp)
         ){
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
                 Text(
-                    text = "活动亮点",
+                    text = "推荐活动",
                     color = Color.Black,
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
                     fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
                 )
             }
-            Text(
-                text = item.lightening,
-                color = Color.DarkGray,
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
-            )
+            LazyRow(Modifier){
+                activityList.forEach{it->
+                    item {
+                        PictureItem(it)
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(10.dp))
             Divider(
                 Modifier
@@ -499,234 +519,64 @@ fun InfoDisplay(item:ActivityDetail){
     IntroductionDisplay(item)
     BasicInfoDisplay(item)
     ContentDisplay(item)
-    LighteningDisplay(item)
 }
 
+
 @Composable
-fun IntroductionDisplayPrview(){
-    val item = test
-    Box() {
-        Column(){
-            GenresRowPreview()
-            Text(
-                text = item.introduction,
-                color = Color.DarkGray,
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Divider(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(start = 18.dp, end = 18.dp),
-                //颜色
-                color = Color.LightGray,
-            )
+fun EvaluationDiplay(evaluationList: ArrayList<Evaluation>){
+    Column() {
+        evaluationList.forEach{it->
+            EvaluationItem(it)
         }
     }
 }
 
-
-
 @Composable
-fun BasicInfoDisplayPreview(){
-    val item = test
-    Box(){
-        Column(
-            modifier = Modifier.padding(9.dp)
-        ) {
-            //基本信息
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
-                Text(
-                    text = "基本信息",
-                    color = Color.Black,
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
-                )
-            }
-            Row() {
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium){
-                    Image(
-                        painter = painterResource(R.drawable.time),
-                        contentDescription = "time",
-                        modifier = Modifier
-                            .size(52.dp, 44.dp)
-                            .padding(16.dp, 12.dp, 8.dp, 12.dp)
-                    )
-                    Text(
-                        text = "日期：",
-                        color = Color.DarkGray,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                    )
-                    Text(
-                        text = item.date,
-                        color = Color.DarkGray,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                    )
-                }
-            }
-            Row() {
-                Image(
-                    painter = painterResource(R.drawable.place),
-                    contentDescription = "place",
-                    modifier = Modifier
-                        .size(52.dp, 44.dp)
-                        .padding(16.dp, 12.dp, 8.dp, 12.dp)
-                )
-                Text(
-                    text = "地点：",
-                    color = Color.DarkGray,
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                )
-                Text(
-                    text = item.place,
-                    color = Color.DarkGray,
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                )
-            }
-            Row() {
-                Image(
-                    painter = painterResource(R.drawable.tag),
-                    contentDescription = "form",
-                    modifier = Modifier
-                        .size(52.dp, 44.dp)
-                        .padding(16.dp, 12.dp, 8.dp, 12.dp)
-                )
-                Text(
-                    text = "形式：",
-                    color = Color.DarkGray,
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                )
-                Text(
-                    text = item.form,
-                    color = Color.DarkGray,
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            Divider(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(start = 18.dp, end = 18.dp),
-                //颜色
-                color = Color.LightGray,
-            )
-        }
-
-    }
-//    Surface(
-//        shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
-//        elevation = 5.dp,
-//        modifier = Modifier
-//            .padding(0.dp, 7.dp)
-//            .fillMaxWidth()
-//    ){
-//
-//    }
-}
-
-@Composable
-fun ContentDisplayPreview(){
-    val item = test
-    Box() {
-        Column(
-            modifier = Modifier.padding(9.dp)
-        ){
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
-                Text(
-                    text = "活动内容",
-                    color = Color.Black,
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
-                )
-            }
-            Text(
-                text = item.content,
-                color = Color.DarkGray,
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Divider(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(start = 18.dp, end = 18.dp),
-                //颜色
-                color = Color.LightGray,
-            )
-        }
-    }
-}
-
-
-
-
-@Composable
-fun LighteningDisplayPreview(){
-    val item = test
-    Box() {
-        Column(
-            modifier = Modifier.padding(9.dp)
-        ){
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
-                Text(
-                    text = "活动亮点",
-                    color = Color.Black,
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
-                )
-            }
-            Text(
-                text = item.lightening,
-                color = Color.DarkGray,
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Divider(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(start = 18.dp, end = 18.dp),
-                //颜色
-                color = Color.LightGray,
-            )
-        }
-    }
-}
-
-
-
-@Composable
-fun GenresRowPreview(){
-    val list = test.genres.split(',')
-    LazyRow(contentPadding = PaddingValues(12.dp,8.dp,8.dp,0.dp)){
-        items(list){ it->
-            Text(
-                text = it,
-                color = Color(0xFF5C63E6),
-                style = MaterialTheme.typography.body2,
+fun EvaluationItem(evaluation:Evaluation){
+    Box(
+        modifier = Modifier
+            .size(550.dp, 85.dp)
+            .padding(3.dp, 0.dp)
+            .clickable { }
+            .background(Color.White)
+    ){
+        Row(modifier = Modifier.padding(all = 8.dp)) {
+            Image(
+                painter = rememberImagePainter(evaluation.reviewerAvator),
+                contentDescription = null,
                 modifier = Modifier
-                    .padding(8.dp, 0.dp, 0.dp, 0.dp)
-                    .clip(RoundedCornerShape(5.dp))
-                    .background(Color(0xFFE1E3FD))
-                    .padding(7.dp, 4.dp)
+                    .padding(10.dp, 5.dp)
+                    .size(55.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .fillMaxSize()
+//                .border(1.5.dp, MaterialTheme.colors.secondary, RoundedCornerShape(7.dp))
             )
+            Spacer(modifier = Modifier.width(15.dp))
+
+            Column (modifier = Modifier.size(300.dp,65.dp)){
+                Text(
+                    text = evaluation.reviewerName,
+                    color = Color.Black,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = evaluation.content,
+                    color = Color(0xFF7A7A7A),
+                    style = MaterialTheme.typography.caption
+                )
+            }
+            Spacer(modifier = Modifier.width(15.dp))
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(Icons.Filled.Add,null)
+            }
         }
     }
 }
+
 
 
 
@@ -780,7 +630,6 @@ fun ActivityHeader(scrollState: LazyListState,title:String) {
                         .size(52.dp, 44.dp)
                         .padding(16.dp, 12.dp, 8.dp, 12.dp)
                         .clickable {
-                            activity.finish()
                         }
                 )
                 Text(
@@ -803,7 +652,7 @@ fun ActivityTopItem(item:ActivityDetail){
         .height(170.dp)
     ){
         Image(
-            painter = painterResource(item.img),
+            painter = rememberImagePainter(item.img),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxWidth()
@@ -827,7 +676,7 @@ fun ActivityTopItem(item:ActivityDetail){
                 modifier = Modifier.padding(16.dp, 8.dp)
             )
             Text(
-                text = item.organizer.name,
+                text = item.organizer.username,
                 color = Color.White,
                 style = MaterialTheme.typography.body2,
                 modifier = Modifier.padding(16.dp, 0.dp)
@@ -836,3 +685,89 @@ fun ActivityTopItem(item:ActivityDetail){
     }
 }
 
+@Preview
+@Composable
+fun displayTextStyle(){
+    Column() {
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.h1,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.h2,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.h3,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.h4,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.body1,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.subtitle2,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.overline,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+        Text(
+            text = "枝枝",
+            color = Color.Black,
+            style = MaterialTheme.typography.button,
+            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+        )
+
+    }
+
+}

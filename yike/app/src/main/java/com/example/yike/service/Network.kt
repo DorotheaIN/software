@@ -25,6 +25,18 @@ object Network {
     suspend fun getActivityList() =
         userService.getActivityList().await()
 
+    suspend fun getActivityDetail(activityID: Int) =
+        userService.getActivityDetail(activityID).await()
+
+    suspend fun getEvaluationList(activityID: Int) =
+        userService.getEvaluationList(activityID).await()
+
+    suspend fun getActivityRecommended(userID: String) =
+        userService.getActivityRecommended(userID).await()
+
+    suspend fun postLikeActivity(activityID: Int,userID: String) =
+        userService.postLikeActivity(activityID,userID).await()
+
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
     private suspend fun <T> Call<T>.await() :T {

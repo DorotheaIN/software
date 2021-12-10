@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import com.example.yike.R
 import kotlin.math.roundToInt
 
@@ -45,7 +46,7 @@ fun ScrollableAppBar(
             },
             contentDescription = "ArrowBack",
             tint = Color.White) }, //默认为返回键
-    @DrawableRes backgroundImageId:Int, // 背景图片
+    backgroundImg:String, // 背景图片
     background: Color = MaterialTheme.colors.primary,
     scrollableAppBarHeight: Dp, //ScrollableAppBar高度
     toolbarOffsetHeightPx:MutableState<Float> //向上偏移量
@@ -69,7 +70,7 @@ fun ScrollableAppBar(
                 .size(600.dp, 170.dp)
                 .clickable {
                 },
-            painter = painterResource(id = backgroundImageId),
+            painter = rememberImagePainter(backgroundImg),
             contentDescription = "background",
             contentScale = ContentScale.FillBounds
         )

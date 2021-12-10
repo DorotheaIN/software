@@ -16,18 +16,18 @@ val SSE = Organization(
 
 val TJELE = Organization(
     "同济电信",
-    R.drawable.tjelec,
-    ""
+    R.drawable.sse,
+    "xx"
 )
 
 val TJSC = Organization(
     "同济创新创业",
-    R.drawable.tjsc,
-    ""
+    R.drawable.sse,
+    "xx"
 )
 
 val TJStudent = Organization(
     "同济大学生",
-    R.drawable.tjstudent,
-    ""
+    R.drawable.sse,
+    "xx"
 )

@@ -99,7 +99,7 @@ val activityDetailList = listOf<ActivityDetail>(
     ActivityDetail(
         2,
         "济学外语",
-        TJStudent,
+        SSE,
         R.drawable.language,
         "11月19日",
         "腾讯会议",
@@ -171,7 +171,7 @@ val activityDetailList = listOf<ActivityDetail>(
     ActivityDetail(
         8,
         "济学外语",
-        TJStudent,
+        SSE,
         R.drawable.language,
         "11月19日",
         "腾讯会议",
