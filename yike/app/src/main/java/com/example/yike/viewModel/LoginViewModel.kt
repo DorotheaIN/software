@@ -4,8 +4,9 @@ import androidx.lifecycle.*
 import com.example.yike.service.LoginRepository
 
 
-data class LoginInput(val userName: String, val passWord: String)
-data class UserInfo(val userId: String = "", val userName: String = "", val userStatus: String = "Undefined")
+data class LoginInput(val userEmail: String, val passWord: String)
+data class UserInfo(val id: String = "", val user_NAME: String = "", val status: Int = -1,
+val introduction: String = "", val avator: String = "")
 
 class LoginViewModel: ViewModel() {
     //观察对象：
@@ -17,12 +18,12 @@ class LoginViewModel: ViewModel() {
 //    val loginStatus: LiveData<Boolean> = _loginStatus
 
     val userInfo = Transformations.switchMap(loginLiveData) { loginInput ->
-        LoginRepository.checkLoginStatus(loginInput.userName, loginInput.passWord)
+        LoginRepository.checkLoginStatus(loginInput.userEmail, loginInput.passWord)
     }
 
     //用户方法：
-    fun checkLoginStatus(userName: String, passWord: String) {
-        loginLiveData.value = LoginInput(userName, passWord)
+    fun checkLoginStatus(userEmail: String, passWord: String) {
+        loginLiveData.value = LoginInput(userEmail, passWord)
     }
 
 }

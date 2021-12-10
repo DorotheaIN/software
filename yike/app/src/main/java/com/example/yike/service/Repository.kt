@@ -11,17 +11,19 @@ import java.lang.Exception
 //network和接口中定义的函数名相同 通过get post来反应请求类型
 
 object LoginRepository {
-    fun checkLoginStatus(userName: String, passWord: String) = liveData(Dispatchers.IO) {
+    fun checkLoginStatus(userEmail: String, passWord: String) = liveData(Dispatchers.IO) {
         val result = try {
-            val loginResponse = Network.getLoginStatus(userName, passWord)
-//            val testResponse = Network.getTest()
-            if (loginResponse.status == 200) {
-                UserInfo(loginResponse.result.userId, loginResponse.result.userName,
-                    loginResponse.result.userStatus)
-//                UserInfo(testResponse.result, "1", "user")
+            val loginResponse = Network.getLoginStatus(userEmail, passWord)
+            if (loginResponse.code == 200) {
+                UserInfo(loginResponse.result.id, loginResponse.result.user_NAME, loginResponse.result.status,
+                    loginResponse.result.introduction, loginResponse.result.avator)
             } else {
-                println("response status is not ok")
-                UserInfo()
+                println("response code is ${loginResponse.code} error msg is ${loginResponse.msg}")
+                val s = when(loginResponse.msg) {
+                    "unregister" -> -2
+                    else -> -1
+                }
+                UserInfo(status = s)
             }
         } catch (e: Exception){
             println(e)
@@ -35,10 +37,25 @@ object QuestionRepository {
     fun getQuestionList() = liveData(Dispatchers.IO) {
         val result = try {
             val questionList = Network.getQuestionList()
-            if (questionList.status == 200) {
+            if (questionList.code == 200) {
                 questionList.result
             } else {
-                println("response status is not ok")
+                println("response code is ${questionList.code} error msg is ${questionList.msg}")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+    fun getQuestionByTheme() = liveData(Dispatchers.IO) {
+        val result = try {
+            val qThemeList = Network.getQuestionByTheme()
+            if (qThemeList.code == 200) {
+                qThemeList.result
+            } else {
+                println("response code is ${qThemeList.code} error msg is ${qThemeList.msg}")
                 null
             }
         } catch (e: Exception){
@@ -53,10 +70,10 @@ object AnswerRepository {
     fun getAnswerList() = liveData(Dispatchers.IO) {
         val result = try {
             val answerList = Network.getAnswerList()
-            if (answerList.status == 200) {
+            if (answerList.code == 200) {
                 answerList.result
             } else {
-                println("response status is not ok")
+                println("response status is ${answerList.code} error msg is ${answerList.msg}")
                 null
             }
         } catch (e: Exception){

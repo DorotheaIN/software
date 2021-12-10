@@ -32,19 +32,22 @@ import com.example.yike.viewModel.UserInfo
 fun LoginScreen(viewModel: LoginViewModel, routeEvent: () -> Unit = {}) {
     val userInfo = viewModel.userInfo.observeAsState()
     LoginContent(userInfo = userInfo.value, routeEvent) {
-        viewModel.checkLoginStatus("Tom", "123")
+        viewModel.checkLoginStatus("2872529770@qq.com", "22")
     }
 }
 
 @Composable
 private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {}, clickEvent: () -> Unit = {}) {
-    val loginStatus = userInfo?.userStatus
-    if(loginStatus != "Undefined") {
+    val loginStatus = userInfo?.status
+    if(loginStatus == 1) {
         if (userInfo != null) {
-            GlobalViewModel.updateUserInfo(userId = userInfo.userId, userName =  userInfo.userName,
-                userStatus = userInfo.userStatus)
+            println(userInfo)
+            GlobalViewModel.updateUserInfo(userId = userInfo.id, userName =  userInfo.user_NAME,
+                userStatus = userInfo.status, avatar = userInfo.avator, introduction = userInfo.introduction)
             run(routeEvent)
         }
+    } else {
+        println(loginStatus)
     }
     Surface(
         color = MaterialTheme.colors.background,

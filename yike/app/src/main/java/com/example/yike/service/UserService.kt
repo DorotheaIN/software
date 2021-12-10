@@ -1,23 +1,24 @@
 package com.example.yike.service
 
-import com.example.yike.model.AnswerResponse
-import com.example.yike.model.LoginResponse
-import com.example.yike.model.QuestionResponse
-import com.example.yike.model.TestResponse
+import com.example.yike.model.*
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface UserService {
-    @GET("login")//path看swagger
-    fun getLoginStatus(@Query("u") user: String, @Query("p") passWord: String): Call<LoginResponse>
+    @GET("login")
+    fun getLoginStatus(@Query("email") userEmail: String, @Query("password") passWord: String): Call<LoginResponse>
 
-    @GET("discuss")//path看swagger
+
+    @GET("discuss")
     fun getQuestionList(): Call<QuestionResponse>
 
-    @GET("answer")//path看swagger
+    @GET("recommenddis")
+    fun getQuestionByTheme(): Call<QThemeResponse>
+
+    @GET("answer")
     fun getAnswerList(): Call<AnswerResponse>
 
-    @GET("/test/doCheck")//path看swagger
+    @GET("/test/doLogin")
     fun getTest(): Call<TestResponse>
 }

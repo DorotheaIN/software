@@ -1,5 +1,7 @@
 package com.example.yike.model
 
+import com.example.yike.viewModel.UserInfo
+
 
 //json:
 //
@@ -16,9 +18,7 @@ package com.example.yike.model
 //status 改为user之类的？
 
 
-data class LoginResponse(val status: Int, val result: Result) {
-    data class Result(val userId: String, val userName: String, val userStatus: String)
+data class LoginResponse(val code: Int, val result: UserInfo, val msg: String, val dataCount: Int) {
+//    data class Result(val userId: String, val userName: String, val userStatus: String)
 }
-//也可以这样定义：
-//data class LoginResponse(val status: String, val result: UserInfo)
-//userinfo 在viewmodel中定义
+

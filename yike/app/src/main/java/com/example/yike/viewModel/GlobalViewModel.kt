@@ -7,11 +7,17 @@ object GlobalViewModel: ViewModel() {
     private val globalUserInfo: MutableLiveData<UserInfo> = MutableLiveData<UserInfo>()
     private val globalQuestionList: MutableLiveData<ArrayList<Question>> = MutableLiveData<ArrayList<Question>>()
 
-    fun updateUserInfo(userId:String, userName: String, userStatus: String) {
-        globalUserInfo.value = UserInfo(userId, userName, userStatus)
+    fun updateUserInfo(userId:String, userName: String, userStatus: Int, avatar: String, introduction: String) {
+        globalUserInfo.value = UserInfo(userId, userName, userStatus, introduction, avatar)
     }
 
-    fun updataQuestionList(questionList: ArrayList<Question>) {
+    fun updataQuestionList(questionList: ArrayList<Question>, questionTheme: ArrayList<QTheme>) {
+        questionTheme.forEach {
+            println(it)
+            val q = Question(it.id, it.title, it.description, it.followNum, it.answerNum)
+            println(q)
+            questionList.add(q)
+        }
         globalQuestionList.value = questionList
     }
 

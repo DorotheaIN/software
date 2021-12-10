@@ -1,4 +1,4 @@
 package com.example.yike.model
 
-data class TestResponse(val status: Int, val result: String) {
+data class TestResponse(val code: Int, val msg: String, val data: String) {
 }

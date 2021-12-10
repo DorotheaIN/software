@@ -16,11 +16,14 @@ object Network {
     private val userService = ServiceCreator.create<UserService>()
 
     //suspend fun:
-    suspend fun getLoginStatus(userName: String, passWord: String) =
-        userService.getLoginStatus(userName, passWord).await()
+    suspend fun getLoginStatus(userEmail: String, passWord: String) =
+        userService.getLoginStatus(userEmail, passWord).await()
 
     suspend fun getQuestionList() =
         userService.getQuestionList().await()
+
+    suspend fun getQuestionByTheme() =
+        userService.getQuestionByTheme().await()
 
     suspend fun getAnswerList() =
         userService.getAnswerList().await()

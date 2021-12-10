@@ -26,40 +26,47 @@ import com.example.yike.component.QuestionList
 import com.example.yike.defaultDiscussThemes
 import com.example.yike.viewModel.DiscussViewModel
 import com.example.yike.viewModel.GlobalViewModel
+import com.example.yike.viewModel.QTheme
 import com.example.yike.viewModel.Question
 
 @Composable
 fun DiscussScreen(
     viewModel: DiscussViewModel,
-    routeEvent: (q: Question) -> Unit
+    routeEvent1: (q: Question) -> Unit,
+    routeEvent2: (q: QTheme) -> Unit
 ) {
     val isGet = viewModel.isGet.observeAsState()
     if (isGet.value != true) {
         viewModel.getQuestionList()
     } else {
         val questionList = viewModel.questionList.observeAsState()
-        DiscussScreenScaffold(questionList.value, routeEvent)
+        val questionTheme = viewModel.questionTheme.observeAsState()
+        DiscussScreenScaffold(questionList.value, questionTheme.value, routeEvent1, routeEvent2)
     }
 }
 
 @Composable
 private fun DiscussScreenScaffold(
     questionList: ArrayList<Question>?,
-    routeEvent: (q: Question) -> Unit
+    questionTheme: ArrayList<QTheme>?,
+    routeEvent1: (q: Question) -> Unit,
+    routeEvent2: (q: QTheme) -> Unit
 ) {
     Scaffold(
         bottomBar = {
 //            BottomBar(navController)
         }
     ) { paddingValues ->
-        if (questionList == null) {
+        if (questionList == null || questionTheme == null) {
             DiscussScreenLoader(paddingValues)
         } else {
-            GlobalViewModel.updataQuestionList(questionList)
+            GlobalViewModel.updataQuestionList(questionList, questionTheme)
             DiscussScreenContent(
                 paddingValues,
                 questionList,
-                routeEvent
+                questionTheme,
+                routeEvent1,
+                routeEvent2
             )
         }
     }
@@ -145,7 +152,10 @@ private fun RowScope.BottomButton(
 private fun DiscussScreenContent(
     paddingValues: PaddingValues,
     questionList: ArrayList<Question>,
-    routeEvent: (q: Question) -> Unit
+    questionTheme: ArrayList<QTheme>,
+    routeEvent1: (q: Question) -> Unit,
+    routeEvent2: (q: QTheme) -> Unit
+
 ) {
     Surface(
         color = MaterialTheme.colors.background,
@@ -163,12 +173,13 @@ private fun DiscussScreenContent(
             SearchInput()
 
             DiscussThemesSection(
-                defaultDiscussThemes
+                questionTheme,
+                routeEvent2
             )
 
             DiscussItemsSection(
                 questionList,
-                routeEvent
+                routeEvent1
             )
         }
     }
@@ -263,7 +274,8 @@ private fun DiscussItemsSection(
 
 @Composable
 private fun DiscussThemesSection(
-    themes: List<DiscussTheme>
+    themes: ArrayList<QTheme>,
+    routeEvent: (q: QTheme) -> Unit
 ) {
     Text(
         text = "Themes",
@@ -282,7 +294,9 @@ private fun DiscussThemesSection(
             .padding(horizontal = 16.dp),
     ) {
         themes.forEach { theme ->
-            ThemeCard(theme)
+            ThemeCard(theme) {
+                theme?.let(routeEvent)
+            }
         }
     }
 }
