@@ -26,18 +26,21 @@ import com.example.yike.component.PrimaryButton
 import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.LoginViewModel
 import com.example.yike.viewModel.UserInfo
+import kotlin.reflect.typeOf
 
 
 @Composable
 fun LoginScreen(viewModel: LoginViewModel, routeEvent: () -> Unit = {}) {
     val userInfo = viewModel.userInfo.observeAsState()
-    LoginContent(userInfo = userInfo.value, routeEvent) {
-        viewModel.checkLoginStatus("2872529770@qq.com", "22")
+    LoginContent(userInfo = userInfo.value, routeEvent) { email, password ->
+        viewModel.checkLoginStatus(email, password)
     }
 }
 
 @Composable
-private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {}, clickEvent: () -> Unit = {}) {
+private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},
+                         clickEvent: (email: String, password: String) -> Unit
+) {
     val loginStatus = userInfo?.status
     if(loginStatus == 1) {
         if (userInfo != null) {
@@ -54,6 +57,8 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {}, click
         modifier = Modifier
             .fillMaxSize(),
     ) {
+        val passwordInput = remember { PasswordInputState() }
+        val emailInput = remember { EmailState() }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -65,25 +70,30 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {}, click
 
             LogInHeader()
 
-            EmailInput()
+            EmailInput(emailInput)
 
             Spacer(Modifier.height(8.dp))
 
-            PasswordInput()
+            PasswordInput(passwordInput)
 
             TermsOfServiceLabel()
 
             Spacer(Modifier.height(16.dp))
 
-            LoginButton( onClick =
-                clickEvent
-            )
+            LoginButton( onClick = {
+                if( emailInput.isValid && passwordInput.isValid ){
+                    run{
+                            println(emailInput.text + passwordInput.text)
+                            clickEvent(emailInput.text, passwordInput.text)
+                    }
+                }
+            })
         }
     }
 }
 
 @Composable
-private fun LoginButton( onClick: () -> Unit = {}) {
+private fun LoginButton( onClick: () -> Unit) {
     PrimaryButton(
         buttonText = "Log in",
         onClick = onClick
@@ -102,7 +112,7 @@ private fun TermsOfServiceLabel() {
 }
 
 @Composable
-private fun PasswordInput() {
+private fun PasswordInput(passwordInput: PasswordInputState) {
     val textState = remember {
         PasswordInputState()
     }
@@ -111,6 +121,7 @@ private fun PasswordInput() {
         value = textState.text,
         onValueChange = { newText ->
             textState.text = newText
+            passwordInput.text = textState.text
         },
         label = {
             Text(text = "Password (8+ characters)")
@@ -172,7 +183,7 @@ private fun PasswordVisabilityIcon(
 }
 
 @Composable
-private fun EmailInput() {
+private fun EmailInput(emailInput: EmailState) {
     val textState = remember {
         EmailState()
     }
@@ -181,6 +192,7 @@ private fun EmailInput() {
         value = textState.text,
         onValueChange = { newString ->
             textState.text = newString
+            emailInput.text = textState.text
         },
         label = {
             Text(text = "Email address")
