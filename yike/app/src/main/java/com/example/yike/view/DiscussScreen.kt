@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.yike.DiscussTheme
+import com.example.yike.component.NavBottomBar
 import com.example.yike.component.ThemeCard
 import com.example.yike.component.QuestionList
 import com.example.yike.defaultDiscussThemes
@@ -32,8 +33,7 @@ import com.example.yike.viewModel.Question
 @Composable
 fun DiscussScreen(
     viewModel: DiscussViewModel,
-    routeEvent1: (q: Question) -> Unit,
-    routeEvent2: (q: QTheme) -> Unit
+    navController: NavController,
 ) {
     val isGet = viewModel.isGet.observeAsState()
     if (isGet.value != true) {
@@ -41,7 +41,7 @@ fun DiscussScreen(
     } else {
         val questionList = viewModel.questionList.observeAsState()
         val questionTheme = viewModel.questionTheme.observeAsState()
-        DiscussScreenScaffold(questionList.value, questionTheme.value, routeEvent1, routeEvent2)
+        DiscussScreenScaffold(questionList.value, questionTheme.value,navController)
     }
 }
 
@@ -49,12 +49,11 @@ fun DiscussScreen(
 private fun DiscussScreenScaffold(
     questionList: ArrayList<Question>?,
     questionTheme: ArrayList<QTheme>?,
-    routeEvent1: (q: Question) -> Unit,
-    routeEvent2: (q: QTheme) -> Unit
+    navController: NavController
 ) {
     Scaffold(
         bottomBar = {
-//            BottomBar(navController)
+            NavBottomBar(navController)
         }
     ) { paddingValues ->
         if (questionList == null || questionTheme == null) {
@@ -65,8 +64,12 @@ private fun DiscussScreenScaffold(
                 paddingValues,
                 questionList,
                 questionTheme,
-                routeEvent1,
-                routeEvent2
+                { question ->
+                    println(question.id)
+                    navController.navigate("question/${question.id}") },
+                { theme ->
+                    navController.navigate("question/${theme.id}")
+                }
             )
         }
     }
@@ -87,65 +90,6 @@ private fun DiscussScreenLoader(
                 .align(Alignment.Center)
         )
     }
-}
-
-@Composable
-private fun BottomBar(navController: NavController) {
-    BottomAppBar(
-        backgroundColor = MaterialTheme.colors.primary,
-    ) {
-        BottomButton(
-            selected = true,
-            icon = Icons.Default.Home,
-            labelText = "Home",
-            navController
-        )
-        BottomButton(
-            selected = false,
-            icon = Icons.Default.FavoriteBorder,
-            labelText = "Favorites",
-            navController
-        )
-        BottomButton(
-            selected = false,
-            icon = Icons.Default.AccountCircle,
-            labelText = "Profile",
-            navController,
-        )
-        BottomButton(
-            selected = false,
-            icon = Icons.Default.ShoppingCart,
-            labelText = "Cart",
-            navController
-        )
-    }
-}
-
-@Composable
-private fun RowScope.BottomButton(
-    selected: Boolean,
-    icon: ImageVector,
-    labelText: String,
-    navController: NavController
-) {
-    BottomNavigationItem(
-        selected = selected,
-        onClick = {
-            //获取点击id
-            //存储
-            navController.navigate("question")
-                  println("click!!!")
-        },
-        icon = {
-            Icon(
-                icon,
-                contentDescription = null,
-            )
-        },
-        label = {
-            Text(labelText)
-        }
-    )
 }
 
 @Composable

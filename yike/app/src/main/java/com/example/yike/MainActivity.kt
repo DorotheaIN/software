@@ -41,12 +41,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("discuss") {
                         val viewModel = DiscussViewModel()
-                        DiscussScreen(viewModel,
-                            routeEvent1 = { question ->
-                                navController.navigate("question/${question.id}") },
-                            routeEvent2 = { theme ->
-                                navController.navigate("question/${theme.id}")
-                            })
+                        DiscussScreen(viewModel, navController)
                     }
                     composable(
                         route = "question/{questionId}",
@@ -54,12 +49,9 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val questionId = it.arguments?.getString("questionId")?:""
                         val questionViewModel = QuestionViewModel(questionId)
-                        QuestionScreen(questionViewModel)
+                        QuestionScreen(questionViewModel, navController)
                     }
-//                    composable(
-//                        route = "question") {
-//                        QuestionScreen()
-//                    }
+
                 }
 
             }

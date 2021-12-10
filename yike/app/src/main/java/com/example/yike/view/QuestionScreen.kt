@@ -14,36 +14,35 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.yike.component.AnswerCard
+import com.example.yike.component.DiscussTopBar
 import com.example.yike.viewModel.Answer
 import com.example.yike.viewModel.Question
 import com.example.yike.viewModel.QuestionViewModel
 
 @Composable
 fun QuestionScreen(
-    viewModel: QuestionViewModel
-) {
+    viewModel: QuestionViewModel,
+    navController: NavController,
+    ) {
     val isGet = viewModel.isGet.observeAsState()
     if (isGet.value != true) {
         viewModel.getAnswerList()
     } else {
         val answerList = viewModel.answerList.observeAsState()
-        QuestionScreenScaffold(answerList.value, viewModel.getQuestionBody())
+        QuestionScreenScaffold(answerList.value, viewModel.getQuestionBody(),
+            backEvent = {
+                navController.popBackStack()
+            })
     }
-//    val answer = AnswerData.answers
-//    Scaffold(
-//        topBar = {
-//            TopBar()
-//        }
-//    ) {
-//        QuestionScreenContent(answer)
-//    }
 }
 
 @Composable
 private fun QuestionScreenScaffold(
     answerList: ArrayList<Answer>?,
-    questionBody: Question?
+    questionBody: Question?,
+    backEvent: () -> Unit = {}
 //    routeEvent: (q: Question) -> Unit
 ) {
     Scaffold(
@@ -51,7 +50,7 @@ private fun QuestionScreenScaffold(
 //            BottomBar(navController)
         },
         topBar = {
-            TopBar()
+            DiscussTopBar(backEvent)
         }
     ) { paddingValues ->
         if (answerList == null || questionBody == null) {
@@ -81,38 +80,6 @@ private fun QuestionScreenLoader(
                 .wrapContentSize()
                 .align(Alignment.Center)
         )
-    }
-}
-
-@Composable
-private fun TopBar() {
-    //toolbar重构
-    //topappbar
-    TopAppBar(
-        backgroundColor = MaterialTheme.colors.primary,
-    ) {
-        IconButton(onClick = {
-//            navController.navigate("discuss")
-        }) {
-            Icon(
-                Icons.Filled.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(24.dp)
-            )
-        }
-
-        IconButton(onClick = {
-//            navController.navigate("discuss")
-        }) {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(18.dp)
-            )
-        }
-
     }
 }
 

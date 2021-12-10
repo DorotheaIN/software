@@ -84,34 +84,5 @@ object AnswerRepository {
     }
 }
 
-//object Repository {
-//    封装写法：
-//    fun checkLoginStatus(userName: String, passWord: String) = fire(Dispatchers.IO) {
-////        val loginResponse = Network.getLoginStatus(userName, passWord)
-//        val loginResponse = Network.getLoginStatus()
-//        println(loginResponse)
-//        if (loginResponse.status == "ok") {
-//            val userInfo = UserInfo(loginResponse.result.userId, loginResponse.result.userName,
-//                loginResponse.result.passWord, loginResponse.result.userStatus)
-//            println("response userInfo:")
-//            println(userInfo)
-//            Result.success(userInfo)
-//        } else {
-////            RequestResult(false, RuntimeException("response status is ${loginResponse.status}"))
-//            Result.failure(RuntimeException("response status is ${loginResponse.status}"))
-//        }
-//    }
-//
-//    private fun <T> fire(context: CoroutineContext, block: suspend () -> Result<T>) =
-//        liveData(context) {
-//            var result = try {
-//                block()
-//            } catch (e: Exception) {
-//                Result.failure(e)
-//            }
-//            emit(result)
-//        }
-//}
-
 
 

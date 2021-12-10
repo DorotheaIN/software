@@ -13,9 +13,7 @@ object GlobalViewModel: ViewModel() {
 
     fun updataQuestionList(questionList: ArrayList<Question>, questionTheme: ArrayList<QTheme>) {
         questionTheme.forEach {
-            println(it)
             val q = Question(it.id, it.title, it.description, it.followNum, it.answerNum)
-            println(q)
             questionList.add(q)
         }
         globalQuestionList.value = questionList
