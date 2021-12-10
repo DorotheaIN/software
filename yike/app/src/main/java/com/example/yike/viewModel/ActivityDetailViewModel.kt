@@ -1,5 +1,6 @@
 package com.example.yike.viewModel
 
+import android.provider.ContactsContract
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
@@ -43,9 +44,14 @@ data class Evaluation(
 //    var subscriberNum:Int,
 //)
 
-data class LikeRelation(
+data class RelationInput(
     val activityID: Int,
     val userID:String
+)
+
+data class UARelation(
+    val likeStatus: Boolean,
+    val subscribeStatus: Boolean
 )
 
 data class ActivityDetail(
@@ -67,11 +73,13 @@ data class ActivityDetail(
 
 data class ActivityID(val activityID: Int)
 
-class ActivityDetailViewModel :ViewModel(){
+class ActivityDetailViewModel() :ViewModel(){
     //观察对象：
 //    private val activityID = MutableLiveData<ActivityID>()
     private val id = MutableLiveData<Int>()
 
+//    private val initialLikeStatus = MutableLiveData<Boolean>()
+    private val relationInput = MutableLiveData<RelationInput>()
 
     val activityDetail = Transformations.switchMap(id){it->
         ActivityRepository.getActivityDetail(it)
@@ -81,19 +89,41 @@ class ActivityDetailViewModel :ViewModel(){
         ActivityRepository.getEvaluationList(it)
     }
 
+    val likeStatus = Transformations.switchMap(relationInput){it->
+        UserActivityRepository.checkLike(it.activityID,it.userID)
+    }
+
+    val subscribeStatus = Transformations.switchMap(relationInput){it->
+        UserActivityRepository.checkSubscribe(it.activityID,it.userID)
+    }
+
     private val userID = MutableLiveData<String>()
+
 
     val activityRecommendedList = Transformations.switchMap(userID){it->
         ActivityRepository.getActivityRecommended(it)
     }
 
 
+    fun save(like:Boolean,subscribe:Boolean){
+        val userInfo = getUserInfo()
+        if(userInfo != null){
+            println(likeStatus.value)
+            println(like)
+            if(likeStatus.value != like && likeStatus!=null){
+                if(like == true){//点赞
+                    println("点赞")
+                    println(id.value)
+                    println(id.value != null)
+                    if(id.value != null){
+                        UserActivityRepository.postLikeActivity(id.value!!,userInfo.id)
+                    }
+//                    id.value?.let {  }
+                    println(userInfo.id)
+                }
+            }
+            if(subscribeStatus.value != subscribe && subscribeStatus!=null){
 
-    fun save(likeStatus:Boolean,subscribeStatus:Boolean){
-        if(likeStatus){
-            val userInfo = getUserInfo()
-            if(userInfo != null){
-                activityDetail.value?.let { UserActivityRepository.postLikeActivity(it.id,userInfo.userId) }
             }
         }
     }
@@ -102,8 +132,13 @@ class ActivityDetailViewModel :ViewModel(){
         id.value = ID
         val userInfo = getUserInfo()
         if(userInfo != null){
-            userID.value = userInfo.userId
+            userID.value = userInfo.id
+            relationInput.value = RelationInput(ID,userInfo.id)
         }
+    }
+
+    fun getRelation(){
+        return
     }
 
 }

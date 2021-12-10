@@ -1,4 +1,4 @@
-package com.example.yike.ui.screens
+package com.example.yike.view
 
 import android.widget.Space
 import androidx.compose.animation.Crossfade
@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.runtime.R
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -28,18 +29,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.yike.component.*
-import com.example.yike.data.activityDetailList
-import com.example.yike.data.ActivityDetail
-import com.example.yike.data.getActivityDetail
-import com.example.yike.data.test
+import com.example.yike.viewModel.Activity
+import com.example.yike.viewModel.ActivityCorrectViewModel
+import com.example.yike.viewModel.ActivityDetail
 
 @Composable
-fun ActivityCorrectScreen(id:Int,navController: NavController) {
-    val result = getActivityDetail(id)
-    var activityDetail = test
-    if(result != null){
-        activityDetail = result
-    }
+fun ActivityCorrectScreen(
+    id:Int,
+    navController: NavController,
+    activityCorrectViewModel: ActivityCorrectViewModel
+) {
+    activityCorrectViewModel.init(id)
+    val activity = activityCorrectViewModel.activityInfo.observeAsState()
+    activity.value?.let { ActivityCorrectContent(navController,it) }
+}
+
+@Composable
+fun ActivityCorrectContent(
+    navController: NavController,
+    activityDetail:ActivityDetail,
+){
     Scaffold(
         topBar = {
 //            TopBar()
@@ -80,7 +89,6 @@ fun ActivityCorrectScreen(id:Int,navController: NavController) {
             }
         }
     }
-
 }
 
 @Composable

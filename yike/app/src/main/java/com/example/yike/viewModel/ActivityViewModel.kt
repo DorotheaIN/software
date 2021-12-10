@@ -3,10 +3,7 @@ package com.example.yike.viewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.example.yike.data.ActivityDetail
-import com.example.yike.data.activityDetailList
 import com.example.yike.service.ActivityRepository
-import com.example.yike.ui.screens.ActivityCorrectScreen
 
 
 

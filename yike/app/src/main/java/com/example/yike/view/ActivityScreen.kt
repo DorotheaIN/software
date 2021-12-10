@@ -1,5 +1,6 @@
 package com.example.yike.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,15 +25,15 @@ import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.yike.R
-import com.example.yike.data.ActivityDetail
-import com.example.yike.data.activityDetailList
 import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.ActivityViewModel
 
 
 @Composable
-fun ActivityScreen(navController: NavController){
-    val activityViewModel = ActivityViewModel()
+fun ActivityScreen(
+    navController: NavController,
+    activityViewModel: ActivityViewModel
+){
     activityViewModel.init()
     val activityList = activityViewModel.activityList.observeAsState()
     ActivityScreenContent(navController,activityList.value)
@@ -48,7 +49,10 @@ fun ActivityScreenContent(navController: NavController,activityList:ArrayList<Ac
             Column(){
                 if (activityList != null) {
                     activityList.forEach{
-                        ActivityItem(it,{activityID ->  navController.navigate("activitydetail_screen/${activityID}")})
+                        ActivityItem(it, { activityID ->
+                                navController.navigate("activitydetail/${it.id}")
+                            }
+                        )
                     }
                 }
             }

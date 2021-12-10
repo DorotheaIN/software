@@ -1,4 +1,4 @@
-package com.example.yike.ui.screens
+package com.example.yike.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,11 +34,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.yike.R
-import com.example.yike.data.*
+import com.example.yike.viewModel.Activity
+import com.example.yike.viewModel.Organization
+import com.example.yike.viewModel.OrganizationViewModel
 
 @Composable
-fun OrganizationScreen(navController: NavController){
+fun OrganizationScreen(
+    navController: NavController,
+    organizationViewModel: OrganizationViewModel
+){
+    organizationViewModel.init()
+    val organization = organizationViewModel.organizationInfo.observeAsState()
+    val activityList = organizationViewModel.activityList.observeAsState()
+    organization.value?.let { activityList.value?.let { it1 ->
+        OrganizationScreenContent(navController, it,
+            it1
+        )
+    } }
+}
+
+@Composable
+fun OrganizationScreenContent(
+    navController: NavController,
+    organization: Organization,
+    activityDetailList:ArrayList<Activity>
+){
     Surface(
         elevation = 5.dp,
         modifier = Modifier
@@ -47,7 +70,7 @@ fun OrganizationScreen(navController: NavController){
     ) {
         LazyColumn(Modifier){
             item {
-                header()
+                header(organization)
             }
             item{
                 PublishItem(navController)
@@ -67,13 +90,10 @@ fun OrganizationScreen(navController: NavController){
 
         }
     }
-
 }
 
-@Preview
 @Composable
-fun header(){
-    val organization = SSE
+fun header(organization:Organization){
     Surface(
         modifier = Modifier
             .padding(bottom = 7.dp)
@@ -101,7 +121,7 @@ fun header(){
             ){
                 Row(modifier = Modifier.padding(all = 8.dp)) {
                     Image(
-                        painter = painterResource(organization.img),
+                        painter = rememberImagePainter(organization.avator),
                         contentDescription = null,
                         modifier = Modifier
                             .padding(0.dp, 5.dp)
@@ -114,7 +134,7 @@ fun header(){
 
                     Column (modifier = Modifier.size(300.dp,65.dp)){
                         Text(
-                            text = organization.name,
+                            text = organization.username,
                             color = Color.White,
                             style = MaterialTheme.typography.h6,
                             modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
@@ -123,7 +143,7 @@ fun header(){
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = organization.describtion,
+                            text = organization.introduction,
                             color = Color(0x7EFFFFFF),
                             style = MaterialTheme.typography.caption
                         )
@@ -150,7 +170,7 @@ fun header(){
 
 @Composable
 fun ActivityPublishList(
-    activityDetailList:List<ActivityDetail>,
+    activityDetailList:ArrayList<Activity>,
     navController: NavController
 ){
     Column() {
@@ -162,7 +182,7 @@ fun ActivityPublishList(
 }
 
 @Composable
-fun ActivityPublishedItem(item:ActivityDetail,navController: NavController){
+fun ActivityPublishedItem(item:Activity,navController: NavController){
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
@@ -187,7 +207,7 @@ fun ActivityPublishedItem(item:ActivityDetail,navController: NavController){
                         Column(
                             modifier = Modifier
                                 .weight(1F)
-                                .clickable {  }
+                                .clickable { }
                         ) {
                             Text(
                                 text = item.title,
@@ -211,7 +231,7 @@ fun ActivityPublishedItem(item:ActivityDetail,navController: NavController){
                                     .size(30.dp)
                                     .padding(5.dp, 0.dp)
                                     .clickable {
-                                        navController.navigate("activity_edit/${item.id}")
+                                        navController.navigate("activityedit/${item.id}")
                                     }
                             )
                         }
@@ -222,7 +242,7 @@ fun ActivityPublishedItem(item:ActivityDetail,navController: NavController){
                                 modifier = Modifier
                                     .size(30.dp)
                                     .padding(5.dp, 0.dp)
-                                    .clickable {  }
+                                    .clickable { }
                             )
                         }
                     }
@@ -249,7 +269,7 @@ fun PublishItem(navController: NavController){
     ) {
         Box(
             Modifier
-                .padding(148.dp,10.dp)
+                .padding(148.dp, 10.dp)
                 .clickable {
                     navController.navigate("activity_publish")
                 }
@@ -295,7 +315,7 @@ fun PublishItem(navController: NavController){
 
 //qi
 @Composable
-fun ActivityPublishItem(item:ActivityDetail){
+fun ActivityPublishItem(item:Activity){
     Row(
         Modifier
             .size(600.dp, 40.dp)

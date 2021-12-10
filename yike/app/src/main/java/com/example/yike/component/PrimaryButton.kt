@@ -1,5 +1,6 @@
 package com.example.yike.component
 
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun YikeSecondaryButton(
+fun PrimaryButton(
     buttonText: String,
     onClick: () -> Unit = {},
 ) {

@@ -8,11 +8,21 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface UserService {
-    @GET("login")//path看swagger
-    fun getLoginStatus(@Query("u") user: String, @Query("p") passWord: String): Call<LoginResponse>
+    @GET("login")
+    fun getLoginStatus(@Query("email") userEmail: String, @Query("password") passWord: String): Call<LoginResponse>
 
-    @GET("discuss")//path看swagger
+
+    @GET("discuss")
     fun getQuestionList(): Call<QuestionResponse>
+
+    @GET("recommenddis")
+    fun getQuestionByTheme(): Call<QThemeResponse>
+
+    @GET("answer")
+    fun getAnswerList(): Call<AnswerResponse>
+
+    @GET("/test/doLogin")
+    fun getTest(): Call<TestResponse>
 
     @GET("getAllActivities")//获取所有活动
     fun getActivityList(): Call<ActivityResponse>
@@ -23,14 +33,22 @@ interface UserService {
     @GET("getReviewsByActivity")
     fun getEvaluationList(@Query("ID") activityID: Int):Call<EvaluationListResponse>
 
-    @GET("getActivityListByOrganization")
-    fun getActivityListByOrganization(@Query("o") organizationID: Int):Call<ActivityResponse>
-
     @GET("getRecommendActivity")
     fun getActivityRecommended(@Query("ID") userID: String) :Call<ActivityResponse>
 
     @POST("likeActivity")
-    @Multipart
-    fun postLikeActivity(@Query("activityID") activityID:Int,@Query("individualUserID") userID:String): Call<LikeResponse>
+    fun postLikeActivity(@Query("activityID") activityID:Int,@Query("individualUserID") userID:String):Call<CheckResponse>
+
+    @GET("checkLike")
+    fun checkLike(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String):Call<CheckResponse>
+
+    @GET("checkSignUp")
+    fun checkSubscribe(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String):Call<CheckResponse>
+
+    @GET("getOrganizationInfo")
+    fun getOrganizationInfo(@Query("ID") id:Int):Call<OrganizationResponse>
+
+    @GET("getAllActivityByOrg")
+    fun getActivityListByOrganization(@Query("ID") organizationID: Int):Call<ActivityResponse>
 
 }

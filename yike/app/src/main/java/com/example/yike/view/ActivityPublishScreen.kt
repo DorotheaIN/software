@@ -1,4 +1,4 @@
-package com.example.yike.ui.screens
+package com.example.yike.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,12 +12,21 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.yike.component.OriganizationTopBar
-import com.example.yike.data.getActivityDetail
-import com.example.yike.data.test
 import com.example.yike.component.*
+import com.example.yike.viewModel.ActivityPublishViewModel
 
 @Composable
-fun ActivityPublishScreen(navController: NavController) {
+fun ActivityPublishScreen(
+    navController: NavController,
+    activityPublishViewModel: ActivityPublishViewModel
+) {
+    ActivityPublishContent(navController)
+}
+
+@Composable
+fun ActivityPublishContent(
+    navController: NavController
+){
     Scaffold(
         topBar = {
             OriganizationTopBar()
@@ -57,7 +66,6 @@ fun ActivityPublishScreen(navController: NavController) {
             }
         }
     }
-
 }
 
 @Composable

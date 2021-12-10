@@ -16,11 +16,20 @@ object Network {
     private val userService = ServiceCreator.create<UserService>()
 
     //suspend fun:
-    suspend fun getLoginStatus(userName: String, passWord: String) =
-        userService.getLoginStatus(userName, passWord).await()
+    suspend fun getLoginStatus(userEmail: String, passWord: String) =
+        userService.getLoginStatus(userEmail, passWord).await()
 
     suspend fun getQuestionList() =
         userService.getQuestionList().await()
+
+    suspend fun getQuestionByTheme() =
+        userService.getQuestionByTheme().await()
+
+    suspend fun getAnswerList() =
+        userService.getAnswerList().await()
+
+    suspend fun getTest() =
+        userService.getTest().await()
 
     suspend fun getActivityList() =
         userService.getActivityList().await()
@@ -37,6 +46,18 @@ object Network {
     suspend fun postLikeActivity(activityID: Int,userID: String) =
         userService.postLikeActivity(activityID,userID).await()
 
+    suspend fun checkLike(activityID: Int,userID: String) =
+        userService.checkLike(activityID,userID).await()
+
+    suspend fun checkSubscribe(activityID: Int,userID: String) =
+        userService.checkSubscribe(activityID,userID).await()
+
+    suspend fun getOrganizationInfo(id:Int) =
+        userService.getOrganizationInfo(id).await()
+
+    suspend fun getActivityOfOrganization(id:Int) =
+        userService.getActivityListByOrganization(id).await()
+
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
     private suspend fun <T> Call<T>.await() :T {
@@ -44,7 +65,6 @@ object Network {
             enqueue(object : Callback<T> { //开启retrofit请求
                 //重载回调部分
                 override fun onResponse(call: Call<T>, response: Response<T>) {
-                    println("on Response")
                     val body = response.body()
                     if (body != null) continuation.resume(body) // 如果body合法 则恢复协程 返回body
                     else continuation.resumeWithException(

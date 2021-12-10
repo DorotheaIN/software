@@ -5,30 +5,38 @@ import com.example.yike.service.QuestionRepository
 
 data class Question(val id: String, val title: String, val description: String,
                     val followNum: Int, val answerNum: Int)
+data class QTheme(val id: String, val title: String, val description: String,
+                  val followNum: Int, val answerNum: Int, val img: String)
 
-class DiscussViewModel(): ViewModel() {
-
-//    val questionList: MutableLiveData<ArrayList<Question>>? = null
-//
-//    val isLoading = true
-//
-//    init {
-//        questionList = QuestionRepository.getQuestionList()
-//        isLoading = false
-//    }
+//为了方便调用 使用了单例
+//可以考虑引入ROOM之类的
+class DiscussViewModel: ViewModel() {
 
     //观察对象：
-    private val isInit = MutableLiveData<Boolean>(false)
+    private val _isGet = MutableLiveData<Boolean>()
 
     //界面变量
-    val questionList = Transformations.switchMap(isInit) {
+    val questionList = Transformations.switchMap(_isGet) {
         QuestionRepository.getQuestionList()
     }
+    val questionTheme = Transformations.switchMap(_isGet) {
+        QuestionRepository.getQuestionByTheme()
+    }
+    val isGet: MutableLiveData<Boolean> = _isGet
 
     //用户方法：
-    fun init() {
-        isInit.value = true
+
+    fun getQuestionList() {
+        //同时请求item形式和theme形式的questionList
+        _isGet.value = true
+        println("refresh")
     }
+
+
+
+//    fun getQuestionById(id: String) {
+//        return
+//    }
 
 
 //    private val _viewState = MutableStateFlow(DiscussViewState()) //可观测对象
