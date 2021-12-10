@@ -34,7 +34,7 @@ fun ThemeCard(
     ) {
         Column {
             Image(
-//                painterResource(id = theme.img),
+//                painterResource(id = theme.avatar),
                 painterResource(id = R.drawable.fiddle_leaf),
                 contentDescription = "${theme.title} Image",
                 contentScale = ContentScale.Crop,

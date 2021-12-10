@@ -25,8 +25,14 @@ object Network {
     suspend fun getQuestionByTheme() =
         userService.getQuestionByTheme().await()
 
-    suspend fun getAnswerList() =
-        userService.getAnswerList().await()
+    suspend fun getAnswerList(questionId: String) =
+        userService.getAnswerList(questionId).await()
+
+    suspend fun postQuestionStatus(questionId: String, userId: String) =
+        userService.postQuestionStatus(questionId, userId).await()
+
+    suspend fun checkQuestionStatus(questionId: String, userId: String) =
+        userService.checkQuestionStatus(questionId, userId).await()
 
     suspend fun getTest() =
         userService.getTest().await()

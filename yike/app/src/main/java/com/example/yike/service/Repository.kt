@@ -64,12 +64,42 @@ object QuestionRepository {
         }
         emit(result)
     }
+    fun postQuestionStatus(questionId: String, userId: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val r = Network.postQuestionStatus(questionId, userId)
+            if (r.code == 200) {
+                r.result
+            } else {
+                println("response code is ${r.code} error msg is ${r.msg}")
+                false
+            }
+        } catch (e: Exception){
+            println(e)
+            false
+        }
+        emit(result)
+    }
+    fun checkQuestionStatus(questionId: String, userId: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val status = Network.checkQuestionStatus(questionId, userId)
+            if (status.code == 200) {
+                status.result
+            } else {
+                println("response code is ${status.code} error msg is ${status.msg}")
+                -1
+            }
+        } catch (e: Exception){
+            println(e)
+            -1
+        }
+        emit(result)
+    }
 }
 
 object AnswerRepository {
-    fun getAnswerList() = liveData(Dispatchers.IO) {
+    fun getAnswerList(questionId: String) = liveData(Dispatchers.IO) {
         val result = try {
-            val answerList = Network.getAnswerList()
+            val answerList = Network.getAnswerList(questionId)
             if (answerList.code == 200) {
                 answerList.result
             } else {

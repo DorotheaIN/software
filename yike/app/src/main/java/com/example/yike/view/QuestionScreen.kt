@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.yike.component.AnswerCard
@@ -30,11 +31,19 @@ fun QuestionScreen(
     if (isGet.value != true) {
         viewModel.getAnswerList()
     } else {
+        if (viewModel.isOriginReady()) viewModel.setQuestionStatus() //或者判断是否为-1
         val answerList = viewModel.answerList.observeAsState()
+        val questionStatus = viewModel.questionStatus.observeAsState()
+//        if(questionStatus.value == -1 )viewModel.setQuestionStatus()
         QuestionScreenScaffold(answerList.value, viewModel.getQuestionBody(),
+            questionStatus.value,
             backEvent = {
+                viewModel.postQuestionStatus()
                 navController.popBackStack()
-            })
+            },
+            clickEvent1 = {
+                viewModel.convertQuestionStatus()
+        })
     }
 }
 
@@ -42,25 +51,27 @@ fun QuestionScreen(
 private fun QuestionScreenScaffold(
     answerList: ArrayList<Answer>?,
     questionBody: Question?,
-    backEvent: () -> Unit = {}
-//    routeEvent: (q: Question) -> Unit
+    questionStatus: Int?,
+    backEvent: () -> Unit,
+    clickEvent1: () -> Unit
 ) {
     Scaffold(
-        bottomBar = {
-//            BottomBar(navController)
-        },
         topBar = {
             DiscussTopBar(backEvent)
         }
     ) { paddingValues ->
-        if (answerList == null || questionBody == null) {
+        println(questionStatus)
+        if (answerList == null || questionBody == null || questionStatus == null) {
             QuestionScreenLoader(paddingValues)
         } else {
             QuestionScreenContent(
                 answerList,
                 questionBody,
+                questionStatus,
                 paddingValues,
+                clickEvent1
 //                routeEvent
+
             )
         }
     }
@@ -87,8 +98,10 @@ private fun QuestionScreenLoader(
 private fun QuestionScreenContent(
     answerList: ArrayList<Answer>,
     questionBody: Question,
+    questionStatus: Int,
     paddingValues: PaddingValues,
-    ) {
+    clickEvent1: () -> Unit = {}
+) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -103,6 +116,9 @@ private fun QuestionScreenContent(
             )
 
             UserOperationSection(
+                questionStatus,
+                clickEvent1,
+
             )
 
             AnswerListSection(
@@ -136,7 +152,10 @@ private fun QuestionSection(
 }
 
 @Composable
-private fun UserOperationSection() {
+private fun UserOperationSection(
+    questionStatus: Int,
+    clickEvent1: () -> Unit = {}
+) {
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
@@ -149,15 +168,16 @@ private fun UserOperationSection() {
                 .fillMaxWidth()
         ){
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = clickEvent1,
                 modifier = Modifier.weight(1f)
             ) {
                 Column() {
                     Icon(
                         Icons.Outlined.Star,//交互
-                        contentDescription = "Star"
+                        contentDescription = "Star",
+                        tint = if (questionStatus == 1) Color.Yellow else Color.Red
                     )
-                    Text("收藏")
+                    Text("关注")
                 }
             }
 

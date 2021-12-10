@@ -6,7 +6,9 @@ import com.example.yike.service.QuestionRepository
 data class Question(val id: String, val title: String, val description: String,
                     val followNum: Int, val answerNum: Int)
 data class QTheme(val id: String, val title: String, val description: String,
-                  val followNum: Int, val answerNum: Int, val img: String)
+                  val followNum: Int, val answerNum: Int, val avatar: String)
+//data class QTheme(val id: String, val title: String, val description: String,
+//                  val followNum: Int, val answerNum: Int, val img: String)
 
 //为了方便调用 使用了单例
 //可以考虑引入ROOM之类的
@@ -29,7 +31,6 @@ class DiscussViewModel: ViewModel() {
     fun getQuestionList() {
         //同时请求item形式和theme形式的questionList
         _isGet.value = true
-        println("refresh")
     }
 
 
