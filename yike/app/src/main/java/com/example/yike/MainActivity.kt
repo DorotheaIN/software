@@ -8,14 +8,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.example.yike.ui.screens.ActivityDetailDisplayScreen
+import com.example.yike.ui.screens.ActivityScreen
+
 import com.example.yike.ui.theme.YikeTheme
-import com.example.yike.view.DiscussScreen
-import com.example.yike.view.LoginScreen
-import com.example.yike.view.QuestionScreen
-import com.example.yike.view.WelcomeScreen
-import com.example.yike.viewModel.DiscussViewModel
-import com.example.yike.viewModel.LoginViewModel
-import com.example.yike.viewModel.QuestionViewModel
+import com.example.yike.view.*
+import com.example.yike.viewModel.*
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +50,41 @@ class MainActivity : ComponentActivity() {
                         val questionViewModel = QuestionViewModel(questionId)
                         QuestionScreen(questionViewModel, navController)
                     }
+                    composable("activity"){
+                        val activityViewModel = ActivityViewModel()
+                        ActivityScreen(navController = navController,activityViewModel)
+                    }
+                    composable("organization"){
+                        val organizationViewModel = OrganizationViewModel()
+                        OrganizationScreen(navController = navController,organizationViewModel)
+                    }
+                    composable(
+                        "activitydetail/{id}",
+                        arguments = listOf(navArgument("id"){type = NavType.IntType})
+                    ){
+                            entry->
+                        val id = entry.arguments?.getInt("id")
+                        if (id != null) {
+                            val activityDetailViewModel = ActivityDetailViewModel()
+                            ActivityDetailDisplayScreen(id,navController = navController,activityDetailViewModel)
+                        }
+                    }
+                    composable(
+                        "activityedit/{id}",
+                        arguments = listOf(navArgument("id"){type = NavType.IntType})
+                    ){
+                            entry->
+                        val id = entry.arguments?.getInt("id")
+                        if (id != null) {
+                            val activityCorrectViewModel = ActivityCorrectViewModel()
+                            ActivityCorrectScreen(id,navController = navController,activityCorrectViewModel)
+                        }
 
+                    }
+                    composable("activity_publish"){
+                        val activityPublishViewModel = ActivityPublishViewModel()
+                        ActivityPublishScreen(navController = navController,activityPublishViewModel)
+                    }
                 }
 
             }

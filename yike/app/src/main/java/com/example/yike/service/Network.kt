@@ -34,8 +34,33 @@ object Network {
     suspend fun checkQuestionStatus(questionId: String, userId: String) =
         userService.checkQuestionStatus(questionId, userId).await()
 
-    suspend fun getTest() =
-        userService.getTest().await()
+
+    suspend fun getActivityList() =
+        userService.getActivityList().await()
+
+    suspend fun getActivityDetail(activityID: Int) =
+        userService.getActivityDetail(activityID).await()
+
+    suspend fun getEvaluationList(activityID: Int) =
+        userService.getEvaluationList(activityID).await()
+
+    suspend fun getActivityRecommended(userID: String) =
+        userService.getActivityRecommended(userID).await()
+
+    suspend fun postLikeActivity(activityID: Int,userID: String) =
+        userService.postLikeActivity(activityID,userID).await()
+
+    suspend fun checkLike(activityID: Int,userID: String) =
+        userService.checkLike(activityID,userID).await()
+
+    suspend fun checkSubscribe(activityID: Int,userID: String) =
+        userService.checkSubscribe(activityID,userID).await()
+
+    suspend fun getOrganizationInfo(id:Int) =
+        userService.getOrganizationInfo(id).await()
+
+    suspend fun getActivityOfOrganization(id:Int) =
+        userService.getActivityListByOrganization(id).await()
 
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
@@ -45,6 +70,7 @@ object Network {
                 //重载回调部分
                 override fun onResponse(call: Call<T>, response: Response<T>) {
                     val body = response.body()
+                    println(response)
                     if (body != null) continuation.resume(body) // 如果body合法 则恢复协程 返回body
                     else continuation.resumeWithException(
                         RuntimeException("response body is null")

@@ -64,6 +64,7 @@ object QuestionRepository {
         }
         emit(result)
     }
+
     fun postQuestionStatus(questionId: String, userId: String) = liveData(Dispatchers.IO) {
         val result = try {
             val r = Network.postQuestionStatus(questionId, userId)
@@ -106,7 +107,7 @@ object AnswerRepository {
                 println("response status is ${answerList.code} error msg is ${answerList.msg}")
                 null
             }
-        } catch (e: Exception){
+        }catch (e: Exception){
             println(e)
             null
         }
@@ -114,5 +115,175 @@ object AnswerRepository {
     }
 }
 
+object ActivityRepository{
+    fun getActivityList() = liveData(Dispatchers.IO){
+        val result = try {
+            val activityList = Network.getActivityList()
+            if(activityList.code == 200) {
+                activityList.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrr")
+            null
+        }
+        emit(result)
+    }
+
+    fun getActivityDetail(activityID:Int) = liveData(Dispatchers.IO){
+        val result = try {
+            val activityDetail = Network.getActivityDetail(activityID)
+            if (activityDetail.code == 200) {
+                activityDetail.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrrrr")
+            null
+        }
+        emit(result)
+    }
+
+
+    fun getEvaluationList(activityID:Int) = liveData(Dispatchers.IO){
+        val result = try {
+            val evaluationList = Network.getEvaluationList(activityID)
+            if (evaluationList.code == 200) {
+                evaluationList.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrrrr")
+            null
+        }
+        emit(result)
+    }
+
+    fun getActivityRecommended(userID: String) = liveData(Dispatchers.IO){
+        val result = try {
+            val activityList = Network.getActivityList()
+            if(activityList.code == 200) {
+                activityList.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrr")
+            null
+        }
+        emit(result)
+    }
+
+}
+
+object UserActivityRepository {
+    fun postLikeActivity(activityID: Int,userID: String) = liveData(Dispatchers.IO){
+        val result = try {
+            val likeresult = Network.postLikeActivity(activityID,userID)
+            println(likeresult.code)
+            if(likeresult.code == 200) {
+                true
+            } else {
+                println("response status is not ok!")
+                println(likeresult)
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
+    fun checkLike(activityID: Int,userID: String) = liveData(Dispatchers.IO){
+        val result = try {
+            val result = Network.checkLike(activityID,userID)
+            if(result.code == 200) {
+                if(result.result == 1){
+                    true
+                }else{
+                    false
+                }
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrr")
+            null
+        }
+        emit(result)
+    }
+
+    fun checkSubscribe(activityID: Int,userID: String) = liveData(Dispatchers.IO){
+        val result = try {
+            val result = Network.checkSubscribe(activityID,userID)
+            if(result.code == 200) {
+                if(result.result == 1){
+                    true
+                }else{
+                    false
+                }
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrr")
+            null
+        }
+        emit(result)
+    }
+
+}
+
+object OrganizationRepository{
+    fun getOrganizationInfo(id:Int) = liveData(Dispatchers.IO){
+        val result = try {
+            val organizationInfo = Network.getOrganizationInfo(id)
+            if(organizationInfo.code == 200) {
+                organizationInfo.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrr")
+            null
+        }
+        emit(result)
+    }
+
+    fun getActivityByOrganization(id:Int) = liveData(Dispatchers.IO){
+        val result = try {
+            val activityList = Network.getActivityOfOrganization(id)
+            if(activityList.code == 200) {
+                activityList.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrr")
+            null
+        }
+        emit(result)
+    }
+}
 
 

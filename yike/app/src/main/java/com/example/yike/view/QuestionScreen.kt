@@ -14,6 +14,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.yike.component.AnswerCard
@@ -118,7 +119,6 @@ private fun QuestionScreenContent(
             UserOperationSection(
                 questionStatus,
                 clickEvent1,
-
             )
 
             AnswerListSection(

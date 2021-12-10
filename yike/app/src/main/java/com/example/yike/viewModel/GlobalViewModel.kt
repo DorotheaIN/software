@@ -7,6 +7,7 @@ object GlobalViewModel: ViewModel() {
     private val globalUserInfo: MutableLiveData<UserInfo> = MutableLiveData<UserInfo>()
     private val globalQuestionList: MutableLiveData<ArrayList<Question>> = MutableLiveData<ArrayList<Question>>()
 
+
     fun updateUserInfo(userId:String, userName: String, userStatus: Int, avatar: String, introduction: String) {
         globalUserInfo.value = UserInfo(userId, userName, userStatus, introduction, avatar)
     }

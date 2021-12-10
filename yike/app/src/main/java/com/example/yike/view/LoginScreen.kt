@@ -29,6 +29,7 @@ import com.example.yike.viewModel.UserInfo
 import kotlin.reflect.typeOf
 
 
+
 @Composable
 fun LoginScreen(viewModel: LoginViewModel, routeEvent: () -> Unit = {}) {
     val userInfo = viewModel.userInfo.observeAsState()
@@ -76,9 +77,11 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},
 
             PasswordInput(passwordInput)
 
+
             TermsOfServiceLabel()
 
             Spacer(Modifier.height(16.dp))
+
 
             LoginButton( onClick = {
                 if( emailInput.isValid && passwordInput.isValid ){

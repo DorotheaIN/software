@@ -28,9 +28,9 @@ fun NavBottomBar(
         BottomButton(
             selected = false,
             icon = Icons.Default.FavoriteBorder,
-            labelText = "Favorites",
+            labelText = "Activity",
             onClick = {
-//                navController.navigate("discuss")
+                navController.navigate("activity")
             }
         )
         BottomButton(
@@ -38,7 +38,7 @@ fun NavBottomBar(
             icon = Icons.Default.AccountCircle,
             labelText = "Profile",
             onClick = {
-//                navController.navigate("discuss")
+                navController.navigate("organization")
             },
         )
     }
