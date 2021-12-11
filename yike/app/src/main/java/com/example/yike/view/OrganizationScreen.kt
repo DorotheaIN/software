@@ -115,7 +115,7 @@ fun header(organization:Organization){
             Spacer(Modifier.height(40.dp))
             Box(
                 modifier = Modifier
-                    .size(550.dp, 85.dp)
+                    .size(550.dp, 105.dp)
                     .padding(15.dp, 0.dp)
                     .clickable { }
             ){
@@ -124,7 +124,7 @@ fun header(organization:Organization){
                         painter = rememberImagePainter(organization.avator),
                         contentDescription = null,
                         modifier = Modifier
-                            .padding(0.dp, 5.dp)
+                            .padding(0.dp, 10.dp)
                             .size(55.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .fillMaxSize()
@@ -132,7 +132,7 @@ fun header(organization:Organization){
                     )
                     Spacer(modifier = Modifier.width(15.dp))
 
-                    Column (modifier = Modifier.size(300.dp,65.dp)){
+                    Column (modifier = Modifier.size(300.dp,85.dp)){
                         Text(
                             text = organization.username,
                             color = Color.White,

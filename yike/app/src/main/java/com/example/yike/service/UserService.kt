@@ -66,4 +66,32 @@ interface UserService {
     @GET("getAllActivityByOrg")
     fun getActivityListByOrganization(@Query("ID") organizationID: Int):Call<ActivityResponse>
 
+    @GET("orglogin")
+    fun getOrgLoginStatus(@Query("ID") id:Int,@Query("password")passWord: String):Call<OrganizationResponse>
+
+    @POST("unlikelikeActivity")
+    fun postDislikeActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String):Call<CheckResponse>
+
+    @POST("signUpActivity")
+    fun postSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String): Call<CheckResponse>
+
+    @POST("cancleSignUp")
+    fun postDisSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String): Call<CheckResponse>
+
+    @POST("publishActivity")
+    fun postPubActivity(@Query("capacity") capacity:Int,@Query("content") content:String,
+                        @Query("date") date:String,@Query("form") form:String,
+                        @Query("genres") genres:String,@Query("img") img:String,
+                        @Query("introduction") intro:String, @Query("organizationID") organizationID: Int,
+                        @Query("place") place:String,@Query("status") status:Int,@Query("title") title:String
+    ):Call<CheckResponse>
+
+    @POST("updateActivity")
+    fun postUpdateActivity(@Query("ID") id:Int,@Query("capacity") capacity:Int,@Query("content") content:String,
+                           @Query("date") data:String,@Query("form") form:String,
+                           @Query("genres") genres:String,@Query("img") img:String,
+                           @Query("introduction") intro:String, @Query("organizationID") organizationID: Int,
+                           @Query("place") place:String,@Query("status") status:Int,@Query("title") title:String
+    ):Call<CheckResponse>
+
 }

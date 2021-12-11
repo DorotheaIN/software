@@ -1,7 +1,9 @@
 package com.example.yike.service
 
 import androidx.lifecycle.liveData
+import com.example.yike.model.CheckResponse
 import com.example.yike.model.QuestionResponse
+import com.example.yike.viewModel.Organization
 import com.example.yike.viewModel.Question
 import com.example.yike.viewModel.UserInfo
 import kotlinx.coroutines.Dispatchers
@@ -188,20 +190,43 @@ object ActivityRepository{
 }
 
 object UserActivityRepository {
-    fun postLikeActivity(activityID: Int,userID: String) = liveData(Dispatchers.IO){
+    fun postLikeActivity(activityID: Int,userID: String,status:Int) = liveData(Dispatchers.IO){
         val result = try {
-            val likeresult = Network.postLikeActivity(activityID,userID)
-            println(likeresult.code)
-            if(likeresult.code == 200) {
+            val likeResult = if(status == 1){
+                Network.postLikeActivity(activityID,userID)
+            }else{
+                Network.postDislikeActivity(activityID,userID)
+            }
+            if(likeResult.code == 200) {
                 true
             } else {
                 println("response status is not ok!")
-                println(likeresult)
-                null
+                println(likeResult)
+                false
             }
         } catch (e: Exception){
             println(e)
-            null
+            false
+        }
+        emit(result)
+    }
+
+    fun postSubActivity(activityID: Int,userID: String,status:Int) = liveData(Dispatchers.IO){
+        val result = try {
+            val subResult = if(status == 1){
+                Network.postSubActivity(activityID,userID)
+            }else{
+                Network.postDisSubActivity(activityID, userID)
+            }
+            if(subResult.code == 200){
+                true
+            }else {
+                println("response status is not ok!")
+                false
+            }
+        } catch (e: Exception){
+            println(e)
+            false
         }
         emit(result)
     }
@@ -281,6 +306,62 @@ object OrganizationRepository{
             println(e)
             println("yuzhierrr")
             null
+        }
+        emit(result)
+    }
+
+    fun publishActivity(capacity:Int,content:String, date:String, form:String, genres:String, img:String, intro:String, organizationID: Int, place:String, status:Int, title:String) = liveData(Dispatchers.IO){
+        val result = try {
+            val res = Network.postPublishActivity(capacity,content,date,form,genres,img,intro,organizationID,place,status,title)
+            if(res.code == 200) {
+                true
+            } else {
+                println("response status is not ok!")
+                false
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrr")
+            false
+        }
+        emit(result)
+    }
+
+    fun correctActivity(id: Int,capacity:Int,content:String, date:String, form:String, genres:String, img:String, intro:String, organizationID: Int, place:String, status:Int, title:String) = liveData(Dispatchers.IO){
+        val result = try {
+            val res = Network.postCorrectActivity(id,capacity,content,date,form,genres,img,intro,organizationID,place,status,title)
+            if(res.code == 200) {
+                true
+            } else {
+                println("response status is not ok!")
+                false
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrr")
+            false
+        }
+        emit(result)
+    }
+}
+
+object OrgLoginRepository{
+    fun checkLoginStatus(id: Int, passWord: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val loginResponse = Network.getOrgLoginStatus(id, passWord)
+            if (loginResponse.code == 200) {
+                Organization(loginResponse.result.id,loginResponse.result.status,loginResponse.result.avator,loginResponse.result.username,loginResponse.result.introduction)
+            } else {
+                println("response code is ${loginResponse.code} error msg is ${loginResponse.msg}")
+                val s = when(loginResponse.msg) {
+                    "unregister" -> -2
+                    else -> -1
+                }
+                Organization(-1,status = s,"","","")
+            }
+        } catch (e: Exception){
+            println(e)
+            Organization(-1,status = 0,"","","")
         }
         emit(result)
     }

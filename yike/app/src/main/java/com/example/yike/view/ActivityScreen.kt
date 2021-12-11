@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -25,6 +26,7 @@ import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.yike.R
+import com.example.yike.component.NavBottomBar
 import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.ActivityViewModel
 
@@ -32,34 +34,66 @@ import com.example.yike.viewModel.ActivityViewModel
 @Composable
 fun ActivityScreen(
     navController: NavController,
-    activityViewModel: ActivityViewModel
+    viewModel: ActivityViewModel
 ){
-    activityViewModel.init()
-    val activityList = activityViewModel.activityList.observeAsState()
-    ActivityScreenContent(navController,activityList.value)
+    val isGet = viewModel.isGet.observeAsState()
+    if(isGet.value != true){
+        viewModel.getActivityList()
+    }else {
+        val activityList = viewModel.activityList.observeAsState()
+        ActivityScreenContent(navController,activityList.value)
+    }
 }
 
 @Composable
-fun ActivityScreenContent(navController: NavController,activityList:ArrayList<Activity>?){
-    LazyColumn(Modifier){
-        item {
-            ActivityTable()
+fun ActivityScreenContent(
+    navController: NavController,
+    activityList:ArrayList<Activity>?
+){
+    Scaffold(
+        bottomBar = {
+            NavBottomBar(navController)
         }
-        item(activityList){
-            Column(){
-                if (activityList != null) {
-                    activityList.forEach{
-                        ActivityItem(it, { activityID ->
-                                navController.navigate("activitydetail/${it.id}")
+    ){ paddingValues ->
+        if( activityList == null){
+            Loader(paddingValues)
+        }else{
+            LazyColumn(Modifier){
+                item {
+                    ActivityTable()
+                }
+                item(activityList){
+                    Column(){
+                        activityList.forEach{it->
+                            ActivityItem(it){id->
+                                navController.navigate("activitydetail/${id}")
                             }
-                        )
+                        }
                     }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(60.dp))
                 }
             }
         }
-        item {
-            Spacer(modifier = Modifier.height(60.dp))
-        }
+    }
+}
+
+
+@Composable
+private fun Loader(
+    paddingValues: PaddingValues
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .wrapContentSize()
+                .align(Alignment.Center)
+        )
     }
 }
 
@@ -77,8 +111,7 @@ fun ActivityTable(){
 @Composable
 fun ActivityItem(
     item: Activity,
-//    navController: NavController,
-    Onclick:(activityID:Int)->Unit
+    onClick:(id:Int)->Unit
 ){
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
@@ -93,7 +126,7 @@ fun ActivityItem(
                     .fillMaxSize()
                     .size(600.dp, 170.dp)
                     .clickable {
-                        Onclick(item.id)
+                        onClick(item.id)
 //                        navController.navigate("activitydetail_screen/${item.id}")
                     },
                 painter = rememberImagePainter(item.img),
@@ -150,10 +183,3 @@ fun ActivityItem(
 
 
 
-
-//
-//@Preview
-//@Composable
-//fun test(){
-//    Text("TJ")
-//}

@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.example.yike.service.ActivityRepository
+import com.example.yike.service.OrgLoginRepository
 import com.example.yike.service.OrganizationRepository
 
 class OrganizationViewModel(): ViewModel() {
@@ -14,11 +15,11 @@ class OrganizationViewModel(): ViewModel() {
 
     //界面变量
     val organizationInfo = Transformations.switchMap(isInit) {
-        id.value?.let { it1 -> OrganizationRepository.getOrganizationInfo(it1) }
+        OrgLoginRepository.checkLoginStatus(3,"tongji_sse")
     }
 
     val activityList = Transformations.switchMap(isInit){
-        id.value?.let { it1 -> OrganizationRepository.getActivityByOrganization(it1) }
+        OrganizationRepository.getActivityByOrganization(3)
     }
     //用户方法：
     fun init() {

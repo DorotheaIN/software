@@ -10,15 +10,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.yike.viewModel.Activity
 
 @Composable
-fun TitleTextField(initial: String,enabled:Boolean){
+fun TitleTextField(initial: RequiredInputState, enabled:Boolean){
     val requiredState = remember{
         RequiredInputState()
     }
 //    mutablemap
     if(!requiredState.hasEverBeenFocused){
-        requiredState.text = initial
+        requiredState.text = initial.text
     }
     var enable by remember{ mutableStateOf(enabled) }
     var edit by remember{ mutableStateOf(false) }
@@ -26,6 +27,7 @@ fun TitleTextField(initial: String,enabled:Boolean){
         value = requiredState.text,
         onValueChange = { newText->
             requiredState.text = newText
+            initial.text = requiredState.text
         },
         singleLine = false,
         maxLines = 2,
@@ -68,12 +70,12 @@ fun TitleTextField(initial: String,enabled:Boolean){
 }
 
 @Composable
-fun TimeTextField(initial: String,enabled:Boolean){
+fun TimeTextField(initial: RequiredInputState,enabled:Boolean){
     val requiredState = remember{
         RequiredInputState()
     }
     if(!requiredState.hasEverBeenFocused){
-        requiredState.text = initial
+        requiredState.text = initial.text
     }
     var enable by remember{ mutableStateOf(enabled) }
     var edit by remember{ mutableStateOf(false) }
@@ -81,6 +83,7 @@ fun TimeTextField(initial: String,enabled:Boolean){
         value = requiredState.text,
         onValueChange = { newText->
             requiredState.text = newText
+            initial.text = requiredState.text
         },
         singleLine = true,
         leadingIcon = {
@@ -121,12 +124,12 @@ fun TimeTextField(initial: String,enabled:Boolean){
 }
 
 @Composable
-fun PlaceTextField(initial: String,enabled:Boolean){
+fun PlaceTextField(initial: RequiredInputState,enabled:Boolean){
     val requiredState = remember{
         RequiredInputState()
     }
     if(!requiredState.hasEverBeenFocused){
-        requiredState.text = initial
+        requiredState.text = initial.text
     }
     var enable by remember{ mutableStateOf(enabled) }
     var edit by remember{ mutableStateOf(false) }
@@ -134,6 +137,7 @@ fun PlaceTextField(initial: String,enabled:Boolean){
         value = requiredState.text,
         onValueChange = { newText->
             requiredState.text = newText
+            initial.text = requiredState.text
         },
         singleLine = true,
         leadingIcon = {
@@ -174,12 +178,12 @@ fun PlaceTextField(initial: String,enabled:Boolean){
 }
 
 @Composable
-fun FormTextField(initial: String,enabled:Boolean){
+fun FormTextField(initial: RequiredInputState,enabled:Boolean){
     val requiredState = remember{
         RequiredInputState()
     }
     if(!requiredState.hasEverBeenFocused){
-        requiredState.text = initial
+        requiredState.text = initial.text
     }
     var enable by remember{ mutableStateOf(enabled) }
     var edit by remember{ mutableStateOf(false) }
@@ -187,6 +191,7 @@ fun FormTextField(initial: String,enabled:Boolean){
         value = requiredState.text,
         onValueChange = { newText->
             requiredState.text = newText
+            initial.text = requiredState.text
         },
         singleLine = true,
         leadingIcon = {
@@ -227,12 +232,12 @@ fun FormTextField(initial: String,enabled:Boolean){
 }
 
 @Composable
-fun CapacityTextField(initial: String,enabled:Boolean){
+fun CapacityTextField(initial: RequiredInputState,enabled:Boolean){
     val requiredState = remember{
         RequiredInputState()
     }
     if(!requiredState.hasEverBeenFocused){
-        requiredState.text = initial
+        requiredState.text = initial.text
     }
     var enable by remember{ mutableStateOf(enabled) }
     var edit by remember{ mutableStateOf(false) }
@@ -240,6 +245,7 @@ fun CapacityTextField(initial: String,enabled:Boolean){
         value = requiredState.text,
         onValueChange = { newText->
             requiredState.text = newText
+            initial.text = requiredState.text
         },
         singleLine = true,
         leadingIcon = {
@@ -280,12 +286,12 @@ fun CapacityTextField(initial: String,enabled:Boolean){
 }
 
 @Composable
-fun ContentTextField(initial: String,enabled:Boolean){
+fun ContentTextField(initial: RequiredInputState,enabled:Boolean){
     val requiredState = remember{
         RequiredInputState()
     }
     if(!requiredState.hasEverBeenFocused){
-        requiredState.text = initial
+        requiredState.text = initial.text
     }
     var enable by remember{ mutableStateOf(enabled) }
     var edit by remember{ mutableStateOf(false) }
@@ -293,6 +299,7 @@ fun ContentTextField(initial: String,enabled:Boolean){
         value = requiredState.text,
         onValueChange = { newText->
             requiredState.text = newText
+            initial.text = requiredState.text
         },
         singleLine = false,
         maxLines = 5,
@@ -334,12 +341,12 @@ fun ContentTextField(initial: String,enabled:Boolean){
 }
 
 @Composable
-fun IntroTextField(initial: String,enabled:Boolean){
+fun IntroTextField(initial: RequiredInputState,enabled:Boolean){
     val requiredState = remember{
         RequiredInputState()
     }
     if(!requiredState.hasEverBeenFocused){
-        requiredState.text = initial
+        requiredState.text = initial.text
     }
     var enable by remember{ mutableStateOf(enabled) }
     var edit by remember{ mutableStateOf(false) }
@@ -347,6 +354,7 @@ fun IntroTextField(initial: String,enabled:Boolean){
         value = requiredState.text,
         onValueChange = { newText->
             requiredState.text = newText
+            initial.text = requiredState.text
         },
         singleLine = false,
         maxLines = 5,
@@ -388,12 +396,12 @@ fun IntroTextField(initial: String,enabled:Boolean){
 }
 
 @Composable
-fun GenresTextField(initial: String,enabled:Boolean){
+fun GenresTextField(initial: RequiredInputState,enabled:Boolean){
     val requiredState = remember{
         RequiredInputState()
     }
     if(!requiredState.hasEverBeenFocused){
-        requiredState.text = initial
+        requiredState.text = initial.text
     }
     var enable by remember{ mutableStateOf(enabled) }
     var edit by remember{ mutableStateOf(false) }
@@ -401,6 +409,7 @@ fun GenresTextField(initial: String,enabled:Boolean){
         value = requiredState.text,
         onValueChange = { newText->
             requiredState.text = newText
+            initial.text = requiredState.text
         },
         singleLine = true,
         leadingIcon = {

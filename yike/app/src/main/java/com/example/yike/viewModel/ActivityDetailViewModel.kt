@@ -1,6 +1,6 @@
 package com.example.yike.viewModel
 
-import android.provider.ContactsContract
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
@@ -8,14 +8,6 @@ import com.example.yike.service.ActivityRepository
 import com.example.yike.service.UserActivityRepository
 import com.example.yike.viewModel.GlobalViewModel.getUserInfo
 
-//data class Evaluation(
-//    val activityID:Int,
-//    val reviewerID:Int,
-//    val reviewerName:String,
-//    val reviewerAvator:String,
-//    val content:String,
-//    val score:Int
-//)
 
 data class Evaluation(
     val reviewerID:Int,
@@ -27,26 +19,11 @@ data class Evaluation(
     val reviewerAvator:String
 )
 
-//data class ActivityDetail(
-//    val id:Int,
-//    val title:String,
-//    val organizer: Organization,
-//    val img:String,
-//    val date:String,
-//    val place:String,
-//    val form:String,
-//    val capacity:Int,
-//    val introduction:String,
-//    val content:String,
-//    val genres:String,
-//    var status:Int,
-//    var likeNum:Int,
-//    var subscriberNum:Int,
-//)
 
 data class RelationInput(
     val activityID: Int,
-    val userID:String
+    val userID:String,
+    val status:Int = 1
 )
 
 data class UARelation(
@@ -71,74 +48,74 @@ data class ActivityDetail(
     val id:Int,
 )
 
-data class ActivityID(val activityID: Int)
 
-class ActivityDetailViewModel() :ViewModel(){
-    //观察对象：
-//    private val activityID = MutableLiveData<ActivityID>()
-    private val id = MutableLiveData<Int>()
+class ActivityDetailViewModel(
+    _activityId:Int
+) :ViewModel(){
+    private val activityID = _activityId
+    private val userID = GlobalViewModel.getUserInfo()?.id
+    private val _isGet = MutableLiveData<Boolean>()
+    val isGet: LiveData<Boolean> = _isGet
 
-//    private val initialLikeStatus = MutableLiveData<Boolean>()
-    private val relationInput = MutableLiveData<RelationInput>()
 
-    val activityDetail = Transformations.switchMap(id){it->
-        ActivityRepository.getActivityDetail(it)
+    private val toLike = MutableLiveData<Int>()
+
+    private val toSub = MutableLiveData<Int>()
+
+    val activityDetail = Transformations.switchMap(_isGet){
+        ActivityRepository.getActivityDetail(activityID)
     }
 
-    val evaluationList = Transformations.switchMap(id){it->
-        ActivityRepository.getEvaluationList(it)
+    val evaluationList = Transformations.switchMap(_isGet){
+        ActivityRepository.getEvaluationList(activityID)
     }
 
-    val likeStatus = Transformations.switchMap(relationInput){it->
-        UserActivityRepository.checkLike(it.activityID,it.userID)
+    val likeStatus = Transformations.switchMap(_isGet){
+        UserActivityRepository.checkLike(activityID,userID!!)
     }
 
-    val subscribeStatus = Transformations.switchMap(relationInput){it->
-        UserActivityRepository.checkSubscribe(it.activityID,it.userID)
+    val subscribeStatus = Transformations.switchMap(_isGet){
+        UserActivityRepository.checkSubscribe(activityID,userID!!)
     }
 
-    private val userID = MutableLiveData<String>()
-
-
-    val activityRecommendedList = Transformations.switchMap(userID){it->
-        ActivityRepository.getActivityRecommended(it)
+    val activityRecommendedList = Transformations.switchMap(_isGet){it->
+        ActivityRepository.getActivityRecommended(userID!!)
     }
 
+    val likeRes = Transformations.switchMap(toLike){it->
+        UserActivityRepository.postLikeActivity(activityID,userID!!,it)
+    }
+
+    val subRes = Transformations.switchMap(toSub){it->
+        UserActivityRepository.postSubActivity(activityID,userID!!,it)
+    }
+
+    fun getActivityDetail(){
+        _isGet.value = true
+    }
 
     fun save(like:Boolean,subscribe:Boolean){
-        val userInfo = getUserInfo()
-        if(userInfo != null){
-            println(likeStatus.value)
-            println(like)
-            if(likeStatus.value != like && likeStatus!=null){
-                if(like == true){//点赞
-                    println("点赞")
-                    println(id.value)
-                    println(id.value != null)
-                    if(id.value != null){
-                        UserActivityRepository.postLikeActivity(id.value!!,userInfo.id)
-                    }
-//                    id.value?.let {  }
-                    println(userInfo.id)
-                }
+        println(like)
+        println(subscribe)
+        if(likeStatus.value != like && likeStatus!=null){
+            if(like == true){//点赞
+                toLike.value = 1
+                UserActivityRepository.postLikeActivity(activityID,userID!!,1)
+            }else{
+                toLike.value = 0
+                UserActivityRepository.postLikeActivity(activityID,userID!!,0)
             }
-            if(subscribeStatus.value != subscribe && subscribeStatus!=null){
-
+        }
+        if(subscribeStatus.value != subscribe && subscribeStatus!=null){
+            if(subscribe == true){
+                toSub.value = 1
+                UserActivityRepository.postSubActivity(activityID,userID!!,1)
+            }else {
+                toSub.value = 0
+                UserActivityRepository.postSubActivity(activityID,userID!!,0)
             }
         }
     }
 
-    fun init(ID:Int){
-        id.value = ID
-        val userInfo = getUserInfo()
-        if(userInfo != null){
-            userID.value = userInfo.id
-            relationInput.value = RelationInput(ID,userInfo.id)
-        }
-    }
-
-    fun getRelation(){
-        return
-    }
 
 }

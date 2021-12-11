@@ -48,31 +48,37 @@ fun NaviIcon(navController: NavController,activityDetailViewModel: ActivityDetai
     Icon(imageVector = Icons.Filled.ArrowBack,
         modifier = Modifier.clickable {
             activityDetailViewModel.save(like,subscribe)
-            print(like)
             navController.navigate("activity")
         },
         contentDescription = "ArrowBack",
         tint = Color.White
     )
+    val likeRes = activityDetailViewModel.likeRes.observeAsState()
+    val subRes = activityDetailViewModel.subRes.observeAsState()
 }
+
 
 
 @Composable
 fun ActivityDetailDisplayScreen(
-    id:Int,
     navController: NavController,
-    activityDetailViewModel: ActivityDetailViewModel
+    viewModel: ActivityDetailViewModel
 ){
-    activityDetailViewModel.init(id)
-    val likeStatus = activityDetailViewModel.likeStatus.observeAsState()
-    val subscribeStatus = activityDetailViewModel.subscribeStatus.observeAsState()
-    val activityDetail = activityDetailViewModel.activityDetail.observeAsState()
-    val evaluationList = activityDetailViewModel.evaluationList.observeAsState()
-    val activityRecommendedList = activityDetailViewModel.activityRecommendedList.observeAsState()
-    ActivityDetailScreenContent(activityDetail.value,navController,evaluationList.value,activityRecommendedList.value,likeStatus.value,subscribeStatus.value,activityDetailViewModel)
-//    {
-//        activityDetailViewModel.save()
-//    }
+    val isGet = viewModel.isGet.observeAsState()
+    if( isGet.value != true){
+        viewModel.getActivityDetail()
+    }else {
+        val likeStatus = viewModel.likeStatus.observeAsState()
+        val subscribeStatus = viewModel.subscribeStatus.observeAsState()
+        val activityDetail = viewModel.activityDetail.observeAsState()
+        val evaluationList = viewModel.evaluationList.observeAsState()
+        val activityRecommendedList = viewModel.activityRecommendedList.observeAsState()
+        ActivityDetailScreenContent(activityDetail.value,navController,evaluationList.value,activityRecommendedList.value,
+            likeStatus.value,subscribeStatus.value,viewModel){like,subscribe->
+            viewModel.save(like,subscribe)
+            navController.navigate("activity")
+        }
+    }
 }
 
 @Composable
@@ -83,7 +89,8 @@ fun ActivityDetailScreenContent(
     activityList:ArrayList<Activity>?,
     likeStatus: Boolean?,
     subscribeStatus: Boolean?,
-    activityDetailViewModel: ActivityDetailViewModel
+    activityDetailViewModel: ActivityDetailViewModel,
+    clickEvent:(like:Boolean,subscribe:Boolean) -> Unit
 ){
     val likeSelected = remember{mutableStateOf(false)}
     val subscribeSelected = remember{mutableStateOf(false)}

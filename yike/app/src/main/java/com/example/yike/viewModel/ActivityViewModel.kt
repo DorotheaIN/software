@@ -16,9 +16,9 @@ import com.example.yike.service.ActivityRepository
 data class Organization(
     val id: Int,
     val status:Int,
-    val introduction:String,
     val avator:String,
     val username:String,
+    val introduction:String,
 )
 
 //data class Activity(
@@ -48,29 +48,18 @@ data class Activity(
 
 
 class ActivityViewModel(): ViewModel() {
-    //观察对象：
-    private val isInit = MutableLiveData<Boolean>(false)
+
+    private val _isGet = MutableLiveData<Boolean>()
 
     //界面变量
-    val activityList = Transformations.switchMap(isInit) {
+    val activityList = Transformations.switchMap(_isGet) {
         ActivityRepository.getActivityList()
     }
+    val isGet: MutableLiveData<Boolean> = _isGet
     //用户方法：
-    fun init() {
-        isInit.value = true
+    fun getActivityList(){
+        _isGet.value = true
     }
-//
-//    private val like = Transformations.switchMap(isInit) {
-//        Activity
-//    }
-//
-//    //查询是否建立点赞关系  起始和结束api
-//    private val like = MutableLiveData<Boolean>(false)
-//
-//    fun clicklikeButton(){
-//        like.value = !like.value!!
-//    }
-
 
 }
 

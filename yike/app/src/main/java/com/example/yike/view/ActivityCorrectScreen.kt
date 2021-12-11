@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
-import androidx.compose.runtime.R
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,57 +31,106 @@ import com.example.yike.component.*
 import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.ActivityCorrectViewModel
 import com.example.yike.viewModel.ActivityDetail
+import com.example.yike.viewModel.Organization
 
 @Composable
 fun ActivityCorrectScreen(
     id:Int,
     navController: NavController,
-    activityCorrectViewModel: ActivityCorrectViewModel
+    viewModel: ActivityCorrectViewModel
 ) {
-    activityCorrectViewModel.init(id)
-    val activity = activityCorrectViewModel.activityInfo.observeAsState()
-    activity.value?.let { ActivityCorrectContent(navController,it) }
+    viewModel.init(id)
+    val activityDetail = viewModel.activityInfo.observeAsState()
+    val organization = viewModel.organizationInfo.observeAsState()
+    organization.value?.let {
+        activityDetail.value?.let { it1 ->
+            ActivityCorrectContent(navController, it, it1){ activity->
+            viewModel.correct(activity)
+            navController.navigate("organization")
+        }
+        }
+    }
+    val correctRes = viewModel.correctRes.observeAsState()
 }
 
 @Composable
 fun ActivityCorrectContent(
     navController: NavController,
+    organization: Organization,
     activityDetail:ActivityDetail,
+    clickEvent: (activity: Activity) ->Unit
 ){
     Scaffold(
         topBar = {
-//            TopBar()
             OriganizationTopBar()
         }
     ) {
+        val title = remember { RequiredInputState()}
+        val time = remember { RequiredInputState() }
+        val place = remember { RequiredInputState() }
+        val form = remember { RequiredInputState() }
+        val capacity = remember { RequiredInputState() }
+        val content = remember { RequiredInputState() }
+        val intro = remember { RequiredInputState() }
+        val genres = remember { RequiredInputState() }
         LazyColumn(Modifier){
             item{
-                TitleTextField(activityDetail.title,false)
+                title.text = activityDetail.title
+                TitleTextField(title,false)
             }
             item{
-                TimeTextField(activityDetail.date,false)
+                time.text = activityDetail.date
+                TimeTextField(time,false)
             }
             item{
-                PlaceTextField(activityDetail.place,false)
+                place.text = activityDetail.place
+                PlaceTextField(place,false)
             }
             item{
-                FormTextField(activityDetail.form,false)
+                form.text = activityDetail.form
+                FormTextField(form,false)
             }
             item{
-                CapacityTextField(activityDetail.capacity.toString(),false)
+                capacity.text = activityDetail.capacity.toString()
+                CapacityTextField(capacity,false)
             }
             item{
-                IntroTextField(activityDetail.introduction,false)
+                intro.text = activityDetail.introduction
+                IntroTextField(intro,false)
             }
             item{
-                ContentTextField(activityDetail.content,false)
+                content.text = activityDetail.content
+                ContentTextField(content,false)
             }
             item {
-                GenresTextField(activityDetail.genres,false)
+                genres.text = activityDetail.genres
+                GenresTextField(genres,false)
             }
             item{
                 Spacer(Modifier.height(15.dp))
-                CorrectSubmitButton(navController)
+                CorrectSubmitButton(){
+                    if(title.isValid && time.isValid && place.isValid && form.isValid &&
+                        capacity.isValid && content.isValid && intro.isValid && genres.isValid){
+                        run{
+                            val activity = Activity(title.text,
+                                "http://mmbiz.qpic.cn/mmbiz_jpg/D9E2nL2KO2kgKU4ibqPWbIUQDP89y7AXicXwc6QiaPTVuRibyB0CPichvm38w3lc1vS3y2DsUiaZFUrhDic92I0H8psTQ/0?wx_fmt=jpeg",
+                                time.text,
+                                place.text,
+                                form.text,
+                                intro.text,
+                                content.text,
+                                genres.text,
+                                0,
+                                capacity.text.toInt(),
+                                1,
+                                0,
+                                organization,
+                                activityDetail.id
+                            )
+                            clickEvent(activity)
+                        }
+                    }
+                }
             }
             item{
                 Spacer(Modifier.height(60.dp))
@@ -111,7 +159,9 @@ fun TopBar() {
 }
 
 @Composable
-fun CorrectSubmitButton(navController: NavController){
+fun CorrectSubmitButton(
+    onClick: () ->Unit
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -122,7 +172,7 @@ fun CorrectSubmitButton(navController: NavController){
         Button(
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xffdaa545)),
             shape = RoundedCornerShape(50),
-            onClick = { navController.navigate("home_screen") },
+            onClick = onClick,
             modifier = Modifier
                 .fillMaxWidth(0.4f)
                 .height(48.dp)

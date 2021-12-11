@@ -65,8 +65,8 @@ class MainActivity : ComponentActivity() {
                             entry->
                         val id = entry.arguments?.getInt("id")
                         if (id != null) {
-                            val activityDetailViewModel = ActivityDetailViewModel()
-                            ActivityDetailDisplayScreen(id,navController = navController,activityDetailViewModel)
+                            val activityDetailViewModel = ActivityDetailViewModel(id)
+                            ActivityDetailDisplayScreen(navController = navController,activityDetailViewModel)
                         }
                     }
                     composable(

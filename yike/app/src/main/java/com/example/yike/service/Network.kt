@@ -3,6 +3,7 @@ package com.example.yike.service
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Query
 import java.lang.RuntimeException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -61,6 +62,26 @@ object Network {
 
     suspend fun getActivityOfOrganization(id:Int) =
         userService.getActivityListByOrganization(id).await()
+
+    suspend fun getOrgLoginStatus(id:Int,passWord: String) =
+        userService.getOrgLoginStatus(id,passWord).await()
+
+    suspend fun postDislikeActivity(activityID: Int,userID: String) =
+        userService.postDislikeActivity(activityID,userID).await()
+
+    suspend fun postSubActivity(activityID: Int,userID: String) =
+        userService.postSubActivity(activityID,userID).await()
+
+    suspend fun postDisSubActivity(activityID: Int,userID: String) =
+        userService.postDisSubActivity(activityID,userID).await()
+
+    suspend fun postPublishActivity(capacity:Int,content:String,date:String,form:String,genres:String,img:String,
+                                    intro:String,organizationID: Int,place:String,status:Int,title:String) =
+        userService.postPubActivity(capacity,content,date,form,genres,img,intro,organizationID,place,status,title).await()
+
+    suspend fun postCorrectActivity(id:Int,capacity:Int,content:String,date:String,form:String,genres:String,img:String,
+                                    intro:String,organizationID: Int,place:String,status:Int,title:String) =
+        userService.postUpdateActivity(id,capacity,content,date,form,genres,img,intro,organizationID,place,status,title).await()
 
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
