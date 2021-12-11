@@ -94,4 +94,7 @@ interface UserService {
                            @Query("place") place:String,@Query("status") status:Int,@Query("title") title:String
     ):Call<CheckResponse>
 
+    @POST("deleteActivity")
+    fun postDeleteActivity(@Query("ID") id:Int):Call<CheckResponse>
+
 }

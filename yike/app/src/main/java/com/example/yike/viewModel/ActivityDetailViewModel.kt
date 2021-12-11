@@ -57,7 +57,6 @@ class ActivityDetailViewModel(
     private val _isGet = MutableLiveData<Boolean>()
     val isGet: LiveData<Boolean> = _isGet
 
-
     private val toLike = MutableLiveData<Int>()
 
     private val toSub = MutableLiveData<Int>()

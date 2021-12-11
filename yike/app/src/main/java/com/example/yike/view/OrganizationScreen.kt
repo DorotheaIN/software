@@ -43,52 +43,65 @@ import com.example.yike.viewModel.OrganizationViewModel
 @Composable
 fun OrganizationScreen(
     navController: NavController,
-    organizationViewModel: OrganizationViewModel
+    viewModel: OrganizationViewModel
 ){
-    organizationViewModel.init()
-    val organization = organizationViewModel.organizationInfo.observeAsState()
-    val activityList = organizationViewModel.activityList.observeAsState()
-    organization.value?.let { activityList.value?.let { it1 ->
-        OrganizationScreenContent(navController, it,
-            it1
-        )
-    } }
+    val isGet = viewModel.isGet.observeAsState()
+    if( isGet.value != true ){
+        viewModel.getInfo()
+    } else {
+        val organization = viewModel.organizationInfo.observeAsState()
+        val activityList = viewModel.activityList.observeAsState()
+        OrganizationScreenContent(navController,organization.value,activityList.value)
+    }
 }
 
 @Composable
 fun OrganizationScreenContent(
     navController: NavController,
-    organization: Organization,
-    activityDetailList:ArrayList<Activity>
+    organization: Organization?,
+    activityDetailList:ArrayList<Activity>?
 ){
-    Surface(
-        elevation = 5.dp,
-        modifier = Modifier
-            .padding(0.dp, 0.dp)
-            .fillMaxSize()
-            .background(Color(0xffededed))
-    ) {
-        LazyColumn(Modifier){
-            item {
-                header(organization)
-            }
-            item{
-                PublishItem(navController)
-            }
-            item{
-                ActivityPublishList(activityDetailList,navController)
-            }
-//        items(activityDetailList){
-//            Surface(
-//                modifier = Modifier.fillMaxWidth(),
-//                shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
-//                elevation = 5.dp,
-//            ) {
-////                    PublicItem(it)
-//            }
-//        }
-
+    if(organization == null || activityDetailList == null){
+        Scaffold(){ paddingValues ->
+            Loader(paddingValues)
         }
+    } else {
+        Surface(
+            elevation = 5.dp,
+            modifier = Modifier
+                .padding(0.dp, 0.dp)
+                .fillMaxSize()
+                .background(Color(0xffededed))
+        ) {
+            LazyColumn(Modifier){
+                item {
+                    header(organization)
+                }
+                item{
+                    PublishItem(navController)
+                }
+                item{
+                    ActivityPublishList(activityDetailList,navController)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Loader(
+    paddingValues: PaddingValues
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .wrapContentSize()
+                .align(Alignment.Center)
+        )
     }
 }
 
@@ -174,10 +187,9 @@ fun ActivityPublishList(
     navController: NavController
 ){
     Column() {
-        activityDetailList.forEach {item->
-            ActivityPublishedItem(item = item,navController)
+        activityDetailList.forEach { item->
+            ActivityPublishedItem(item,navController)
         }
-
     }
 }
 

@@ -19,11 +19,9 @@ import com.example.yike.viewModel.*
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             YikeTheme {
                 val navController = rememberNavController()
-
                 NavHost(
                     navController = navController,
                     startDestination = "login",
@@ -79,7 +77,6 @@ class MainActivity : ComponentActivity() {
                             val activityCorrectViewModel = ActivityCorrectViewModel()
                             ActivityCorrectScreen(id,navController = navController,activityCorrectViewModel)
                         }
-
                     }
                     composable("activity_publish"){
                         val activityPublishViewModel = ActivityPublishViewModel()

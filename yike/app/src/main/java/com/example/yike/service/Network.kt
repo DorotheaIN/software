@@ -83,6 +83,9 @@ object Network {
                                     intro:String,organizationID: Int,place:String,status:Int,title:String) =
         userService.postUpdateActivity(id,capacity,content,date,form,genres,img,intro,organizationID,place,status,title).await()
 
+    suspend fun postDelActivity(id:Int) =
+        userService.postDeleteActivity(id).await()
+
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
     private suspend fun <T> Call<T>.await() :T {
