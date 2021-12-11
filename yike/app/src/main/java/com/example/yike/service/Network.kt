@@ -62,6 +62,12 @@ object Network {
     suspend fun getActivityOfOrganization(id:Int) =
         userService.getActivityListByOrganization(id).await()
 
+    suspend fun getPublishQuestionList(id:String) =
+        userService.getPublishQuestionList(id).await()
+
+    suspend fun getFollowQuestionList(id:String) =
+        userService.getFollowQuestionsList(id).await()
+
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
     private suspend fun <T> Call<T>.await() :T {

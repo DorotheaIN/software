@@ -66,4 +66,11 @@ interface UserService {
     @GET("getAllActivityByOrg")
     fun getActivityListByOrganization(@Query("ID") organizationID: Int):Call<ActivityResponse>
 
+    @GET("getMyFocusQuestions")
+    fun getFollowQuestionsList(@Query("ID")id:String):Call<FollowQuestionResponse>
+
+    @GET("getMyQuestions")
+    fun getPublishQuestionList(@Query("ID") id:String):Call<PublishQuestionResponse>
+
+
 }

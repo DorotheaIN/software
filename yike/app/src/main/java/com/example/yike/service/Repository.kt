@@ -286,4 +286,40 @@ object OrganizationRepository{
     }
 }
 
+object PublishQuestionRepository{
+    fun getPublishQuestion(id:String) = liveData(Dispatchers.IO){
+        val result = try {
+            val publishQuestionList = Network.getPublishQuestionList(id)
+            if(publishQuestionList.code == 200) {
+                publishQuestionList.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}
+
+object FollowQuestionRepository{
+    fun getFollowQuestion(id:String) = liveData(Dispatchers.IO){
+        val result = try {
+            val followQuestionList = Network.getFollowQuestionList(id)
+            if(followQuestionList.code == 200) {
+                followQuestionList.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}
+
 
