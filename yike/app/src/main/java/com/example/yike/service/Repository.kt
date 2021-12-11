@@ -3,6 +3,7 @@ package com.example.yike.service
 import androidx.lifecycle.liveData
 import com.example.yike.model.CheckResponse
 import com.example.yike.model.QuestionResponse
+import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.Organization
 import com.example.yike.viewModel.Question
 import com.example.yike.viewModel.UserInfo
@@ -276,23 +277,6 @@ object UserActivityRepository {
 }
 
 object OrganizationRepository{
-    fun getOrganizationInfo(id:Int) = liveData(Dispatchers.IO){
-        val result = try {
-            val organizationInfo = Network.getOrganizationInfo(id)
-            if(organizationInfo.code == 200) {
-                organizationInfo.result
-            } else {
-                println("response status is not ok!")
-                null
-            }
-        } catch (e: Exception){
-            println(e)
-            println("yuzhierrr")
-            null
-        }
-        emit(result)
-    }
-
     fun getActivityByOrganization(id:Int) = liveData(Dispatchers.IO){
         val result = try {
             val activityList = Network.getActivityOfOrganization(id)
@@ -300,12 +284,12 @@ object OrganizationRepository{
                 activityList.result
             } else {
                 println("response status is not ok!")
-                null
+                ArrayList<Activity>()
             }
         } catch (e: Exception){
             println(e)
             println("yuzhierrr")
-            null
+            ArrayList<Activity>()
         }
         emit(result)
     }
@@ -340,6 +324,55 @@ object OrganizationRepository{
             println(e)
             println("yuzhierrr")
             false
+        }
+        emit(result)
+    }
+
+    fun deleteActivity(id:Int) = liveData(Dispatchers.IO) {
+        val result = try {
+            val res = Network.postDelActivity(id)
+            if(res.code == 200) {
+                true
+            } else {
+                println("response status is not ok!")
+                false
+            }
+        } catch (e: Exception){
+            println(e)
+            println("yuzhierrr")
+            false
+        }
+        emit(result)
+    }
+
+    fun getEvaAnalysis(id: Int) = liveData(Dispatchers.IO) {
+        val result = try {
+            val analysisRes = Network.getEvaluationAnalysis(id)
+            if(analysisRes.code == 200){
+                analysisRes.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
+    fun getSubscriberList(id: Int) = liveData(Dispatchers.IO) {
+        val result = try {
+            val subscriberList = Network.getSubscriberList(id)
+            if(subscriberList.code == 200){
+                subscriberList.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
         }
         emit(result)
     }

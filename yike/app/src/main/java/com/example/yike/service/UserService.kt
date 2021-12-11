@@ -97,4 +97,10 @@ interface UserService {
     @POST("deleteActivity")
     fun postDeleteActivity(@Query("ID") id:Int):Call<CheckResponse>
 
+    @GET("getEmotionalAnalysis")
+    fun getReviewAnalysis(@Query("ID") id: Int):Call<EvaluationAnalysisResponse>
+
+    @GET("getUserSubscribed")
+    fun getSubscriberList(@Query("ID") id: Int):Call<SubscriberListResponse>
+
 }

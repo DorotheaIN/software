@@ -57,7 +57,6 @@ class QuestionViewModel(
                 QuestionRepository.postQuestionStatus(userId, questionId)
             }
         }
-
     }
 
     fun getAnswerList() {

@@ -24,12 +24,13 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = "login",
+                    startDestination = "organization",
                     route = "root"
                 ) {
                     composable("welcome") {
                         WelcomeScreen(navController)
                     }
+
                     composable("login") {
                         val viewModel = LoginViewModel()
                         LoginScreen(viewModel) {
@@ -81,6 +82,17 @@ class MainActivity : ComponentActivity() {
                     composable("activity_publish"){
                         val activityPublishViewModel = ActivityPublishViewModel()
                         ActivityPublishScreen(navController = navController,activityPublishViewModel)
+                    }
+                    composable(
+                        "activityreflect/{id}",
+                        arguments = listOf(navArgument("id"){type = NavType.IntType})
+                    ){
+                            entry->
+                        val id = entry.arguments?.getInt("id")
+                        if (id != null) {
+                            val activityReflectViewModel = ActivityReflectViewModel(id)
+                            ActivityReflectScreen(navController = navController,activityReflectViewModel)
+                        }
                     }
                 }
 

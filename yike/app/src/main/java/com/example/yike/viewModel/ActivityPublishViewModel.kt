@@ -14,14 +14,6 @@ class ActivityPublishViewModel() : ViewModel(
 
     private val activityToPub = MutableLiveData<Activity>()
 
-//    private val activityID = MutableLiveData<Int>()
-//
-//    //界面变量
-//    val activityInfo = Transformations.switchMap(activityID) { it->
-//        ActivityRepository.getActivityDetail(it)
-//    }
-//
-    //用户方法：
     fun init() {
         isInit.value = true
     }

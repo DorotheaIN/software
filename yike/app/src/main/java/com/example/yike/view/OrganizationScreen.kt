@@ -46,12 +46,21 @@ fun OrganizationScreen(
     viewModel: OrganizationViewModel
 ){
     val isGet = viewModel.isGet.observeAsState()
+    val refresh = viewModel.refresh.observeAsState()
     if( isGet.value != true ){
         viewModel.getInfo()
     } else {
         val organization = viewModel.organizationInfo.observeAsState()
         val activityList = viewModel.activityList.observeAsState()
-        OrganizationScreenContent(navController,organization.value,activityList.value)
+        val delRes = viewModel.delRes.observeAsState()
+        OrganizationScreenContent(
+            navController, organization.value,activityList.value,
+            { id->
+                viewModel.delete(id)
+            },{id->
+                navController.navigate("activityreflect/${id}")
+            }
+        )
     }
 }
 
@@ -59,7 +68,9 @@ fun OrganizationScreen(
 fun OrganizationScreenContent(
     navController: NavController,
     organization: Organization?,
-    activityDetailList:ArrayList<Activity>?
+    activityDetailList:ArrayList<Activity>?,
+    delEvent:(id:Int) -> Unit,
+    checkEvent:(id:Int) -> Unit
 ){
     if(organization == null || activityDetailList == null){
         Scaffold(){ paddingValues ->
@@ -81,7 +92,7 @@ fun OrganizationScreenContent(
                     PublishItem(navController)
                 }
                 item{
-                    ActivityPublishList(activityDetailList,navController)
+                    ActivityPublishList(activityDetailList,navController,delEvent,checkEvent)
                 }
             }
         }
@@ -184,19 +195,26 @@ fun header(organization:Organization){
 @Composable
 fun ActivityPublishList(
     activityDetailList:ArrayList<Activity>,
-    navController: NavController
+    navController: NavController,
+    delEvent:(id:Int) -> Unit,
+    checkEvent:(id:Int) -> Unit
 ){
     Column() {
         activityDetailList.forEach { item->
-            ActivityPublishedItem(item,navController)
+            ActivityPublishedItem(item,navController,delEvent,checkEvent)
         }
     }
 }
 
 @Composable
-fun ActivityPublishedItem(item:Activity,navController: NavController){
+fun ActivityPublishedItem(
+    item:Activity,
+    navController: NavController,
+    delEvent:(id:Int) -> Unit,
+    checkEvent:(id:Int) -> Unit
+){
     Surface(
-        shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
+        shape = MaterialTheme.shapes.medium,
         elevation = 5.dp,
         modifier = Modifier
             .padding(0.dp, 0.1.dp)
@@ -219,7 +237,9 @@ fun ActivityPublishedItem(item:Activity,navController: NavController){
                         Column(
                             modifier = Modifier
                                 .weight(1F)
-                                .clickable { }
+                                .clickable {
+                                    checkEvent(item.id)
+                                }
                         ) {
                             Text(
                                 text = item.title,
@@ -254,19 +274,16 @@ fun ActivityPublishedItem(item:Activity,navController: NavController){
                                 modifier = Modifier
                                     .size(30.dp)
                                     .padding(5.dp, 0.dp)
-                                    .clickable { }
+                                    .clickable {
+                                        delEvent(item.id)
+                                    }
                             )
                         }
                     }
-
-//                Divider()
                 }
-
             }
         }
     }
-
-
 }
 
 
