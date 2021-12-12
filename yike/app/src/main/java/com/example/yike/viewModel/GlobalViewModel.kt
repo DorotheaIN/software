@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 object GlobalViewModel: ViewModel() {
     private val globalUserInfo: MutableLiveData<UserInfo> = MutableLiveData<UserInfo>()
     private val globalQuestionList: MutableLiveData<ArrayList<Question>> = MutableLiveData<ArrayList<Question>>()
-
+    private val globalOrgInfo:MutableLiveData<Organization> = MutableLiveData<Organization>()
 
     fun updateUserInfo(userId:String, userName: String, userStatus: Int, avatar: String, introduction: String) {
         globalUserInfo.value = UserInfo(userId, userName, userStatus, introduction, avatar)
@@ -20,8 +20,16 @@ object GlobalViewModel: ViewModel() {
         globalQuestionList.value = questionList
     }
 
+    fun updateOrgInfo(organization: Organization){
+        globalOrgInfo.value = organization
+    }
+
     fun getUserInfo(): UserInfo? { //为啥用这个 因为observe有问题 不知道为何？ 可以再试试
         return globalUserInfo.value
+    }
+
+    fun getOrgInfo():Organization?{
+        return globalOrgInfo.value
     }
 
     fun getQuestion(id: String): Question? {

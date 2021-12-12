@@ -274,6 +274,37 @@ object UserActivityRepository {
         emit(result)
     }
 
+    fun postReviewActivity(activityID: Int,content: String,userID: String,score:Int) = liveData(Dispatchers.IO){
+        val result = try {
+            val postRes = Network.postReviewActivity(activityID, content, userID, score)
+            if(postRes.code == 200){
+                true
+            } else {
+                println(postRes.msg)
+                false
+            }
+        } catch (e: Exception){
+            println(e)
+            false
+        }
+        emit(result)
+    }
+
+    fun postDelReviewActivity(activityID: Int,userID: String) = liveData(Dispatchers.IO){
+        val result = try {
+            val postRes = Network.postDelReviewActivity(activityID, userID)
+            if(postRes.code == 200){
+                true
+            } else {
+                println(postRes.msg)
+                false
+            }
+        } catch (e:Exception){
+            println(e)
+            false
+        }
+        emit(result)
+    }
 }
 
 object OrganizationRepository{
@@ -349,6 +380,8 @@ object OrganizationRepository{
         val result = try {
             val analysisRes = Network.getEvaluationAnalysis(id)
             if(analysisRes.code == 200){
+                println(analysisRes.result.cloud)
+                println(analysisRes.result.emo_ANALYSIS)
                 analysisRes.result
             } else {
                 println("response status is not ok!")

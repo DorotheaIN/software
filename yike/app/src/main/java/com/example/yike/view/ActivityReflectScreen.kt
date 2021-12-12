@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.yike.component.NavBottomBar
 import com.example.yike.component.OriganizationTopBar
+import com.example.yike.component.TitleRec
 import com.example.yike.viewModel.ActivityReflectViewModel
 import com.example.yike.viewModel.EvaluationAnalysis
 import com.example.yike.viewModel.UserInfo
@@ -111,7 +112,7 @@ fun ImageDisplay(
     ) {
         Box(){
             Column() {
-                testTitle(text)
+                TitleRec(text)
 //                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
 //                    Text(
 //                        text = text,
@@ -190,9 +191,6 @@ fun SubscriberDisplay(
                             )
                         }
                         Spacer(modifier = Modifier.width(15.dp))
-//                        IconButton(onClick = { /*TODO*/ }) {
-//                            Icon(Icons.Filled.Add,null)
-//                        }
                     }
                 }
             }
@@ -202,34 +200,3 @@ fun SubscriberDisplay(
 }
 
 
-@Composable
-fun testTitle(
-    text:String
-){
-    Row(Modifier.padding(10.dp,20.dp)){
-        Box(
-            Modifier.size(110.dp,41.dp)
-        ){
-            Canvas(modifier = Modifier.size(70.dp,36.dp), onDraw = {
-                drawRoundRect(
-                    color = Color(0xff6d72b1),
-                    style = Stroke(width = 10f),
-                )
-            })
-            Box(
-                Modifier
-                    .background(Color.White)
-                    .align(Alignment.BottomEnd)
-            ){
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
-                    Text(
-                        text = text,
-                        color = Color.Black,
-                        style = MaterialTheme.typography.h5,
-                        fontFamily = FontFamily.SansSerif
-                    )
-                }
-            }
-        }
-    }
-}

@@ -103,4 +103,9 @@ interface UserService {
     @GET("getUserSubscribed")
     fun getSubscriberList(@Query("ID") id: Int):Call<SubscriberListResponse>
 
+    @POST("reviewActivity")
+    fun postReviewActivity(@Query("activityID") activityID: Int,@Query("content") content: String,@Query("individualUserID") userID: String,@Query("score") score:Int):Call<CheckResponse>
+
+    @POST("deleteReview")
+    fun postDeleteActivityReview(@Query("aID") activityID: Int,@Query("iID") userID: String):Call<CheckResponse>
 }

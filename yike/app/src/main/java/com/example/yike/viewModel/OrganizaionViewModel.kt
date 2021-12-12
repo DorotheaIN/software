@@ -12,21 +12,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class OrganizationViewModel(): ViewModel() {
-
+    private val orgInfo = GlobalViewModel.getOrgInfo()
     private val _isGet = MutableLiveData<Boolean>()
     val isGet: LiveData<Boolean> = _isGet
+    val GetOrgInfo = orgInfo
 
     private val _isDel = MutableLiveData<Int>()
     private val _refresh = MutableLiveData<Int>()
     val refresh : LiveData<Int> = _refresh
 
-    //之后要改成从Global获取
-    val organizationInfo = Transformations.switchMap(_isGet) {
-        OrgLoginRepository.checkLoginStatus(3,"tongji_sse")
-    }
+//    //之后要改成从Global获取
+//    val organizationInfo = Transformations.switchMap(_isGet) {
+//        OrgLoginRepository.checkLoginStatus(3,"tongji_sse")
+//    }
 
     val activityList = Transformations.switchMap(_refresh){
-        OrganizationRepository.getActivityByOrganization(3,)
+        OrganizationRepository.getActivityByOrganization(orgInfo!!.id)
     }
 
     val delRes = Transformations.switchMap(_isDel){
@@ -38,6 +39,7 @@ class OrganizationViewModel(): ViewModel() {
         _refresh.value = 0
     }
 
+
     fun delete(id:Int) = runBlocking {
         val del = launch {
             _isDel.value = id
@@ -47,14 +49,7 @@ class OrganizationViewModel(): ViewModel() {
         val ref = launch {
             _refresh.value = _refresh.value?.plus(1)
         }
+        ref.join()
     }
-
-
-
-
-//    fun delete(id:Int){
-//        _isDel.value = id
-//        _refresh.value = _refresh.value?.plus(1)
-//    }
 
 }

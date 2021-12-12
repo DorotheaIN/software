@@ -9,6 +9,8 @@ import com.example.yike.service.OrganizationRepository
 
 class ActivityCorrectViewModel() : ViewModel(
 ){
+    private val orgInfo = GlobalViewModel.getOrgInfo()
+    val GetOrgInfo = orgInfo
     //观察对象：
     private val isInit = MutableLiveData<Boolean>(false)
 
@@ -20,9 +22,9 @@ class ActivityCorrectViewModel() : ViewModel(
         ActivityRepository.getActivityDetail(it)
     }
 
-    val organizationInfo = Transformations.switchMap(isInit) {
-        OrgLoginRepository.checkLoginStatus(3,"tongji_sse")
-    }
+//    val organizationInfo = Transformations.switchMap(isInit) {
+//        OrgLoginRepository.checkLoginStatus(3,"tongji_sse")
+//    }
 
     val correctRes = Transformations.switchMap(activityToCorrect){it->
         OrganizationRepository.correctActivity(it.id,it.capacity,it.content,it.date,it.form,it.genres,it.img,it.introduction,it.organizer.id,it.place,it.status,it.title)

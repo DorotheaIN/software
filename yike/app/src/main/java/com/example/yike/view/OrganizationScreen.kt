@@ -50,11 +50,11 @@ fun OrganizationScreen(
     if( isGet.value != true ){
         viewModel.getInfo()
     } else {
-        val organization = viewModel.organizationInfo.observeAsState()
+        val organization = viewModel.GetOrgInfo
         val activityList = viewModel.activityList.observeAsState()
         val delRes = viewModel.delRes.observeAsState()
         OrganizationScreenContent(
-            navController, organization.value,activityList.value,
+            navController, organization,activityList.value,
             { id->
                 viewModel.delete(id)
             },{id->

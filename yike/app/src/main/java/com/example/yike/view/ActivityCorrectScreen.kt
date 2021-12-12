@@ -41,8 +41,8 @@ fun ActivityCorrectScreen(
 ) {
     viewModel.init(id)
     val activityDetail = viewModel.activityInfo.observeAsState()
-    val organization = viewModel.organizationInfo.observeAsState()
-    organization.value?.let {
+    val organization = viewModel.GetOrgInfo
+    organization?.let {
         activityDetail.value?.let { it1 ->
             ActivityCorrectContent(navController, it, it1){ activity->
             viewModel.correct(activity)

@@ -26,8 +26,8 @@ fun ActivityPublishScreen(
     viewModel: ActivityPublishViewModel
 ) {
     viewModel.init()
-    val organization = viewModel.organizationInfo.observeAsState()
-    organization.value?.let {
+    val organization = viewModel.GetOrgInfo
+    organization?.let {
         ActivityPublishContent(navController, it){ activity ->
         viewModel.publish(activity)
     }

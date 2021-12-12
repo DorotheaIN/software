@@ -1,5 +1,6 @@
 package com.example.yike.view
 
+
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,50 +15,43 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.yike.EmailState
 import com.example.yike.PasswordInputState
 import com.example.yike.component.PrimaryButton
+import com.example.yike.component.RequiredInputState
 import com.example.yike.viewModel.GlobalViewModel
-import com.example.yike.viewModel.LoginViewModel
-import com.example.yike.viewModel.UserInfo
-import kotlin.reflect.typeOf
-
-
+import com.example.yike.viewModel.OrgLoginViewModel
+import com.example.yike.viewModel.Organization
 
 @Composable
-fun LoginScreen(
-    viewModel: LoginViewModel,
-    routeEvent: () -> Unit = {},
-    changeEvent:()->Unit = {} //跳转到组织登录
-) {
-    val userInfo = viewModel.userInfo.observeAsState()
-    LoginContent(userInfo = userInfo.value, routeEvent,changeEvent) { email, password ->
-        viewModel.checkLoginStatus(email, password)
+fun OrgLoginScreen(
+    viewModel: OrgLoginViewModel,
+    routeEvent:()->Unit = {}
+){
+    val orgInfo = viewModel.orgInfo.observeAsState()
+    LoginContent(orgInfo = orgInfo.value, routeEvent){ id, password ->
+        viewModel.checkLoginStatus(id,password)
     }
 }
 
 @Composable
-private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},changeEvent:()->Unit = {},
-                         clickEvent: (email: String, password: String) -> Unit
-) {
-    val loginStatus = userInfo?.status
-    if(loginStatus == 1) {
-        if (userInfo != null) {
-            println(userInfo)
-            GlobalViewModel.updateUserInfo(userId = userInfo.id, userName =  userInfo.user_NAME,
-                userStatus = userInfo.status, avatar = userInfo.avator, introduction = userInfo.introduction)
-            run(routeEvent)
-        }
+private fun LoginContent(
+    orgInfo:Organization?,
+    routeEvent:()->Unit = {},
+    clickEvent:(id:Int,password:String) -> Unit
+){
+    if(orgInfo != null) {
+        println(orgInfo)
+        GlobalViewModel.updateOrgInfo(orgInfo)
+        run(routeEvent)
     } else {
-        println(loginStatus)
+        println(orgInfo)
     }
     Surface(
         color = MaterialTheme.colors.background,
@@ -65,7 +59,7 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
             .fillMaxSize(),
     ) {
         val passwordInput = remember { PasswordInputState() }
-        val emailInput = remember { EmailState() }
+        val idInput = remember { RequiredInputState() }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -77,7 +71,7 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
 
             LogInHeader()
 
-            EmailInput(emailInput)
+            IdInput(idInput)
 
             Spacer(Modifier.height(8.dp))
 
@@ -90,18 +84,17 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
 
 
             LoginButton( onClick = {
-                if( emailInput.isValid && passwordInput.isValid ){
+                if( idInput.isValid && passwordInput.isValid ){
                     run{
-                            println(emailInput.text + passwordInput.text)
-                            clickEvent(emailInput.text, passwordInput.text)
+                        println(idInput.text + passwordInput.text)
+                        clickEvent(idInput.text.toInt(), passwordInput.text)
                     }
                 }
             })
-
-            ChangeLoginEntry(changeEvent)
         }
     }
 }
+
 
 @Composable
 private fun LoginButton( onClick: () -> Unit) {
@@ -127,7 +120,6 @@ private fun PasswordInput(passwordInput: PasswordInputState) {
     val textState = remember {
         PasswordInputState()
     }
-
     OutlinedTextField(
         value = textState.text,
         onValueChange = { newText ->
@@ -135,7 +127,7 @@ private fun PasswordInput(passwordInput: PasswordInputState) {
             passwordInput.text = textState.text
         },
         label = {
-            Text(text = "Password (8+ characters)")
+            Text(text = "Password")
         },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Password,
@@ -194,29 +186,27 @@ private fun PasswordVisabilityIcon(
 }
 
 @Composable
-private fun EmailInput(emailInput: EmailState) {
+private fun IdInput(idInput: RequiredInputState) {
     val textState = remember {
-        EmailState()
+        RequiredInputState()
     }
-
     OutlinedTextField(
         value = textState.text,
         onValueChange = { newString ->
             textState.text = newString
-            emailInput.text = textState.text
+            idInput.text = textState.text
         },
         label = {
-            Text(text = "Email address")
+            Text(text = "Organization ID")
         },
         keyboardOptions = KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Email,
+            keyboardType = KeyboardType.Number,
         ),
         modifier = Modifier
             .fillMaxWidth()
             .onFocusChanged { it ->
                 val isFocused = it.isFocused
                 textState.onFocusChange(isFocused)
-
                 if (!isFocused) {
                     textState.enableShowErrors()
                 }
@@ -257,72 +247,3 @@ private fun LogInHeader() {
             )
     )
 }
-
-@Composable
-private fun ChangeLoginEntry(
-    onClick: () -> Unit = {}
-){
-    Box(
-        Modifier.fillMaxSize()
-    ){
-        Box(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(0.dp,20.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "组织用户登录",
-                style = MaterialTheme.typography.body2,
-                textAlign = TextAlign.Center,
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier
-                    .paddingFromBaseline(top = 24.dp)
-                    .clickable { onClick() },
-                color = Color(0xFFA2E2FF)
-            )
-        }
-    }
-
-}
-
-//@Composable
-//fun MyExample() {
-//    val painter = rememberImagePainter(
-//        data = "http://101.132.138.14/files/123/12/10.png",
-//        builder = {
-//            crossfade(true)
-//        }
-//    )
-//
-//    Box {
-//        Image(
-//            painter = painter,
-//            contentDescription = null,
-//            modifier = Modifier.size(128.dp)
-//        )
-//
-//        when (painter.state) {
-//            is ImagePainter.State.Loading -> {
-//                // Display a circular progress indicator whilst loading
-//                CircularProgressIndicator(Modifier.align(Alignment.Center))
-//            }
-//            is ImagePainter.State.Error -> {
-//                // If you wish to display some content if the request fails
-//            }
-//        }
-//    }
-//}
-
-//@Preview(
-//    name = "Night Mode",
-//    uiMode = Configuration.UI_MODE_NIGHT_YES,
-//)
-//@Preview(
-//    name = "Day Mode",
-//    uiMode = Configuration.UI_MODE_NIGHT_NO,
-//)
-//@Composable
-//private fun LoginScreenPreview() {
-//    YikeTheme {
-//        LoginScreen()
-//    }
-//}

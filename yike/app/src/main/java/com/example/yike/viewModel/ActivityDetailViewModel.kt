@@ -7,10 +7,13 @@ import androidx.lifecycle.ViewModel
 import com.example.yike.service.ActivityRepository
 import com.example.yike.service.UserActivityRepository
 import com.example.yike.viewModel.GlobalViewModel.getUserInfo
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 data class Evaluation(
-    val reviewerID:Int,
+    val reviewerID:String,
     val activityID:Int,
     val content:String,
     val score:Int,
@@ -55,8 +58,11 @@ class ActivityDetailViewModel(
     private val activityID = _activityId
     private val userID = GlobalViewModel.getUserInfo()?.id
     private val _isGet = MutableLiveData<Boolean>()
+    private val toReview = MutableLiveData<Evaluation>()
+    private val _refresh = MutableLiveData<Int>()
     val isGet: LiveData<Boolean> = _isGet
-
+    private val _isDel = MutableLiveData<Int>(0)
+    val getUserID = userID
     private val toLike = MutableLiveData<Int>()
 
     private val toSub = MutableLiveData<Int>()
@@ -65,7 +71,7 @@ class ActivityDetailViewModel(
         ActivityRepository.getActivityDetail(activityID)
     }
 
-    val evaluationList = Transformations.switchMap(_isGet){
+    val evaluationList = Transformations.switchMap(_refresh){
         ActivityRepository.getEvaluationList(activityID)
     }
 
@@ -89,8 +95,17 @@ class ActivityDetailViewModel(
         UserActivityRepository.postSubActivity(activityID,userID!!,it)
     }
 
+    val reviewRes = Transformations.switchMap(toReview){it->
+        UserActivityRepository.postReviewActivity(it.activityID,it.content,it.reviewerID,it.score)
+    }
+
+    val delReviewRes = Transformations.switchMap(_isDel){
+        UserActivityRepository.postDelReviewActivity(activityID,userID!!)
+    }
+
     fun getActivityDetail(){
         _isGet.value = true
+        _refresh.value = 0
     }
 
     fun save(like:Boolean,subscribe:Boolean){
@@ -117,4 +132,28 @@ class ActivityDetailViewModel(
     }
 
 
+    fun review(content: String) = runBlocking {
+        val review = launch {
+            print(content)
+            toReview.value = Evaluation(userID!!,activityID,content,5,"","","")
+            delay(200)
+        }
+        review.join()
+        val ref = launch {
+            _refresh.value = _refresh.value?.plus(1)
+        }
+        ref.join()
+    }
+
+    fun deleteReview() = runBlocking {
+        val del = launch {
+            _isDel.value = _isDel.value?.plus(1)
+            delay(250)
+        }
+        del.join()
+        val ref = launch {
+            _refresh.value = _refresh.value?.plus(1)
+        }
+        ref.join()
+    }
 }

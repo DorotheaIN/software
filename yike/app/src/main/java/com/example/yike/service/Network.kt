@@ -92,6 +92,12 @@ object Network {
     suspend fun getSubscriberList(id: Int) =
         userService.getSubscriberList(id).await()
 
+    suspend fun postReviewActivity(activityID: Int,content: String,userID: String,score:Int) =
+        userService.postReviewActivity(activityID,content,userID, score).await()
+
+    suspend fun postDelReviewActivity(activityID: Int,userID: String) =
+        userService.postDeleteActivityReview(activityID, userID).await()
+
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
     private suspend fun <T> Call<T>.await() :T {

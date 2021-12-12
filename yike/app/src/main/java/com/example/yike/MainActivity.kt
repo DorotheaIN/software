@@ -3,6 +3,7 @@ package com.example.yike
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,6 +18,7 @@ import com.example.yike.viewModel.*
 
 
 class MainActivity : ComponentActivity() {
+    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -24,7 +26,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = "organization",
+                    startDestination = "login",
                     route = "root"
                 ) {
                     composable("welcome") {
@@ -33,8 +35,19 @@ class MainActivity : ComponentActivity() {
 
                     composable("login") {
                         val viewModel = LoginViewModel()
-                        LoginScreen(viewModel) {
-                            navController.navigate("discuss")
+                        LoginScreen(viewModel,
+                            {
+                                navController.navigate("discuss")
+                            },
+                            {
+                                navController.navigate("orgLogin")
+                            }
+                        )
+                    }
+                    composable("orgLogin") {
+                        val viewModel = OrgLoginViewModel()
+                        OrgLoginScreen(viewModel){
+                            navController.navigate("organization")
                         }
                     }
                     composable("discuss") {

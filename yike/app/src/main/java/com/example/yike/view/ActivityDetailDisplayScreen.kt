@@ -8,13 +8,17 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -36,13 +40,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.yike.R
+import com.example.yike.component.RequiredInputState
 import com.example.yike.component.ScrollableAppBar
 import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.ActivityDetail
 import com.example.yike.viewModel.ActivityDetailViewModel
 import com.example.yike.viewModel.Evaluation
+import kotlinx.coroutines.launch
 
-
+@ExperimentalMaterialApi
 @Composable
 fun NaviIcon(navController: NavController,activityDetailViewModel: ActivityDetailViewModel,like:Boolean,subscribe:Boolean){
     Icon(imageVector = Icons.Filled.ArrowBack,
@@ -53,12 +59,10 @@ fun NaviIcon(navController: NavController,activityDetailViewModel: ActivityDetai
         contentDescription = "ArrowBack",
         tint = Color.White
     )
-    val likeRes = activityDetailViewModel.likeRes.observeAsState()
-    val subRes = activityDetailViewModel.subRes.observeAsState()
 }
 
 
-
+@ExperimentalMaterialApi
 @Composable
 fun ActivityDetailDisplayScreen(
     navController: NavController,
@@ -72,113 +76,143 @@ fun ActivityDetailDisplayScreen(
         val subscribeStatus = viewModel.subscribeStatus.observeAsState()
         val activityDetail = viewModel.activityDetail.observeAsState()
         val evaluationList = viewModel.evaluationList.observeAsState()
-        val activityRecommendedList = viewModel.activityRecommendedList.observeAsState()
-        ActivityDetailScreenContent(activityDetail.value,navController,evaluationList.value,activityRecommendedList.value,
-            likeStatus.value,subscribeStatus.value,viewModel){like,subscribe->
-            viewModel.save(like,subscribe)
-            navController.navigate("activity")
-        }
+//        val activityRecommendedList = viewModel.activityRecommendedList.observeAsState()
+        val reviewRes = viewModel.reviewRes.observeAsState()
+        val likeRes = viewModel.likeRes.observeAsState()
+        val subRes = viewModel.subRes.observeAsState()
+        val delRes = viewModel.delReviewRes.observeAsState()
+        val userID = viewModel.getUserID
+        ActivityDetailScreenContent(activityDetail.value,userID,navController,evaluationList.value,
+            likeStatus.value,subscribeStatus.value,viewModel,
+            { like,subscribe->
+                viewModel.save(like,subscribe)
+                navController.navigate("activity")
+            },
+            { text->
+                viewModel.review(text)
+            },
+            {
+                viewModel.deleteReview()
+            }
+        )
     }
 }
 
+@ExperimentalMaterialApi
 @Composable
 fun ActivityDetailScreenContent(
     activityDetail: ActivityDetail?,
+    id:String?,
     navController: NavController,
     evaluationList:ArrayList<Evaluation>?,
-    activityList:ArrayList<Activity>?,
+//    activityList:ArrayList<Activity>?,
     likeStatus: Boolean?,
     subscribeStatus: Boolean?,
     activityDetailViewModel: ActivityDetailViewModel,
-    clickEvent:(like:Boolean,subscribe:Boolean) -> Unit
+    clickEvent:(like:Boolean,subscribe:Boolean) -> Unit,
+    reviewEvent: (text:String) -> Unit,
+    delReviwEvent:() -> Unit
 ){
     val likeSelected = remember{mutableStateOf(false)}
     val subscribeSelected = remember{mutableStateOf(false)}
-    Scaffold(
-        bottomBar = {
-            if(activityDetail!=null){
-                if(likeStatus!=null && subscribeStatus!=null){
-                    likeSelected.value = likeStatus
-                    subscribeSelected.value = subscribeStatus
-                    Bottom(activityDetail,evaluationList,likeSelected,subscribeSelected)
-                }
-            }
-        },
-        content = {
-            if(activityDetail!=null){
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    // ToolBar 最大向上位移量
-                    // 56.dp 参考自 androidx.compose.material AppBar.kt 里面定义的 private val AppBarHeight = 56.dp
-                    val maxUpPx = with(LocalDensity.current) { 170.dp.roundToPx().toFloat() - 56.dp.roundToPx().toFloat() }
-                    // ToolBar 最小向上位移量
-                    val minUpPx = 0f
-                    // 偏移折叠工具栏上移高度
-                    val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }
-                    // 现在，让我们创建与嵌套滚动系统的连接并聆听子 LazyColumn 中发生的滚动
-                    val nestedScrollConnection = remember {
-                        object : NestedScrollConnection {
-                            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                                // try to consume before LazyColumn to collapse toolbar if needed, hence pre-scroll
-                                val delta = available.y
-                                val newOffset = toolbarOffsetHeightPx.value + delta
-                                toolbarOffsetHeightPx.value = newOffset.coerceIn(-maxUpPx, minUpPx)
-                                return Offset.Zero
-                            }
-                        }
-                    }
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            // attach as a parent to the nested scroll system
-                            .nestedScroll(nestedScrollConnection)
-                    ) {
-                        // our list with build in nested scroll support that will notify us about its scroll
-                        LazyColumn(contentPadding = PaddingValues(top = 170.dp)) {
-                            item {
-                                InfoDisplay(item = activityDetail)
-                            }
-                            if(activityList!=null){
-                                item{
-                                    ActivityRecommendedDisplay(activityList)
-                                }
-                            }
-                            if(evaluationList != null){
-                                item{
-                                    EvaluationDiplay(evaluationList)
-                                }
-                            }
-                            item {
-                                Spacer(modifier = Modifier.height(60.dp))
-                            }
-                        }
-                        ScrollableAppBar(
-                            title = activityDetail.title,
-                            navigationIcon = { NaviIcon(navController = navController,activityDetailViewModel,likeSelected.value,subscribeSelected.value) },
-                            scrollableAppBarHeight = 170.dp,
-                            toolbarOffsetHeightPx = toolbarOffsetHeightPx,
-                            backgroundImg = activityDetail.img
-                        )
-
-                    }
-
-                }
+    val state = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val scope = rememberCoroutineScope()
+    ModalBottomSheetLayout(
+        sheetState = state,
+        sheetContent = {
+            ReviewTextField(reviewEvent){
+                scope.launch { state.hide() }
             }
         }
-    )
+    ) {
+        Scaffold(
+            bottomBar = {
+                if(activityDetail!=null){
+                    if(likeStatus!=null && subscribeStatus!=null){
+                        likeSelected.value = likeStatus
+                        subscribeSelected.value = subscribeStatus
+                        Bottom(activityDetail,evaluationList,likeSelected,subscribeSelected){
+                            scope.launch { state.show() }
+                        }
+                    }
+                }
+            },
+            content = {
+                if(activityDetail!=null && id != null){
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colors.background
+                    ) {
+                        // ToolBar 最大向上位移量
+                        // 56.dp 参考自 androidx.compose.material AppBar.kt 里面定义的 private val AppBarHeight = 56.dp
+                        val maxUpPx = with(LocalDensity.current) { 170.dp.roundToPx().toFloat() - 56.dp.roundToPx().toFloat() }
+                        // ToolBar 最小向上位移量
+                        val minUpPx = 0f
+                        // 偏移折叠工具栏上移高度
+                        val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }
+                        // 现在，让我们创建与嵌套滚动系统的连接并聆听子 LazyColumn 中发生的滚动
+                        val nestedScrollConnection = remember {
+                            object : NestedScrollConnection {
+                                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                                    // try to consume before LazyColumn to collapse toolbar if needed, hence pre-scroll
+                                    val delta = available.y
+                                    val newOffset = toolbarOffsetHeightPx.value + delta
+                                    toolbarOffsetHeightPx.value = newOffset.coerceIn(-maxUpPx, minUpPx)
+                                    return Offset.Zero
+                                }
+                            }
+                        }
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                // attach as a parent to the nested scroll system
+                                .nestedScroll(nestedScrollConnection)
+                        ) {
+                            // our list with build in nested scroll support that will notify us about its scroll
+                            LazyColumn(contentPadding = PaddingValues(top = 170.dp)) {
+                                item {
+                                    InfoDisplay(item = activityDetail)
+                                }
+//                                if(activityList!=null){
+//                                    item{
+//                                        ActivityRecommendedDisplay(activityList)
+//                                    }
+//                                }
+                                if(evaluationList != null){
+                                    item{
+                                        EvaluationDiplay(evaluationList,id,delReviwEvent)
+                                    }
+                                }
+                                item {
+                                    Spacer(modifier = Modifier.height(70.dp))
+                                }
+                            }
+                            ScrollableAppBar(
+                                title = activityDetail.title,
+                                navigationIcon = { NaviIcon(navController = navController,activityDetailViewModel,likeSelected.value,subscribeSelected.value) },
+                                scrollableAppBarHeight = 170.dp,
+                                toolbarOffsetHeightPx = toolbarOffsetHeightPx,
+                                backgroundImg = activityDetail.img
+                            )
 
+                        }
 
+                    }
+                }
+            }
+        )
+    }
 }
 
 
+@ExperimentalMaterialApi
 @Composable
 fun Bottom(
     activityDetail: ActivityDetail,
     evaluationList: ArrayList<Evaluation>?,
     likeStatus:MutableState<Boolean>,
-    subscribeStatus:MutableState<Boolean>
+    subscribeStatus:MutableState<Boolean>,
+    clickEvent: () -> Unit = {},
 ){
     Row(
         Modifier
@@ -188,12 +222,12 @@ fun Bottom(
         SubscribeIcon(activityDetail,subscribeStatus)
         LikeIcon(activityDetail,likeStatus)
         if(evaluationList != null){
-            EvaluateIcon(evaluationList.size)
+            EvaluateIcon(evaluationList.size,clickEvent)
         }else {
-            EvaluateIcon(0)
+            EvaluateIcon(0,clickEvent)
         }
-
     }
+
 }
 
 @Composable
@@ -240,14 +274,15 @@ fun LikeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>){
 }
 
 @Composable
-fun EvaluateIcon(evaluationNum:Int){
+fun EvaluateIcon(
+    evaluationNum:Int,
+    clickEvent:()->Unit
+){
     Box(
         modifier = Modifier.padding(30.dp,5.dp)
     ){
         Row(){
-            IconButton(onClick = {
-                /////////
-            }) {
+            IconButton(onClick = clickEvent ) {
                 Icon(painter = painterResource(id = R.drawable.review),
                     contentDescription = null,
                     modifier = Modifier.size(32.dp),
@@ -305,9 +340,6 @@ fun SubscribeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>)
         }
     }
 }
-
-
-
 
 @Composable
 fun PictureItem(item: Activity){
@@ -484,8 +516,9 @@ fun ContentDisplay(item:ActivityDetail){
     }
 }
 
+//qi
 @Composable
-fun ActivityRecommendedDisplay(activityList:ArrayList<Activity>){
+fun ActivityRecommendedDisplay(activityList: ArrayList<Activity>){
     Box() {
         Column(
             modifier = Modifier.padding(9.dp,3.dp,9.dp,3.dp)
@@ -548,20 +581,32 @@ fun InfoDisplay(item:ActivityDetail){
 
 
 @Composable
-fun EvaluationDiplay(evaluationList: ArrayList<Evaluation>){
+fun EvaluationDiplay(
+    evaluationList: ArrayList<Evaluation>,
+    id: String,
+    delReviwEvent:() -> Unit
+){
     Column() {
         evaluationList.forEach{it->
-            EvaluationItem(it)
+            if(it.reviewerID == id){
+                EvaluationItem(it,true,delReviwEvent)
+            }else{
+                EvaluationItem(it,false,delReviwEvent)
+            }
         }
     }
 }
 
 @Composable
-fun EvaluationItem(evaluation:Evaluation){
+fun EvaluationItem(
+    evaluation:Evaluation,
+    deletable:Boolean,
+    delReviwEvent:() -> Unit
+){
     Box(
         modifier = Modifier
             .size(550.dp, 85.dp)
-            .padding(3.dp, 0.dp)
+            .padding(20.dp, 0.dp,0.dp,0.dp)
             .clickable { }
             .background(Color.White)
     ){
@@ -570,7 +615,7 @@ fun EvaluationItem(evaluation:Evaluation){
                 painter = rememberImagePainter(evaluation.reviewerAvator),
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(10.dp, 5.dp)
+                    .padding(0.dp, 5.dp)
                     .size(55.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .fillMaxSize()
@@ -578,7 +623,7 @@ fun EvaluationItem(evaluation:Evaluation){
             )
             Spacer(modifier = Modifier.width(15.dp))
 
-            Column (modifier = Modifier.size(300.dp,65.dp)){
+            Column (modifier = Modifier.size(250.dp,65.dp).clickable {  }){
                 Text(
                     text = evaluation.reviewerName,
                     color = Color.Black,
@@ -594,20 +639,93 @@ fun EvaluationItem(evaluation:Evaluation){
                     style = MaterialTheme.typography.caption
                 )
             }
-            Spacer(modifier = Modifier.width(15.dp))
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(Icons.Filled.Add,null)
+            if(deletable){
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    IconButton(
+                        onClick = delReviwEvent
+                    ) {
+                        Icon(Icons.Outlined.Delete,null)
+                    }
+                }
             }
         }
     }
 }
 
+@Composable
+fun ReviewTextField(
+    reviewEvent: (text: String) -> Unit,
+    closeEvent: () ->Unit
+){
+    val state = remember { RequiredInputState() }
+    Box(
+        modifier = Modifier
+            .size(600.dp, 200.dp)
+            .fillMaxWidth()
+            .background(Color(0xFFD3D3D3)),
+    ) {
+        BasicTextField(
+            value = state.text,
+            onValueChange = {
+                state.text = it
+            },
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxSize(),
+            decorationBox = { innerTextField ->
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp, 15.dp, 0.dp, 5.dp)
+                        .fillMaxSize()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(0.dp,5.dp),
+                        horizontalArrangement = Arrangement.Start,
+//                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        IconButton(onClick = {},Modifier.size(15.dp)) { Icon(painterResource(id = R.drawable.more), contentDescription = null) }
+                        IconButton(onClick = {},Modifier.size(15.dp)) { Icon(painterResource(id = R.drawable.more), contentDescription = null) }
+                        IconButton(onClick = {},Modifier.size(15.dp)) { Icon(painterResource(id = R.drawable.more), contentDescription = null) }
+                        IconButton(onClick = {},Modifier.size(15.dp)) { Icon(painterResource(id = R.drawable.more), contentDescription = null) }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .fillMaxSize()
+                            .weight(1f)
+                    ) {
+                        innerTextField()
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+//                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        TextButton( onClick = {
+                            reviewEvent(state.text)
+                            closeEvent()
+                        }) {
+                            Text("发送")
+                        }
+                        Spacer(Modifier.padding(horizontal = 10.dp))
+                        TextButton( onClick = closeEvent ) {
+                            Text("关闭")
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+}
 
 
 
-
-
-@Preview
 @Composable
 fun displayTextStyle(){
     Column() {
