@@ -127,7 +127,6 @@ fun ActivityItem(
                     .size(600.dp, 170.dp)
                     .clickable {
                         onClick(item.id)
-//                        navController.navigate("activitydetail_screen/${item.id}")
                     },
                 painter = rememberImagePainter(item.img),
                 contentDescription = null,

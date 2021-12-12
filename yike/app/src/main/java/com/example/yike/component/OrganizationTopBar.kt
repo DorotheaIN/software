@@ -12,19 +12,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun OriganizationTopBar() {
+fun OriganizationTopBar(
+    clickEvent:()->Unit = {}
+) {
     TopAppBar(
-        backgroundColor = Color(0xffdaa545),
+        backgroundColor = Color(0xFFFFFFFF),
     ) {
-        IconButton(onClick = {
-//            navController.navigate("discuss")
-        }) {
+        IconButton(onClick = clickEvent) {
             Icon(
                 Icons.Filled.ArrowBack,
                 contentDescription = "Back",
                 modifier = Modifier
                     .size(24.dp),
-                tint = Color.White
+                tint = Color(0xFF000000)
             )
         }
     }

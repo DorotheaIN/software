@@ -62,7 +62,9 @@ fun ActivityCorrectContent(
 ){
     Scaffold(
         topBar = {
-            OriganizationTopBar()
+            OriganizationTopBar(){
+                navController.navigate("organization")
+            }
         }
     ) {
         val title = remember { RequiredInputState()}

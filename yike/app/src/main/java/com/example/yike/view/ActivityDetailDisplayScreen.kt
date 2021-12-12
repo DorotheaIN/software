@@ -239,7 +239,6 @@ fun LikeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>){
     }
 }
 
-
 @Composable
 fun EvaluateIcon(evaluationNum:Int){
     Box(

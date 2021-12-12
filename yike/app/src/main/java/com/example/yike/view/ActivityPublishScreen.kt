@@ -43,7 +43,9 @@ fun ActivityPublishContent(
 ){
     Scaffold(
         topBar = {
-            OriganizationTopBar()
+            OriganizationTopBar(){
+                navController.navigate("organization")
+            }
         }
     ) {
         //val activity = remember { mutableStateOf(Activity("","","","","","","","",0,0,1,0, organization,0)) }
