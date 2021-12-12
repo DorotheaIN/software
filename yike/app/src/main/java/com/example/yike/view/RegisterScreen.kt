@@ -6,19 +6,31 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key.Companion.Sleep
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import com.example.yike.view.ResgisterTwoScreen
+import com.example.yike.view.RegisterTwoScreen
+import com.example.yike.viewModel.*
+import com.example.yike.viewModel.GlobalViewModel.checksendStatus
+import com.example.yike.viewModel.GlobalViewModel.sendEmailInfo
+import kotlinx.coroutines.delay
+
+//data class BackStackEntry(val email: String?,val verifyCode:String?)
+
 
 @Preview
 @Composable
@@ -29,20 +41,52 @@ fun RegisterUI(){
         startDestination = "personRegister_screen",
     ){
         composable("personRegister_screen"){
-            ResgisterScreen(navController = navController)
+            val viewModel = SendEmailViewModel()
+            ResgisterScreen(navController = navController, viewModel)
         }
         composable("officialRegister_screen"){
-            ResgisterOfficialScreen(navController = navController)
+            RegisterOfficialScreen(navController = navController)
         }
-        composable("personRegister2_screen"){
-            ResgisterTwoScreen(navController = navController)
+        composable(
+            route = "personRegister2_screen",
+//            arguments = listOf(
+//                navArgument("email"){type = NavType.StringType},
+//                navArgument("verifyCode"){type = NavType.StringType})
+            ){
+            val getPersonRegisterViewModel = GetPersonRegisterViewModel()
+//            val email = it.arguments?.getString("email")?:""
+//            val verifyCode = it.arguments?.getString("verifyCode")?:""
+            RegisterTwoScreen(navController = navController,getPersonRegisterViewModel)
         }
     }
 }
 
+@Composable
+fun ResgisterScreen(navController: NavController,
+                    sendEmailViewModel: SendEmailViewModel
+                    ){
+
+    val sendEmailInfo = sendEmailViewModel.sendEmailInfo.observeAsState()
+    println("222222222222222222222")
+//    println(sendEmailInfo.value)
+    RegisterScreenContent(navController, sendEmailInfo.value){
+        email ->  sendEmailViewModel.checksendStatus(email)
+    }
+
+}
 
 @Composable
-fun ResgisterScreen(navController: NavController){
+fun RegisterScreenContent(navController: NavController,
+                          code: String?,
+                           clickEvent: (email: String) -> Unit,
+                           ){
+    val emailInput = remember { EmailState() }
+    if(!code.isNullOrEmpty()) {
+        println("5555555")
+        GlobalViewModel.updateVerifyCode(code)
+        println(code)
+        navController.navigate("personRegister2_screen")
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,9 +105,19 @@ fun ResgisterScreen(navController: NavController){
         Spacer(Modifier.height(70.dp))
         RegistDescript()
         Spacer(Modifier.height(50.dp))
-        TextInfomation()
+        TextEmail(emailInput)
         Spacer(Modifier.height(10.dp))
-        VerifyButton(navController)
+        VerifyButton(
+            onClick = {
+                if (emailInput.isValid) {
+                    clickEvent(emailInput.text)
+                    GlobalViewModel.updateEmail(emailInput.text)
+//                    GlobalViewModel.updateVerifyCode(verifyCode)
+                    println("check!2222222")
+//                    println(GlobalViewModel.getVerifyCode())
+                }
+            }
+        )
     }
 }
 
@@ -102,8 +156,13 @@ fun RegistDescript(){
 }
 
 @Composable
-fun TextInfomation(){
-    var text by remember{ mutableStateOf("") }
+fun TextEmail(emailInput:EmailState){
+//    var text by remember{ mutableStateOf("") }
+
+    val textState = remember {
+        EmailState()
+    }
+
     Surface(
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
@@ -113,9 +172,10 @@ fun TextInfomation(){
             .fillMaxWidth()
     ) {
         TextField(
-            value = text,
-            onValueChange = {
-                text = it
+            value = textState.text,
+            onValueChange = { newString ->
+                textState.text = newString
+                emailInput.text = textState.text
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color(0xFF0D0D0E),
@@ -135,7 +195,11 @@ fun TextInfomation(){
 }
 
 @Composable
-fun VerifyButton(navController: NavController){
+fun VerifyButton(
+//    navController: NavController,
+//                 emailInput: EmailState,
+                 onClick: () -> Unit
+                 ){
 
     Surface(
         shape = RoundedCornerShape(30.dp),
@@ -145,9 +209,7 @@ fun VerifyButton(navController: NavController){
             .padding(start = 30.dp,end = 30.dp)
             .fillMaxWidth()
             .clickable(
-                onClick = {
-                    navController.navigate("personRegister2_screen")
-                }
+                onClick = onClick
             )
     ) {
         Text("获取邮箱验证码",

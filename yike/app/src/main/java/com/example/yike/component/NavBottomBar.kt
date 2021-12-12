@@ -38,7 +38,7 @@ fun NavBottomBar(
             icon = Icons.Default.AccountCircle,
             labelText = "Profile",
             onClick = {
-                navController.navigate("organization")
+                navController.navigate("mainInfo_screen")
             },
         )
     }

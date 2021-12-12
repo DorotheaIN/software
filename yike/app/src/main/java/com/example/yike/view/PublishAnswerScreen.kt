@@ -50,35 +50,35 @@ fun AnswerScreen(navController: NavController){
         },
     ) {
         Column() {
-            questionPart(ans = AnswerData)
+//            questionPart(ans = AnswerData)
             AnswerPart()
         }
     }
 }
 
-@Composable
-fun questionPart(ans:AnswerData)
-{
-    Column() {
-        Spacer(modifier = Modifier.padding(vertical = 6.dp))
-        Row {
-            Box(Modifier.padding(horizontal = 4.dp))
-            Text(
-                text = ans.answer.question,
-                fontSize = 20.sp,
-            )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-            Divider(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(start = 0.dp, end = 0.dp),
-                //颜色
-                color = Color.LightGray,
-            )
-    }
-}
+//@Composable
+//fun questionPart(ans:Ques)
+//{
+//    Column() {
+//        Spacer(modifier = Modifier.padding(vertical = 6.dp))
+//        Row {
+//            Box(Modifier.padding(horizontal = 4.dp))
+//            Text(
+//                text = ans.answer.question,
+//                fontSize = 20.sp,
+//            )
+//        }
+//        Spacer(modifier = Modifier.height(10.dp))
+//            Divider(
+//                Modifier
+//                    .fillMaxWidth()
+//                    .height(1.dp)
+//                    .padding(start = 0.dp, end = 0.dp),
+//                //颜色
+//                color = Color.LightGray,
+//            )
+//    }
+//}
 
 @Composable
 fun AnswerPart(){

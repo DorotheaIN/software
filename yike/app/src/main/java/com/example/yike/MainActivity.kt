@@ -85,6 +85,32 @@ class MainActivity : ComponentActivity() {
                         val activityPublishViewModel = ActivityPublishViewModel()
                         ActivityPublishScreen(navController = navController,activityPublishViewModel)
                     }
+                    composable("mainInfo_screen"){
+                        MainInfo(navController = navController)
+                    }
+                    composable("infoPublishQuestion_screen")
+                    {
+                        val publishQuestionViewModel = PublishQuestionViewModel()
+                        InfoPublishQuesScreen(navController = navController,publishQuestionViewModel)
+                    }
+                    composable("infoFollowQuestion_screen")
+                    {
+                        val followQuestionViewModel = FollowQuestionViewModel()
+                        InfoFollowQuesScreen(navController = navController,followQuestionViewModel)
+                    }
+                    composable(
+                        route = "detailed_screen/{questionId}/{answerId}",
+                        arguments = listOf(navArgument("questionId") { type = NavType.StringType },navArgument("answerId") { type = NavType.StringType })
+                    ){
+                        val questionId = it.arguments?.getString("questionId")?:""
+                        val answerId = it.arguments?.getString("answerId")?:""
+                        val detailedAnswerViewModel = DetailedAnswerViewModel(questionId,answerId)
+                        DetailedScreen(navController = navController,detailedAnswerViewModel)
+                    }
+                    composable("publishAnswer_screen"){
+                        AnswerScreen(navController = navController)
+                    }
+
                 }
 
             }

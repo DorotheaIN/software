@@ -17,7 +17,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.yike.data.Taylor
+import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.PublishQuestion
 import com.example.yike.viewModel.PublishQuestionViewModel
 
@@ -64,7 +66,8 @@ fun PubQuesTable(){
 
 @Composable
 fun QuestionCard(navController: NavController,ques:PublishQuestion) {
-    val user = Taylor
+//    val user = Taylor
+    val id = ques.id
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 0.dp,
@@ -72,7 +75,8 @@ fun QuestionCard(navController: NavController,ques:PublishQuestion) {
             .padding(all = 8.dp)
             .fillMaxWidth()
             .clickable {
-                navController.navigate("detailed_screen")
+//                navController.navigate("detailed_screen")
+                navController.navigate("question/${id}")
             }
 
     ) {
@@ -83,7 +87,7 @@ fun QuestionCard(navController: NavController,ques:PublishQuestion) {
                 modifier = Modifier.padding(all = 8.dp)
             ) {
                 Image(
-                    painterResource(user.pic),
+                    painter = rememberImagePainter(GlobalViewModel.getUserInfo()?.avator),//用户照片
                     contentDescription = "profile picture", //这个描述用于无障碍
                     modifier = Modifier
                         .size(50.dp)
@@ -94,12 +98,12 @@ fun QuestionCard(navController: NavController,ques:PublishQuestion) {
 
                 ) {
                     Text(
-                        text = user.name,
+                        text = GlobalViewModel.getUserInfo()?.user_NAME.toString(),
                         style = MaterialTheme.typography.subtitle2 // 添加 style
                     )
                     Spacer(modifier = Modifier.padding(vertical = 4.dp))
                     Text(
-                        user.introduction,
+                        text = GlobalViewModel.getUserInfo()?.introduction.toString(),
                         style = MaterialTheme.typography.caption // 添加 style
 
                     )

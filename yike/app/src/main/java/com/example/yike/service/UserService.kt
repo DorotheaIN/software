@@ -72,5 +72,14 @@ interface UserService {
     @GET("getMyQuestions")
     fun getPublishQuestionList(@Query("ID") id:String):Call<PublishQuestionResponse>
 
+    @POST("sendEmail")
+    fun sendEmail(@Query("to")email:String):Call<SendEmailResponse>
 
+    @POST("signUp")
+    fun getPersonRegister(@Query("email")email:String,@Query("name")name:String,@Query("password")password:String):Call<getPersonRegistResponse>
+
+    @GET("discuss/getAllCommentByQuestionIdAndAnswerId")
+    fun getAllCommentByQuestionIdAndAnswerId(@Query("answerId")answerId:Int,@Query("questionId")questionId:Int):Call<GetAllCommentByQuestionIdAndAnswerIdResponse>
 }
+
+//getAllCommentByQuestionIdAndAnswerId

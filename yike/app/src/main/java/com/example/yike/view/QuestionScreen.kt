@@ -44,7 +44,10 @@ fun QuestionScreen(
             },
             clickEvent1 = {
                 viewModel.convertQuestionStatus()
-        })
+                          },
+            navController,//whl增加
+            viewModel.questionId,//whl增加
+            )
     }
 }
 
@@ -54,7 +57,9 @@ private fun QuestionScreenScaffold(
     questionBody: Question?,
     questionStatus: Int?,
     backEvent: () -> Unit,
-    clickEvent1: () -> Unit
+    clickEvent1: () -> Unit,
+    navController: NavController,//whl增加
+    questionId:String,//whl增加
 ) {
     Scaffold(
         topBar = {
@@ -70,7 +75,9 @@ private fun QuestionScreenScaffold(
                 questionBody,
                 questionStatus,
                 paddingValues,
-                clickEvent1
+                navController,// whl增加
+                questionId,//whl增加
+                clickEvent1,
 //                routeEvent
 
             )
@@ -101,6 +108,8 @@ private fun QuestionScreenContent(
     questionBody: Question,
     questionStatus: Int,
     paddingValues: PaddingValues,
+    navController: NavController,//whl增加
+    questionId:String,//whl增加
     clickEvent1: () -> Unit = {}
 ) {
     Surface(
@@ -122,7 +131,9 @@ private fun QuestionScreenContent(
             )
 
             AnswerListSection(
-                answerList
+                answerList,
+                navController,//whl增加
+                questionId,//whl增加
             )
         }
     }
@@ -200,7 +211,9 @@ private fun UserOperationSection(
 
 @Composable
 private fun AnswerListSection(
-    answerList: ArrayList<Answer>
+    answerList: ArrayList<Answer>,
+    navController: NavController,//whl增加
+    questionId:String,//whl增加
 ) {
 //    LazyColumn {
 //        items(answerModel) { answer ->
@@ -209,7 +222,7 @@ private fun AnswerListSection(
 //    }
     Column() {
         answerList.forEach{answer ->
-            AnswerCard(answerInfo = answer)
+            AnswerCard(answerInfo = answer,navController,questionId)
         }
     }
 }

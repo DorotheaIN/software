@@ -22,7 +22,7 @@ import com.example.yike.view.RegisterButton
 
 
 @Composable
-fun ResgisterOfficialScreen(navController: NavController){
+fun RegisterOfficialScreen(navController: NavController){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +49,7 @@ fun ResgisterOfficialScreen(navController: NavController){
         Spacer(Modifier.height(10.dp))
         UploadPicFile()
         Spacer(Modifier.height(10.dp))
-        RegisterButton()
+//        RegisterButton()
     }
 }
 

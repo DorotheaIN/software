@@ -18,7 +18,7 @@ class QuestionViewModel(
 ): ViewModel() {
     private val questionBody = GlobalViewModel.getQuestion(_questionId)
     private val userId = GlobalViewModel.getUserInfo()?.id
-    private val questionId = _questionId
+    val questionId = _questionId
     private val _isGet = MutableLiveData<Boolean>()
     val isGet: LiveData<Boolean> = _isGet
 

@@ -24,55 +24,57 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.example.yike.data.Taylor
 import com.example.yike.ui.screens.ActivityDetailDisplayScreen
 import com.example.yike.view.InfoFollowQuesScreen
 import com.example.yike.viewModel.FollowQuestionViewModel
+import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.PublishQuestionViewModel
 
 
-@Composable
-fun MainInfoScreen(){
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = "mainInfo_screen" ,
-    ){
-        composable("mainInfo_screen"){
-            MainInfo(navController = navController)
-        }
-        composable("infoactivity_screen"){
-            InfoActivityScreen(navController = navController)
-        }
-        composable("infoPublishQuestion_screen")
-        {
-            val publishQuestionViewModel = PublishQuestionViewModel()
-            InfoPublishQuesScreen(navController = navController,publishQuestionViewModel)
-        }
-        composable("infoFollowQuestion_screen")
-        {
-            val followQuestionViewModel = FollowQuestionViewModel()
-            InfoFollowQuesScreen(navController = navController,followQuestionViewModel)
-        }
-        composable("detailed_screen"){
-            DetailedScreen(navController = navController)
-        }
-        composable("publishAnswer_screen"){
-            AnswerScreen(navController = navController)
-        }
-//        composable(
-//            "activitydetail_screen/{id}",
-//            arguments = listOf(navArgument("id"){type = NavType.IntType})
-//        ){
-//                entry->
-//            val id = entry.arguments?.getInt("id")
-//            if (id != null) {
-//                ActivityDetailDisplayScreen(id,navController = navController)
-//            }
+//@Composable
+//fun MainInfoScreen(){
+//    val navController = rememberNavController()
+//    NavHost(
+//        navController = navController,
+//        startDestination = "mainInfo_screen" ,
+//    ){
+//        composable("mainInfo_screen"){
+//            MainInfo(navController = navController)
 //        }
-    }
-
-}
+//        composable("infoactivity_screen"){
+//            InfoActivityScreen(navController = navController)
+//        }
+//        composable("infoPublishQuestion_screen")
+//        {
+//            val publishQuestionViewModel = PublishQuestionViewModel()
+//            InfoPublishQuesScreen(navController = navController,publishQuestionViewModel)
+//        }
+//        composable("infoFollowQuestion_screen")
+//        {
+//            val followQuestionViewModel = FollowQuestionViewModel()
+//            InfoFollowQuesScreen(navController = navController,followQuestionViewModel)
+//        }
+//        composable("detailed_screen"){
+//            DetailedScreen(navController = navController)
+//        }
+//        composable("publishAnswer_screen"){
+//            AnswerScreen(navController = navController)
+//        }
+////        composable(
+////            "activitydetail_screen/{id}",
+////            arguments = listOf(navArgument("id"){type = NavType.IntType})
+////        ){
+////                entry->
+////            val id = entry.arguments?.getInt("id")
+////            if (id != null) {
+////                ActivityDetailDisplayScreen(id,navController = navController)
+////            }
+////        }
+//    }
+//
+//}
 
 
 @Composable
@@ -110,7 +112,7 @@ fun MainInfo(navController: NavController){
 @Preview
 @Composable
 fun UserInfo(){
-    val tay= Taylor
+//    val tay= Taylor
     Surface(
         modifier = Modifier
             .padding(bottom = 7.dp)
@@ -138,7 +140,7 @@ fun UserInfo(){
             ){
                 Row(modifier = Modifier.padding(all = 8.dp)) {
                     Image(
-                        painter = painterResource(tay.pic),
+                        painter = rememberImagePainter(GlobalViewModel.getUserInfo()?.avator),
                         contentDescription = null,
                         modifier = Modifier
                             .padding(0.dp, 5.dp)
@@ -151,7 +153,7 @@ fun UserInfo(){
 
                     Column (modifier = Modifier.size(300.dp,65.dp)){
                         Text(
-                            text = tay.name,
+                            text = GlobalViewModel.getUserInfo()?.user_NAME.toString(),
                             color = Color.White,
                             style = MaterialTheme.typography.h6,
                             modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
@@ -160,7 +162,7 @@ fun UserInfo(){
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = tay.introduction,
+                            text = GlobalViewModel.getUserInfo()?.introduction.toString(),
                             color = Color(0x7EFFFFFF),
                             style = MaterialTheme.typography.caption
                         )
@@ -266,6 +268,7 @@ fun ToQuestion(navController: NavController){
             )
             Spacer(modifier = Modifier.width(15.dp))
             TextButton(onClick = {
+//                navController.navigate("infoPublishQuestion_screen")
                 navController.navigate("infoPublishQuestion_screen")
             }) {
                 Text(

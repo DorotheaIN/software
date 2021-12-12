@@ -2,6 +2,7 @@ package com.example.yike.service
 
 import androidx.lifecycle.liveData
 import com.example.yike.model.QuestionResponse
+import com.example.yike.viewModel.QuesAnswer
 import com.example.yike.viewModel.Question
 import com.example.yike.viewModel.UserInfo
 import kotlinx.coroutines.Dispatchers
@@ -322,4 +323,73 @@ object FollowQuestionRepository{
     }
 }
 
+object SendEmailRepository {
+    fun sendEmail(email:String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val sendEmailResponse = Network.sendEmail(email)
+            println(sendEmailResponse.result)
+            if (sendEmailResponse.code == 200) {
+//                println("111111111111111111")
+//                println(sendEmailResponse.result)
+                sendEmailResponse.result
+            } else {
+                println("response status is not ok!")
+                ""
+                }
+        } catch (e: Exception){
+            println(e)
+            UserInfo()
+            ""
+        }
+        emit(result)
+    }
+}
 
+object GetPersonRegisterRepository {
+    fun getPersonRegister(email:String,name:String,password: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val getPersonRegisterResponse = Network.getPersonRegister(email,name,password)
+            if (getPersonRegisterResponse.code == 200) {
+                getPersonRegisterResponse.result
+            } else {
+                println("response status is not ok!")
+            }
+            ""
+        } catch (e: Exception){
+            println(e)
+            UserInfo()
+            ""
+        }
+        emit(result)
+    }
+}
+
+object GetAllCommentByQuestionIdAndAnswerIdRepository {
+    fun getAllCommentByQuestionIdAndAnswerId(answerId:String,questionId: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            println("c22222222222222222222222222222222")
+            println(answerId)
+            println(questionId)
+            val intAnswer=answerId.toInt()
+            val intQuestion=questionId.toInt()
+            println(intAnswer.toString())
+            println(intQuestion.toString())
+            val getAllCommentByQuestionIdAndAnswerIdResponse = Network.getAllCommentByQuestionIdAndAnswerId(intAnswer,intQuestion)
+            if (getAllCommentByQuestionIdAndAnswerIdResponse.code == 200) {
+                println("c3333333333333333333")
+                println(answerId)
+                println(getAllCommentByQuestionIdAndAnswerIdResponse.result.question)
+                getAllCommentByQuestionIdAndAnswerIdResponse.result
+            } else {
+                println("response status is not ok!")
+//                QuesAnswer()
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+//            QuesAnswer()
+            null
+        }
+        emit(result)
+    }
+}

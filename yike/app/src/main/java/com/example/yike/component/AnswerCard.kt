@@ -1,6 +1,7 @@
 package com.example.yike.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -10,17 +11,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.yike.R
 import com.example.yike.viewModel.Answer
 
 @Composable
 fun AnswerCard(
-    answerInfo: Answer
+    answerInfo: Answer,
+    navController:NavController,//whl增加
+    _questionId:String,//whl增加
 ) {
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
-        modifier = Modifier.padding(all = 8.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(all = 8.dp).fillMaxWidth()
+            .clickable(         // whl增加
+                onClick = {
+//                    val questionId = "20"
+                    val questionId = _questionId
+                    val answerId = answerInfo.id
+                    navController.navigate("detailed_screen/${questionId}/${answerId}")
+                }
+            )
     ){
         Row(
             modifier = Modifier.padding(all = 8.dp) // 在我们的 Card 周围添加 padding

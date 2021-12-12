@@ -46,7 +46,7 @@ class PublishQuestionViewModel(
     }
     //用户方法：
     fun init() {
-        id.value = "DRT@qq.com"
+        id.value = GlobalViewModel.getUserInfo()?.id
     }
 //
 //    private val like = Transformations.switchMap(isInit) {

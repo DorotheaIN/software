@@ -1,10 +1,12 @@
 package com.example.yike.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -14,10 +16,39 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.yike.NameInputState
+import com.example.yike.PasswordInputState
 import com.example.yike.RegistDescript
+import com.example.yike.VerifyCodeInputState
+import com.example.yike.viewModel.GetPersonRegisterViewModel
+import com.example.yike.viewModel.GlobalViewModel
+import com.example.yike.viewModel.GlobalViewModel.sendEmailInfo
 
 @Composable
-fun ResgisterTwoScreen(navController: NavController){
+fun RegisterTwoScreen(
+    navController: NavController,
+    getPersonRegisterViewModel: GetPersonRegisterViewModel
+    ) {
+    println("3333333333333333")
+    println(sendEmailInfo.value)
+    val getPersonRegisterInfo = getPersonRegisterViewModel.personRegisterInfo.observeAsState()
+    RegisterTwoScreenContent(navController, GlobalViewModel.getEmail().toString() , verifyCode = GlobalViewModel.getVerifyCode()){
+        email,name,password -> getPersonRegisterViewModel.checkPersonRegisterStatus(email,name,password)
+    }
+}
+
+
+@Composable
+fun RegisterTwoScreenContent(
+    navController: NavController,
+    email:String,
+    verifyCode:String?,
+    clickEvent: (email:String,name:String,password:String) -> Unit
+    ){
+
+    val nameInput = remember { NameInputState() }
+    val passwordInput = remember { PasswordInputState() }
+    val verifyCodeInput = remember { VerifyCodeInputState() }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -36,13 +67,19 @@ fun ResgisterTwoScreen(navController: NavController){
         Spacer(Modifier.height(70.dp))
         RegistDescript()
         Spacer(Modifier.height(50.dp))
-        TextName()
+        TextName(nameInput)
         Spacer(Modifier.height(10.dp))
-        TextCode()
+        TextCode(passwordInput)
         Spacer(Modifier.height(10.dp))
-        TextVerify()
+        TextVerify(verifyCodeInput)
         Spacer(Modifier.height(10.dp))
-        RegisterButton()
+        RegisterButton(
+            onClick = {
+                if(passwordInput.isValid && nameInput.isValid && verifyCodeInput.isValid && verifyCodeInput.text == verifyCode){
+                    clickEvent(email,nameInput.text,passwordInput.text)
+                }
+            }
+        )
     }
 }
 
@@ -62,8 +99,10 @@ fun RegisterTwoTable(navController: NavController){
 }
 
 @Composable
-fun TextName(){
-    var text by remember{ mutableStateOf("") }
+fun TextName(nameInput:NameInputState){
+    val textName = remember {
+        NameInputState()
+    }
     Surface(
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
@@ -73,9 +112,10 @@ fun TextName(){
             .fillMaxWidth()
     ) {
         TextField(
-            value = text,
-            onValueChange = {
-                text = it
+            value = textName.text,
+            onValueChange = {newString ->
+                textName.text = newString
+                nameInput.text = textName.text
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color(0xFF0D0D0E),
@@ -95,8 +135,10 @@ fun TextName(){
 }
 
 @Composable
-fun TextCode(){
-    var text by remember{ mutableStateOf("") }
+fun TextCode(passwordInput:PasswordInputState){
+    val textCode = remember {
+        PasswordInputState()
+    }
     Surface(
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
@@ -106,9 +148,10 @@ fun TextCode(){
             .fillMaxWidth()
     ) {
         TextField(
-            value = text,
-            onValueChange = {
-                text = it
+            value = textCode.text,
+            onValueChange = {newText ->
+                textCode.text = newText
+                passwordInput.text = textCode.text
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color(0xFF0D0D0E),
@@ -127,10 +170,11 @@ fun TextCode(){
     }
 }
 
-@Preview
 @Composable
-fun TextVerify(){
-    var text by remember{ mutableStateOf("") }
+fun TextVerify(verifyCodeInput:VerifyCodeInputState){
+    val textVerifyCode = remember {
+        VerifyCodeInputState()
+    }
     Surface(
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
@@ -140,9 +184,10 @@ fun TextVerify(){
             .fillMaxWidth()
     ) {
         TextField(
-            value = text,
-            onValueChange = {
-                text = it
+            value = textVerifyCode.text,
+            onValueChange = {newText ->
+                textVerifyCode.text = newText
+                verifyCodeInput.text = textVerifyCode.text
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color(0xFF0D0D0E),
@@ -161,9 +206,10 @@ fun TextVerify(){
     }
 }
 
-@Preview
 @Composable
-fun RegisterButton(){
+fun RegisterButton(
+    onClick: () -> Unit
+){
     Surface(
         shape = RoundedCornerShape(30.dp),
         color = Color(0xFFFFFFFF),
@@ -171,7 +217,9 @@ fun RegisterButton(){
             .size(width = 700.dp, height = 50.dp)
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
-//            .clickable()
+            .clickable(
+                onClick = onClick
+            )
     ) {
         Text("点击注册",
             modifier = Modifier

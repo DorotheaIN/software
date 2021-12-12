@@ -68,6 +68,15 @@ object Network {
     suspend fun getFollowQuestionList(id:String) =
         userService.getFollowQuestionsList(id).await()
 
+    suspend fun sendEmail(email:String) =
+        userService.sendEmail(email).await()
+
+    suspend fun getPersonRegister(email:String,name:String,password: String) =
+        userService.getPersonRegister(email,name,password).await()
+
+    suspend fun getAllCommentByQuestionIdAndAnswerId(answerId:Int,questionId:Int) =
+        userService.getAllCommentByQuestionIdAndAnswerId(answerId,questionId).await()
+
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
     private suspend fun <T> Call<T>.await() :T {
@@ -82,7 +91,6 @@ object Network {
                         RuntimeException("response body is null")
                     )
                 }
-
                 override fun onFailure(call: Call<T>, t: Throwable) {
                     println(t)
                     continuation.resumeWithException(t)

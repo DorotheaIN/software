@@ -17,6 +17,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.sharp.ArrowDropDown
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -26,20 +27,32 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.yike.data.Answer
 import com.example.yike.data.AnswerData
 import com.example.yike.data.CommentData
 import com.example.yike.data.Taylor
+import com.example.yike.viewModel.CommentInfo
+import com.example.yike.viewModel.DetailedAnswerViewModel
+import com.example.yike.viewModel.QuesAnswer
 
 @Composable
-fun DetailedScreen(navController: NavController) {
-    DetailAnswer(comments = CommentData.comment,navController)
+fun DetailedScreen(navController: NavController,
+                   detailedAnswerViewModel: DetailedAnswerViewModel
+                   ) {
+    println("c111111111111111111111111111111111")
+    println(detailedAnswerViewModel.answerId)
+    println(detailedAnswerViewModel.questionId)
+    detailedAnswerViewModel.slectQuesAnswer(detailedAnswerViewModel.answerId,detailedAnswerViewModel.questionId)
+    val quesAnswerInfoList = detailedAnswerViewModel.quesAnswerInfoList.observeAsState()
+    DetailAnswer(quesAnswerInfoList.value,navController)
 }
 
 
 //@Preview
 @Composable
-fun DetailAnswer(comments: List<Answer>,navController: NavController){
+//fun DetailAnswer(questionAnswerInfoList:ArrayList<QuesAnswer>?,navController: NavController)
+fun DetailAnswer(questionAnswerInfoList:QuesAnswer?,navController: NavController){
     Scaffold(
         topBar = {
             TopAppBar(
@@ -59,7 +72,7 @@ fun DetailAnswer(comments: List<Answer>,navController: NavController){
                 elevation = 0.dp,
                 actions = {
                     TextButton(onClick = {
-                        navController.navigate("publishAnswer_screen")
+//                        navController.navigate("publishAnswer_screen")
                     }) {
                         Text("写回答",
                             color = Color(0xFF1084E0)
@@ -85,13 +98,41 @@ fun DetailAnswer(comments: List<Answer>,navController: NavController){
         }
     ) {
             LazyColumn(Modifier) {
+//                item {
+//                    questionPart(ans = AnswerData)
+//                    UserPart()
+//                    ShowAnswer(ans = AnswerData)
+//                }
                 item {
-                    questionPart(ans = AnswerData)
-                    UserPart()
-                    ShowAnswer(ans = AnswerData)
+//                item(questionAnswerInfoList) {
+//                    if(questionAnswerInfoList!=null) {
+//                        questionAnswerInfoList[] {
+//                            DetailedQuestionPart(it)
+//                            DetailedUserPart(it)
+//                            ShowAnswer(it)
+//                        }
+//                    questionAnswerInfoList?.get(0)?.let { it1 -> DetailedQuestionPart(it1) }
+//                    questionAnswerInfoList?.get(0)?.let { it1 -> DetailedUserPart(it1) }
+//                    questionAnswerInfoList?.get(0)?.let { it1 -> ShowAnswer(it1) }
+
+                    if (questionAnswerInfoList != null) {
+                        DetailedQuestionPart(questionAnswerInfoList)
+                        DetailedUserPart(questionAnswerInfoList)
+                        ShowAnswer(questionAnswerInfoList)
+                    }
                 }
-                items(comments) { comment, ->
-                    CommentCard(com= comment)
+//                items(comments) { comment, ->
+//                    CommentCard(com= comment)
+//                }
+//                item(comments) { comment, ->
+//                    CommentCard(com= comment)
+//                }
+                if (questionAnswerInfoList != null) {
+                    item(questionAnswerInfoList.comment){
+                        questionAnswerInfoList.comment.forEach() {
+                            CommentCard(it)
+                        }
+                    }
                 }
                 item{
                     Spacer(modifier = Modifier.padding(vertical = 30.dp))
@@ -102,8 +143,8 @@ fun DetailAnswer(comments: List<Answer>,navController: NavController){
 }
 
 @Composable
-fun UserPart(){
-    val userData = Taylor
+fun DetailedUserPart(answerer:QuesAnswer){
+//    val userData = Taylor
     Surface(
         modifier = Modifier
             .padding(all = 8.dp),
@@ -112,7 +153,8 @@ fun UserPart(){
             modifier = Modifier.padding(all = 8.dp)
         ) {
             Image(
-                painterResource(id = R.drawable.tay),
+//                painterResource(id = answerer.info.pic),
+                rememberImagePainter(answerer.info.pic),//回答者头像
                 contentDescription = "profile picture", //这个描述用于无障碍
                 modifier = Modifier
                     .size(50.dp)
@@ -121,12 +163,12 @@ fun UserPart(){
             Spacer(modifier = Modifier.padding(horizontal = 8.dp))
             Column {
                 Text(
-                    text = userData.name,
+                    text = answerer.info.name,
                     style = MaterialTheme.typography.subtitle2 // 添加 style
                 )
                 Spacer(modifier = Modifier.padding(vertical = 4.dp))
                 Text(
-                    text = userData.introduction,
+                    text = answerer.info.intro,
                     style = MaterialTheme.typography.body2, // 添加 style
                 )
             }
@@ -135,10 +177,36 @@ fun UserPart(){
 }
 
 @Composable
-fun ShowAnswer(ans: AnswerData){
+fun DetailedQuestionPart(ques:QuesAnswer)
+{
+    Column() {
+        Spacer(modifier = Modifier.padding(vertical = 6.dp))
+        Row {
+            Box(Modifier.padding(horizontal = 4.dp))
+            Text(
+                text = ques.question,//展示问题内容
+                fontSize = 20.sp,
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Divider(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .padding(start = 0.dp, end = 0.dp),
+            //颜色
+            color = Color.LightGray,
+        )
+    }
+}
+
+@Composable
+fun ShowAnswer(ans: QuesAnswer){
 Column() {
     Box(modifier = Modifier.padding(vertical = 2.dp))
-    Text(text = AnswerData.answer.answerContent,
+    Text(
+//        text = AnswerData.answer.answerContent,
+        text = ans.answer,//展示回答内容
         modifier = Modifier.padding(horizontal = 10.dp),
         style = TextStyle(
             letterSpacing =0.4.sp
@@ -178,7 +246,7 @@ fun Collect() {
 }
 
 @Composable
-fun CommentCard(com:Answer){
+fun CommentCard(com:CommentInfo){
     var isExpanded by remember { mutableStateOf (false) } // 创建一个能够检测卡片是否被展开的变量
 
     // 创建一个能够根据 isExpanded 变量值而改变颜色的变量
@@ -201,7 +269,8 @@ fun CommentCard(com:Answer){
             modifier = Modifier.padding(all = 8.dp)
         ) {
             Image(
-                painterResource(id = R.drawable.tay),
+//                painterResource(id = R.drawable.tay),
+                rememberImagePainter(com.info.pic),//评论者头像
                 contentDescription = "profile picture", //这个描述用于无障碍
                 modifier = Modifier
                     .size(50.dp)
@@ -210,12 +279,12 @@ fun CommentCard(com:Answer){
             Spacer(modifier = Modifier.padding(horizontal = 8.dp))
             Column {
                 Text(
-                    text = com.commentUser,
+                    text = com.info.name,//评论者名字
                     style = MaterialTheme.typography.subtitle2 // 添加 style
                 )
                 Spacer(modifier = Modifier.padding(vertical = 4.dp))
                 Text(
-                    text = com.comment,
+                    text = com.content,//评论者内容
                     style = MaterialTheme.typography.body2, // 添加 style
                     maxLines = if (isExpanded) Int.MAX_VALUE else 1,
                     // Composable 大小的动画效果
@@ -235,14 +304,14 @@ fun CommentCard(com:Answer){
     }
 }
 
-@Composable
-fun Conversation(comments: List<Answer>) {
-    LazyColumn {
-        items(comments) { comment, ->
-            CommentCard(com= comment)
-        }
-    }
-}
+//@Composable
+//fun Conversation(comments: List<Answer>) {
+//    LazyColumn {
+//        items(comments) { comment, ->
+//            CommentCard(com= comment)
+//        }
+//    }
+//}
 
 @Composable
 fun ThumbUpButton(){
