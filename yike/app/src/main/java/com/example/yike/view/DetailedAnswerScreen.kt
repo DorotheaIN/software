@@ -249,58 +249,65 @@ fun Collect() {
 fun CommentCard(com:CommentInfo){
     var isExpanded by remember { mutableStateOf (false) } // 创建一个能够检测卡片是否被展开的变量
 
-    // 创建一个能够根据 isExpanded 变量值而改变颜色的变量
-    val surfaceColor by animateColorAsState(
-        targetValue = if (isExpanded) Color(0xFFCCCCCC) else MaterialTheme.colors.surface
-    )
-
-    Surface(
-        shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
-        elevation = 0.dp,
-        modifier = Modifier
-            .padding(all = 8.dp)
-            .fillMaxWidth()
-            .clickable { // 添加一个新的 Modifier 扩展方法，可以让元素具有点击的效果
-                isExpanded = !isExpanded // 编写点击的事件内容
-            } ,
-        color = surfaceColor
-    ) {
-        Row(
-            modifier = Modifier.padding(all = 8.dp)
-        ) {
-            Image(
-//                painterResource(id = R.drawable.tay),
-                rememberImagePainter(com.info.pic),//评论者头像
-                contentDescription = "profile picture", //这个描述用于无障碍
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-            Column {
-                Text(
-                    text = com.info.name,//评论者名字
-                    style = MaterialTheme.typography.subtitle2 // 添加 style
-                )
-                Spacer(modifier = Modifier.padding(vertical = 4.dp))
-                Text(
-                    text = com.content,//评论者内容
-                    style = MaterialTheme.typography.body2, // 添加 style
-                    maxLines = if (isExpanded) Int.MAX_VALUE else 1,
-                    // Composable 大小的动画效果
-                    modifier = Modifier.animateContentSize()
-                )
-            }
-        }
-        Divider(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .padding(start = 8.dp, end = 8.dp),
-            //颜色
-            color = Color.LightGray,
+    if(com==null){
+        Text(
+            text = "目前还没有评论噢"
         )
-        Spacer(modifier = Modifier.height(10.dp))
+    }
+    else {
+        // 创建一个能够根据 isExpanded 变量值而改变颜色的变量
+        val surfaceColor by animateColorAsState(
+            targetValue = if (isExpanded) Color(0xFFCCCCCC) else MaterialTheme.colors.surface
+        )
+
+        Surface(
+            shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
+            elevation = 0.dp,
+            modifier = Modifier
+                .padding(all = 8.dp)
+                .fillMaxWidth()
+                .clickable { // 添加一个新的 Modifier 扩展方法，可以让元素具有点击的效果
+                    isExpanded = !isExpanded // 编写点击的事件内容
+                },
+            color = surfaceColor
+        ) {
+            Row(
+                modifier = Modifier.padding(all = 8.dp)
+            ) {
+                Image(
+//                painterResource(id = R.drawable.tay),
+                    rememberImagePainter(com.info.pic),//评论者头像
+                    contentDescription = "profile picture", //这个描述用于无障碍
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                Column {
+                    Text(
+                        text = com.info.name,//评论者名字
+                        style = MaterialTheme.typography.subtitle2 // 添加 style
+                    )
+                    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+                    Text(
+                        text = com.content,//评论者内容
+                        style = MaterialTheme.typography.body2, // 添加 style
+                        maxLines = if (isExpanded) Int.MAX_VALUE else 1,
+                        // Composable 大小的动画效果
+                        modifier = Modifier.animateContentSize()
+                    )
+                }
+            }
+            Divider(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .padding(start = 8.dp, end = 8.dp),
+                //颜色
+                color = Color.LightGray,
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+        }
     }
 }
 

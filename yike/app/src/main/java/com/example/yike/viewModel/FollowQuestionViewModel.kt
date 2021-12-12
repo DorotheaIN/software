@@ -6,11 +6,21 @@ import androidx.lifecycle.ViewModel
 import com.example.yike.service.FollowQuestionRepository
 import com.example.yike.service.PublishQuestionRepository
 
+//data class FollowQuestion(
+//    val title:String,
+//    val content:String,
+//    val id:Int,
+//    val individualUserID:String
+//)
+
 data class FollowQuestion(
-    val title:String,
-    val content:String,
-    val id:Int,
-    val individualUserID:String
+    val individualUserID:String?,
+    val question_ID:String?,
+    val title:String?,
+    val content:String?,
+    val user_NAME:String?,
+    val avator:String?,
+    val introduction:String?,
 )
 
 class FollowQuestionViewModel(

@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.yike.data.Taylor
 import com.example.yike.viewModel.FollowQuestion
 import com.example.yike.viewModel.FollowQuestionViewModel
@@ -65,7 +66,8 @@ fun PubQuesTable(){
 
 @Composable
 fun QuestionCard(navController: NavController, ques: FollowQuestion) {
-    val user = Taylor
+//    val user = Taylor
+    val id = ques.question_ID
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 0.dp,
@@ -73,7 +75,8 @@ fun QuestionCard(navController: NavController, ques: FollowQuestion) {
             .padding(all = 8.dp)
             .fillMaxWidth()
             .clickable {
-                navController.navigate("detailed_screen")
+//                navController.navigate("detailed_screen")
+                navController.navigate("question/${id}")
             }
 
     ) {
@@ -84,7 +87,8 @@ fun QuestionCard(navController: NavController, ques: FollowQuestion) {
                 modifier = Modifier.padding(all = 8.dp)
             ) {
                 Image(
-                    painterResource(user.pic),
+//                    painterResource(user.pic),
+                    painter = rememberImagePainter(ques.avator.toString()),//提出问题人的头像
                     contentDescription = "profile picture", //这个描述用于无障碍
                     modifier = Modifier
                         .size(50.dp)
@@ -95,19 +99,19 @@ fun QuestionCard(navController: NavController, ques: FollowQuestion) {
 
                 ) {
                     Text(
-                        text = user.name,
+                        text = ques.user_NAME.toString(),//提出问题人的名字
                         style = MaterialTheme.typography.subtitle2 // 添加 style
                     )
                     Spacer(modifier = Modifier.padding(vertical = 4.dp))
                     Text(
-                        user.introduction,
+                        text = ques.introduction.toString(),//提出问题人的简介
                         style = MaterialTheme.typography.caption // 添加 style
 
                     )
                 }
             }
             Text(
-                text = ques.title,
+                text = ques.title.toString(),//问题的标题
                 style = MaterialTheme.typography.h6, // 添加 style
                 modifier = Modifier.padding(
                     start = 10.dp,
@@ -117,7 +121,7 @@ fun QuestionCard(navController: NavController, ques: FollowQuestion) {
                 ),
             )
             Text(
-                text = ques.content,
+                text = ques.content.toString(),//提出问题的具体内容
                 style = MaterialTheme.typography.body2, // 添加 style
                 modifier = Modifier.padding(
                     start = 10.dp,
