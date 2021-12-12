@@ -50,6 +50,10 @@ class MainActivity : ComponentActivity() {
                         val questionViewModel = QuestionViewModel(questionId)
                         QuestionScreen(questionViewModel, navController)
                     }
+                    composable("myactivity"){
+                        val infoActivityViewModel = InfoActivityViewModel()
+                        InfoActivityScreen(navController,infoActivityViewModel)
+                    }
                     composable("activity"){
                         val activityViewModel = ActivityViewModel()
                         ActivityScreen(navController = navController,activityViewModel)

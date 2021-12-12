@@ -77,6 +77,8 @@ object Network {
     suspend fun getAllCommentByQuestionIdAndAnswerId(answerId:Int,questionId:Int) =
         userService.getAllCommentByQuestionIdAndAnswerId(answerId,questionId).await()
 
+    suspend fun getMyActivities(email: String) =
+        userService.getMyActivities(email).await()
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
     private suspend fun <T> Call<T>.await() :T {

@@ -80,6 +80,9 @@ interface UserService {
 
     @GET("discuss/getAllCommentByQuestionIdAndAnswerId")
     fun getAllCommentByQuestionIdAndAnswerId(@Query("answerId")answerId:Int,@Query("questionId")questionId:Int):Call<GetAllCommentByQuestionIdAndAnswerIdResponse>
+
+    @GET("getMyActivities")
+    fun getMyActivities(@Query("email") email: String):Call<ActivityResponse>
 }
 
 //getAllCommentByQuestionIdAndAnswerId

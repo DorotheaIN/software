@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -21,30 +22,63 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.example.yike.data.ActivityDetail
 import com.example.yike.data.activityDetailList
+import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.ActivityViewModel
 import com.example.yike.viewModel.InfoActivityViewModel
 
 
 @Composable
-fun InfoActivityScreen(navController: NavController){
-    val infoActivityViewModel = InfoActivityViewModel()
-    val infoActivityList = infoActivityViewModel.infoActivityList.observeAsState()
-    ActivityScreenContent(navController,infoActivityList.value)
+fun InfoActivityScreen(
+    navController: NavController,
+    viewModel: InfoActivityViewModel
+){
+    val isGet = viewModel.isGet.value
+    if(isGet != true){
+        viewModel.getMyActivities()
+    }else {
+        val myActivityList = viewModel.myActivities.observeAsState()
+        ActivityScreenContent(navController,myActivityList.value)
+    }
+}
+
+
+@Composable
+private fun Loader(
+    paddingValues: PaddingValues
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .wrapContentSize()
+                .align(Alignment.Center)
+        )
+    }
 }
 
 @Composable
 fun ActivityScreenContent(
     navController: NavController,
-    activityList: ArrayList<com.example.yike.viewModel.Activity>?
+    activityList: ArrayList<Activity>?
 ){
-    LazyColumn(Modifier){
-        item {
-            ActivityTable()
+    if(activityList == null){
+        Scaffold() {
+            Loader(paddingValues = it)
         }
-        items(activityDetailList){
-            ActivityItem(it,navController)
+    } else{
+        LazyColumn(Modifier){
+            item {
+                ActivityTable()
+            }
+            items(activityDetailList){
+                ActivityItem(it,navController)
+            }
         }
     }
+    
 }
 
 @Composable

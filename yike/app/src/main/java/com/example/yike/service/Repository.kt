@@ -393,3 +393,21 @@ object GetAllCommentByQuestionIdAndAnswerIdRepository {
         emit(result)
     }
 }
+
+object MyRepository {
+    fun getMyActivities(email: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val myActivities = Network.getMyActivities(email)
+            if(myActivities.code == 200){
+                myActivities.result
+            }else {
+                println(myActivities.msg)
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}

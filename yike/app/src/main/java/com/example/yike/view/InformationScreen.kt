@@ -219,7 +219,7 @@ fun ToActivity(navController: NavController){
                 )
                 Spacer(modifier = Modifier.width(15.dp))
                 TextButton(onClick = {
-                    navController.navigate("activity_screen")
+                    navController.navigate("myactivity")
                 }) {
                     Text(
                         text = "我报名的活动",
