@@ -63,7 +63,9 @@ fun ActivityReflectContent(
 ){
     Scaffold(
         topBar = {
-            OriganizationTopBar(clickEvent)
+            if(activity!=null){
+                OriganizationTopBar(activity.title,clickEvent)
+            }
         }
     ){ paddingValues ->
         if(anaylsis == null || subscriberList == null){

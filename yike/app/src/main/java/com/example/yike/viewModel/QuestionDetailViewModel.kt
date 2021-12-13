@@ -18,16 +18,23 @@ class QuestionViewModel(
 ): ViewModel() {
     private val questionBody = GlobalViewModel.getQuestion(_questionId)
     private val userId = GlobalViewModel.getUserInfo()?.id
-    private val questionId = _questionId
+    val questionId = _questionId
     private val _isGet = MutableLiveData<Boolean>()
     val isGet: LiveData<Boolean> = _isGet
+    private val isPost = MutableLiveData<Boolean>()
+
 
     val answerList = Transformations.switchMap(_isGet) {
         AnswerRepository.getAnswerList(_questionId)
     }
 
-    private val originStatus = Transformations.switchMap(_isGet) {
+    val originStatus = Transformations.switchMap(_isGet) {
         QuestionRepository.checkQuestionStatus(_questionId, userId!!)
+    }
+
+    val postResult = Transformations.switchMap(isPost) {
+        println("!!!!!!!!!!!!!!!!!!")
+        QuestionRepository.postQuestionStatus(userId = userId!!, questionId = questionId)
     }
 
     //-1 没请求：
@@ -36,9 +43,8 @@ class QuestionViewModel(
     private val _questionStatus: MutableLiveData<Int> = MutableLiveData<Int>(-1)
     val questionStatus: LiveData<Int> = _questionStatus
 
-    fun isOriginReady(): Boolean {
-        println("!!!!!!!!")
-        return originStatus.value != null
+    fun isSet(): Boolean {
+        return _questionStatus.value != -1
     }
 
     fun setQuestionStatus() {
@@ -51,11 +57,10 @@ class QuestionViewModel(
         else _questionStatus.value = 1
     }
 
+
     fun postQuestionStatus() {
-        if (_questionStatus != originStatus) {
-            if (userId != null && questionId != null) {
-                QuestionRepository.postQuestionStatus(userId, questionId)
-            }
+        if (_questionStatus.value != originStatus.value) {
+            isPost.value = true
         }
     }
 

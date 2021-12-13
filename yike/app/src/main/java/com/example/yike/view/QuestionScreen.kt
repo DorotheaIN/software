@@ -1,5 +1,6 @@
 package com.example.yike.view
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,7 +11,10 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,22 +33,29 @@ fun QuestionScreen(
     navController: NavController,
     ) {
     val isGet = viewModel.isGet.observeAsState()
+    val postRes = viewModel.postResult.observeAsState()
     if (isGet.value != true) {
         viewModel.getAnswerList()
     } else {
-        if (viewModel.isOriginReady()) viewModel.setQuestionStatus() //或者判断是否为-1
+        val originStatus = viewModel.originStatus.observeAsState()
+        if (originStatus.value != null && !viewModel.isSet()) viewModel.setQuestionStatus()
         val answerList = viewModel.answerList.observeAsState()
         val questionStatus = viewModel.questionStatus.observeAsState()
-//        if(questionStatus.value == -1 )viewModel.setQuestionStatus()
-        QuestionScreenScaffold(answerList.value, viewModel.getQuestionBody(),
-            questionStatus.value,
-            backEvent = {
-                viewModel.postQuestionStatus()
-                navController.popBackStack()
-            },
-            clickEvent1 = {
-                viewModel.convertQuestionStatus()
-        })
+        viewModel.getQuestionBody()?.let {
+            QuestionScreenScaffold(answerList.value, viewModel.getQuestionBody(), originStatus.value,
+                questionStatus.value,
+                backEvent = {
+                    viewModel.postQuestionStatus()
+                    navController.popBackStack()
+                },
+                clickEvent1 = {
+                    viewModel.convertQuestionStatus()
+                },
+                navController,//whl增加
+                viewModel.questionId,//whl增加
+                it.title,
+            )
+        }
     }
 }
 
@@ -52,25 +63,32 @@ fun QuestionScreen(
 private fun QuestionScreenScaffold(
     answerList: ArrayList<Answer>?,
     questionBody: Question?,
+    originStatus: Int?,
     questionStatus: Int?,
     backEvent: () -> Unit,
-    clickEvent1: () -> Unit
+    clickEvent1: () -> Unit,
+    navController: NavController,//whl增加
+    questionId:String,//whl增加
+    questionTitle: String,//whl增加
 ) {
     Scaffold(
         topBar = {
             DiscussTopBar(backEvent)
         }
     ) { paddingValues ->
-        println(questionStatus)
-        if (answerList == null || questionBody == null || questionStatus == null) {
+
+        if (questionBody == null || originStatus == null) {
             QuestionScreenLoader(paddingValues)
         } else {
             QuestionScreenContent(
                 answerList,
                 questionBody,
-                questionStatus,
+                questionStatus!!,
                 paddingValues,
-                clickEvent1
+                navController,// whl增加
+                questionId,//whl增加
+                questionTitle,//whl增加
+                clickEvent1,
 //                routeEvent
 
             )
@@ -97,15 +115,19 @@ private fun QuestionScreenLoader(
 
 @Composable
 private fun QuestionScreenContent(
-    answerList: ArrayList<Answer>,
+    answerList: ArrayList<Answer>?,
     questionBody: Question,
     questionStatus: Int,
     paddingValues: PaddingValues,
+    navController: NavController,//whl增加
+    questionId:String,//whl增加
+    questionTitle: String,//whl增加
     clickEvent1: () -> Unit = {}
 ) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
+            .fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
@@ -118,11 +140,16 @@ private fun QuestionScreenContent(
 
             UserOperationSection(
                 questionStatus,
+                questionId,
+                questionTitle,
+                navController,
                 clickEvent1,
             )
 
             AnswerListSection(
-                answerList
+                answerList,
+                navController,//whl增加
+                questionId,//whl增加
             )
         }
     }
@@ -135,7 +162,7 @@ private fun QuestionSection(
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
-        modifier = Modifier.padding(all = 8.dp)
+        modifier = Modifier.padding(all = 8.dp).fillMaxWidth()
     ) {
         Column{
             Text(
@@ -154,6 +181,9 @@ private fun QuestionSection(
 @Composable
 private fun UserOperationSection(
     questionStatus: Int,
+    questionId: String,
+    questionTitle:String,
+    navController: NavController,
     clickEvent1: () -> Unit = {}
 ) {
     Surface(
@@ -161,6 +191,13 @@ private fun UserOperationSection(
         elevation = 5.dp,
         modifier = Modifier.padding(all = 8.dp)
     ) {
+        val change = remember{ mutableStateOf(false) }
+        val buttonSize by animateDpAsState(
+            targetValue = if(change.value) 30.dp else 24.dp
+        )
+        if(buttonSize == 30.dp) {
+            change.value = false
+        }
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -168,21 +205,30 @@ private fun UserOperationSection(
                 .fillMaxWidth()
         ){
             IconButton(
-                onClick = clickEvent1,
+                onClick = {
+                    clickEvent1()
+                    change.value = true
+                },
                 modifier = Modifier.weight(1f)
             ) {
                 Column() {
                     Icon(
                         Icons.Outlined.Star,//交互
                         contentDescription = "Star",
-                        tint = if (questionStatus == 1) Color.Yellow else Color.Red
+                        modifier = Modifier.size(buttonSize),
+                        tint = if (questionStatus == 1) Color.Yellow else Color.Gray
                     )
-                    Text("关注")
+                    Text(text="关注",color = Color.DarkGray,
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.weight(0.5f).padding(0.dp, 0.dp, 0.dp, 0.dp)
+                    )
                 }
             }
 
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                          navController.navigate("publishAnswer_screen/${questionId}/${questionTitle}")
+                },
                 modifier = Modifier.weight(1f)
             ) {
                 Column() {
@@ -190,7 +236,9 @@ private fun UserOperationSection(
                         Icons.Outlined.Edit,//交互
                         contentDescription = "Edit"
                     )
-                    Text("写回答")
+                    Text(text="回答",color = Color.DarkGray,
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.weight(0.5f).padding(0.dp, 0.dp, 0.dp, 0.dp))
                 }
             }
         }
@@ -200,7 +248,9 @@ private fun UserOperationSection(
 
 @Composable
 private fun AnswerListSection(
-    answerList: ArrayList<Answer>
+    answerList: ArrayList<Answer>?,
+    navController: NavController,//whl增加
+    questionId:String,//whl增加
 ) {
 //    LazyColumn {
 //        items(answerModel) { answer ->
@@ -208,8 +258,8 @@ private fun AnswerListSection(
 //        }
 //    }
     Column() {
-        answerList.forEach{answer ->
-            AnswerCard(answerInfo = answer)
+        answerList?.forEach{answer ->
+            AnswerCard(answerInfo = answer,navController,questionId)
         }
     }
 }

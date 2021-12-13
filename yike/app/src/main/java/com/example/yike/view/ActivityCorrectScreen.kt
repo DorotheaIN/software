@@ -62,7 +62,7 @@ fun ActivityCorrectContent(
 ){
     Scaffold(
         topBar = {
-            OriganizationTopBar(){
+            OriganizationTopBar(organization.username){
                 navController.navigate("organization")
             }
         }

@@ -434,4 +434,180 @@ object OrgLoginRepository{
     }
 }
 
+object PublishQuestionRepository{
+    fun getPublishQuestion(id:String) = liveData(Dispatchers.IO){
+        val result = try {
+            val publishQuestionList = Network.getPublishQuestionList(id)
+            if(publishQuestionList.code == 200) {
+                publishQuestionList.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}
 
+object FollowQuestionRepository{
+    fun getFollowQuestion(id:String) = liveData(Dispatchers.IO){
+        val result = try {
+            val followQuestionList = Network.getFollowQuestionList(id)
+            if(followQuestionList.code == 200) {
+                followQuestionList.result
+            } else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}
+
+object SendEmailRepository {
+    fun sendEmail(email:String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val sendEmailResponse = Network.sendEmail(email)
+            println(sendEmailResponse.result)
+            if (sendEmailResponse.code == 200) {
+//                println("111111111111111111")
+//                println(sendEmailResponse.result)
+                sendEmailResponse.result
+            } else {
+                println("response status is not ok!")
+                ""
+                }
+        } catch (e: Exception){
+            println(e)
+            UserInfo()
+            ""
+        }
+        emit(result)
+    }
+}
+
+object GetPersonRegisterRepository {
+    fun getPersonRegister(email:String,name:String,password: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val getPersonRegisterResponse = Network.getPersonRegister(email,name,password)
+            if (getPersonRegisterResponse.code == 200) {
+                getPersonRegisterResponse.result
+            } else {
+                println("response status is not ok!")
+            }
+            ""
+        } catch (e: Exception){
+            println(e)
+            UserInfo()
+            ""
+        }
+        emit(result)
+    }
+}
+
+object GetAllCommentByQuestionIdAndAnswerIdRepository {
+    fun getAllCommentByQuestionIdAndAnswerId(answerId:String,questionId: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            println("c22222222222222222222222222222222")
+            println(answerId)
+            println(questionId)
+            val intAnswer=answerId.toInt()
+            val intQuestion=questionId.toInt()
+            println(intAnswer.toString())
+            println(intQuestion.toString())
+            val getAllCommentByQuestionIdAndAnswerIdResponse = Network.getAllCommentByQuestionIdAndAnswerId(intAnswer,intQuestion)
+            if (getAllCommentByQuestionIdAndAnswerIdResponse.code == 200) {
+                println("c3333333333333333333")
+                println(answerId)
+                println(getAllCommentByQuestionIdAndAnswerIdResponse.result.question)
+                getAllCommentByQuestionIdAndAnswerIdResponse.result
+            } else {
+                println("response status is not ok!")
+//                QuesAnswer()
+                null
+            }
+        } catch (e: Exception){
+            println(e)
+//            QuesAnswer()
+            null
+        }
+        emit(result)
+    }
+}
+
+object CommentAnswerRepository {
+    fun addAnswer(content:String,questionId: String,userId: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val addAnswerResponse = Network.addAnswer(content,questionId,userId)
+            if (addAnswerResponse.code == 200) {
+                addAnswerResponse.result
+            } else {
+                println("response status is not ok!")
+            }
+            null
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
+
+    fun comment(answerId: String,content:String,userId: String)= liveData(Dispatchers.IO){
+        val result = try {
+            val commentResponse = Network.comment(answerId,content,userId)
+            if (commentResponse.code == 200) {
+                commentResponse.result
+            } else {
+                println("response status is not ok!")
+            }
+            null
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}
+
+object MyRepository {
+    fun getMyActivities(email: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val myActivities = Network.getMyActivities(email)
+            if(myActivities.code == 200){
+                myActivities.result
+            }else {
+                println(myActivities.msg)
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}
+
+object OfficialRepository {
+    fun officialRegister(avator:String,certification:String,introduction:String,password:String,userName:String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val officialRegisterResponse = Network.officialRegister(avator, certification, introduction, password, userName)
+            if(officialRegisterResponse.code == 200){
+                officialRegisterResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}

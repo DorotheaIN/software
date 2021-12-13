@@ -20,10 +20,10 @@ interface UserService {
 //    @GET("answer")
 //    fun getAnswerList(@Query("questionId") questionId: String): Call<AnswerResponse>
 
-    @GET("followQuestion")
+    @POST("discuss/takeAntiFocusQuestion")
     fun postQuestionStatus(@Query("questionId") questionId: String, @Query("userId") userId: String): Call<PostResponse>
 
-    @GET("checkQuestion")
+    @GET("discuss/checkFocusQuestion")
     fun checkQuestionStatus(@Query("questionId") questionId: String, @Query("userId") userId: String): Call<CheckResponse>
 
     @GET("login")
@@ -108,4 +108,33 @@ interface UserService {
 
     @POST("deleteReview")
     fun postDeleteActivityReview(@Query("aID") activityID: Int,@Query("iID") userID: String):Call<CheckResponse>
+
+
+    @GET("getMyFocusQuestions")
+    fun getFollowQuestionsList(@Query("ID")id:String):Call<FollowQuestionResponse>
+
+    @GET("getMyQuestions")
+    fun getPublishQuestionList(@Query("ID") id:String):Call<PublishQuestionResponse>
+
+    @POST("sendEmail")
+    fun sendEmail(@Query("to")email:String):Call<SendEmailResponse>
+
+    @POST("signUp")
+    fun getPersonRegister(@Query("email")email:String,@Query("name")name:String,@Query("password")password:String):Call<getPersonRegistResponse>
+
+    @GET("discuss/getAllCommentByQuestionIdAndAnswerId")
+    fun getAllCommentByQuestionIdAndAnswerId(@Query("answerId")answerId:Int,@Query("questionId")questionId:Int):Call<GetAllCommentByQuestionIdAndAnswerIdResponse>
+
+    @POST("discuss/addAnswer")
+    fun addAnswer(@Query("content")content:String,@Query("questionId")questionId: String,@Query("userId")userId: String):Call<AddAnswerResponse>
+
+    @POST("discuss/addComment")
+    fun comment(@Query("answerId")answerId: String,@Query("content")content: String,@Query("userId")userID: String):Call<CommentResponse>
+
+    @GET("getMyActivities")
+    fun getMyActivities(@Query("email") email: String):Call<ActivityResponse>
+
+    @GET("signUp")
+    fun officialRegister(@Query("avator")avator:String,@Query("certification")certification:String,@Query("introduction")introduction:String,@Query("password")password:String,@Query("userName")userName:String):Call<OfficialRegisterResponse>
 }
+

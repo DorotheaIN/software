@@ -12,21 +12,22 @@ import androidx.navigation.NavController
 
 @Composable
 fun NavBottomBar(
-    navController: NavController
+    navController: NavController,
+    dir: String
 ) {
     BottomAppBar(
         backgroundColor = MaterialTheme.colors.primary,
     ) {
         BottomButton(
-            selected = true,
+            selected = dir == "Discuss",
             icon = Icons.Default.Home,
-            labelText = "Home",
+            labelText = "Discuss",
             onClick = {
                 navController.navigate("discuss")
             }
         )
         BottomButton(
-            selected = false,
+            selected = dir == "Activity",
             icon = Icons.Default.FavoriteBorder,
             labelText = "Activity",
             onClick = {
@@ -34,11 +35,11 @@ fun NavBottomBar(
             }
         )
         BottomButton(
-            selected = false,
+            selected = dir == "Info",
             icon = Icons.Default.AccountCircle,
-            labelText = "Profile",
+            labelText = "Info",
             onClick = {
-//                navController.navigate("organization")
+                navController.navigate("mainInfo_screen")
             },
         )
     }

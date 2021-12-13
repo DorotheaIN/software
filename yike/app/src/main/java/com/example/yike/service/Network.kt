@@ -98,6 +98,34 @@ object Network {
     suspend fun postDelReviewActivity(activityID: Int,userID: String) =
         userService.postDeleteActivityReview(activityID, userID).await()
 
+    suspend fun getPublishQuestionList(id:String) =
+        userService.getPublishQuestionList(id).await()
+
+    suspend fun getFollowQuestionList(id:String) =
+        userService.getFollowQuestionsList(id).await()
+
+    suspend fun sendEmail(email:String) =
+        userService.sendEmail(email).await()
+
+    suspend fun getPersonRegister(email:String,name:String,password: String) =
+        userService.getPersonRegister(email,name,password).await()
+
+    suspend fun getAllCommentByQuestionIdAndAnswerId(answerId:Int,questionId:Int) =
+        userService.getAllCommentByQuestionIdAndAnswerId(answerId,questionId).await()
+
+    suspend fun addAnswer(content:String,questionId: String,userId: String) =
+        userService.addAnswer(content,questionId,userId).await()
+
+    suspend fun comment(answerId: String,content:String,userId: String) =
+        userService.comment(answerId,content,userId).await()
+
+    suspend fun getMyActivities(email: String) =
+        userService.getMyActivities(email).await()
+
+    suspend fun officialRegister(avator:String,certification:String,introduction:String,password:String,userName:String) =
+        userService.officialRegister(avator, certification, introduction, password, userName).await()
+
+
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
     private suspend fun <T> Call<T>.await() :T {
@@ -112,7 +140,6 @@ object Network {
                         RuntimeException("response body is null")
                     )
                 }
-
                 override fun onFailure(call: Call<T>, t: Throwable) {
                     println(t)
                     continuation.resumeWithException(t)

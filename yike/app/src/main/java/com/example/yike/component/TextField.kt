@@ -416,7 +416,7 @@ fun GenresTextField(initial: RequiredInputState,enabled:Boolean){
             Text("类型")
         },
         label = {
-            Text("请自定义三个;隔开")
+            Text("请自定义三个,隔开")
         },
         modifier = Modifier
             .fillMaxWidth()

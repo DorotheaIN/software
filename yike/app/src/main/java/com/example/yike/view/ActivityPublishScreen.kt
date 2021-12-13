@@ -43,7 +43,7 @@ fun ActivityPublishContent(
 ){
     Scaffold(
         topBar = {
-            OriganizationTopBar(){
+            OriganizationTopBar(organization.username){
                 navController.navigate("organization")
             }
         }

@@ -1,10 +1,11 @@
-package com.example.yike.ui.screens
+package com.example.yike
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,54 +18,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.yike.component.NavBottomBar
+import com.example.yike.data.ActivityDetail
+import com.example.yike.data.activityDetailList
 import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.ActivityViewModel
+import com.example.yike.viewModel.InfoActivityViewModel
 
 
 @Composable
-fun ActivityScreen(
+fun InfoActivityScreen(
     navController: NavController,
-    viewModel: ActivityViewModel
+    viewModel: InfoActivityViewModel
 ){
     val isGet = viewModel.isGet.observeAsState()
     if(isGet.value != true){
-        viewModel.getActivityList()
+        viewModel.getMyActivities()
     }else {
-        val activityList = viewModel.activityList.observeAsState()
-        ActivityScreenContent(navController,activityList.value)
-    }
-}
-
-@Composable
-fun ActivityScreenContent(navController: NavController,activityList:ArrayList<Activity>?){
-    Scaffold(
-        bottomBar = {
-            NavBottomBar(navController,"Activity")})
-    { paddingValues ->
-        if( activityList == null){
-            Loader(paddingValues)
-        }else{
-            LazyColumn(Modifier){
-                item {
-                    ActivityTable()
-                }
-                item(activityList){
-                    Column(){
-                        activityList.forEach{it->
-                            ActivityItem(it){id->
-                                navController.navigate("activitydetail/${id}")
-                            }
-                        }
-                    }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(170.dp))
-                }
-            }
-        }
+        val myActivityList = viewModel.myActivities.observeAsState()
+        ActivityScreenContent(navController,myActivityList.value)
     }
 }
 
@@ -87,9 +61,33 @@ private fun Loader(
 }
 
 @Composable
-fun ActivityTable(){
+fun ActivityScreenContent(
+    navController: NavController,
+    activityList: ArrayList<Activity>?
+){
+    if(activityList == null){
+        Scaffold() {
+            Loader(paddingValues = it)
+        }
+    } else{
+        LazyColumn(Modifier){
+            item {
+                ActivityTable()
+            }
+            item{
+                activityList.forEach{
+                    ActivityItem(it,navController)
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+private fun ActivityTable(){
     Text(
-        text = "活动一览",
+        text = "我报名的活动",
         color = Color.Black,
         style = MaterialTheme.typography.h5,
         modifier = Modifier.padding(16.dp,16.dp,16.dp,16.dp)
@@ -98,10 +96,7 @@ fun ActivityTable(){
 
 
 @Composable
-fun ActivityItem(
-    item: Activity,
-    onClick:(id:Int)->Unit
-){
+fun ActivityItem(item: Activity, navController: NavController){
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
@@ -115,7 +110,7 @@ fun ActivityItem(
                     .fillMaxSize()
                     .size(600.dp, 170.dp)
                     .clickable {
-                        onClick(item.id)
+                        navController.navigate("activitydetail/${item.id}")
                     },
                 painter = rememberImagePainter(item.img),
                 contentDescription = null,
@@ -168,6 +163,3 @@ fun ActivityItem(
 
 
 }
-
-
-

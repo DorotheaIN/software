@@ -117,7 +117,14 @@ fun ScrollableAppBar(
                     },
                 contentAlignment = Alignment.CenterStart
             ) {
-                Text(text = title,color = Color(0xFFFFFFFF),modifier = Modifier.padding(start = 20.dp),fontSize = 23.sp,fontWeight = FontWeight.Bold)
+                Text(
+                    text = title,
+                    color = Color(0xFFFFFFFF),
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    fontSize = 23.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
 
