@@ -81,11 +81,16 @@ interface UserService {
     @GET("discuss/getAllCommentByQuestionIdAndAnswerId")
     fun getAllCommentByQuestionIdAndAnswerId(@Query("answerId")answerId:Int,@Query("questionId")questionId:Int):Call<GetAllCommentByQuestionIdAndAnswerIdResponse>
 
+<<<<<<< HEAD
     @POST("discuss/addAnswer")
     fun addAnswer(@Query("content")content:String,@Query("questionId")questionId: String,@Query("userId")userId: String):Call<AddAnswerResponse>
 
     @POST("discuss/addComment")
     fun comment(@Query("answerId")answerId: String,@Query("content")content: String,@Query("userId")userID: String):Call<CommentResponse>
+=======
+    @GET("getMyActivities")
+    fun getMyActivities(@Query("email") email: String):Call<ActivityResponse>
+>>>>>>> 8eae07e6b6bcbc95881d01bb468dff57291de3b6
 }
 
 //getAllCommentByQuestionIdAndAnswerId

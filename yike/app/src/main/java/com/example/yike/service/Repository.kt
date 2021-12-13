@@ -394,6 +394,7 @@ object GetAllCommentByQuestionIdAndAnswerIdRepository {
     }
 }
 
+<<<<<<< HEAD
 object CommentAnswerRepository {
     fun addAnswer(content:String,questionId: String,userId: String) = liveData(Dispatchers.IO) {
         val result = try {
@@ -422,6 +423,19 @@ object CommentAnswerRepository {
             }
             null
         } catch (e: Exception){
+=======
+object MyRepository {
+    fun getMyActivities(email: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val myActivities = Network.getMyActivities(email)
+            if(myActivities.code == 200){
+                myActivities.result
+            }else {
+                println(myActivities.msg)
+                null
+            }
+        } catch (e:Exception){
+>>>>>>> 8eae07e6b6bcbc95881d01bb468dff57291de3b6
             println(e)
             null
         }
