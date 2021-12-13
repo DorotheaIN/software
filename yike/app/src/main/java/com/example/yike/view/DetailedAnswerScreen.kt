@@ -40,19 +40,26 @@ import com.example.yike.viewModel.QuesAnswer
 fun DetailedScreen(navController: NavController,
                    detailedAnswerViewModel: DetailedAnswerViewModel
                    ) {
-    println("c111111111111111111111111111111111")
-    println(detailedAnswerViewModel.answerId)
-    println(detailedAnswerViewModel.questionId)
+//    println("c111111111111111111111111111111111")
+//    println(detailedAnswerViewModel.answerId)
+//    println(detailedAnswerViewModel.questionId)
+    val questionId = detailedAnswerViewModel.questionId
+    val answererId = detailedAnswerViewModel.answerId
     detailedAnswerViewModel.slectQuesAnswer(detailedAnswerViewModel.answerId,detailedAnswerViewModel.questionId)
     val quesAnswerInfoList = detailedAnswerViewModel.quesAnswerInfoList.observeAsState()
-    DetailAnswer(quesAnswerInfoList.value,navController)
+    DetailAnswer(quesAnswerInfoList.value,questionId,answererId,navController)
 }
 
 
 //@Preview
 @Composable
 //fun DetailAnswer(questionAnswerInfoList:ArrayList<QuesAnswer>?,navController: NavController)
-fun DetailAnswer(questionAnswerInfoList:QuesAnswer?,navController: NavController){
+fun DetailAnswer(
+    questionAnswerInfoList:QuesAnswer?,
+    questionId:String,
+    answererId:String,
+    navController: NavController,
+    ){
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,7 +79,9 @@ fun DetailAnswer(questionAnswerInfoList:QuesAnswer?,navController: NavController
                 elevation = 0.dp,
                 actions = {
                     TextButton(onClick = {
-//                        navController.navigate("publishAnswer_screen")
+                        val questionId = questionId
+                        val questionTitle = questionAnswerInfoList?.question
+                        navController.navigate("publishAnswer_screen/${questionId}/${questionTitle}/${answererId}")
                     }) {
                         Text("写回答",
                             color = Color(0xFF1084E0)
@@ -92,7 +101,7 @@ fun DetailAnswer(questionAnswerInfoList:QuesAnswer?,navController: NavController
                 ThumbUpButton()
                 Box(Modifier.padding(horizontal = 80.dp))
                 Collect()
-                CommentButton()
+                CommentButton(navController, answererId)
             }
             )
         }
@@ -355,8 +364,13 @@ fun ThumbUpButton(){
 }
 
 @Composable
-fun CommentButton(){
-    IconButton(onClick = { /*TODO*/ }) {
+fun CommentButton(
+    navController: NavController,
+    answererId: String,
+    ){
+    IconButton(onClick = {
+        navController.navigate("inputComment_Screen/${answererId}")
+    }) {
         Icon(
             painterResource(id = R.drawable.comment),
             contentDescription = "Comment",

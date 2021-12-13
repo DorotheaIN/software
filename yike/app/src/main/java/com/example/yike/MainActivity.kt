@@ -107,8 +107,27 @@ class MainActivity : ComponentActivity() {
                         val detailedAnswerViewModel = DetailedAnswerViewModel(questionId,answerId)
                         DetailedScreen(navController = navController,detailedAnswerViewModel)
                     }
-                    composable("publishAnswer_screen"){
-                        AnswerScreen(navController = navController)
+                    composable(
+                        route = "publishAnswer_screen/{questionId}/{questionTitle}/{answerId}",
+                        arguments = listOf(
+                            navArgument("questionId") { type = NavType.StringType},
+                            navArgument("questionTitle") { type = NavType.StringType},
+                            navArgument("answerId") { type = NavType.StringType}
+                            )
+                    ){
+                        val questionId = it.arguments?.getString("questionId")?:""
+                        val questionTitle = it.arguments?.getString("questionTitle")?:""
+                        val answerId = it.arguments?.getString("answerId")?:""
+                        val addAnswerViewModel = AddAnswerViewModel(questionId,questionTitle,answerId)
+                        AnswerScreen(navController = navController,addAnswerViewModel)
+                    }
+                    composable(
+                        route = "inputComment_Screen/{answerId}",
+                        arguments = listOf(navArgument("answerId") { type = NavType.StringType})
+                    ){
+                        val answerId = it.arguments?.getString("answerId")?:""
+                        val commentViewModel = CommentViewModel()
+                        CommentScreen(navController = navController,commentViewModel,answerId)
                     }
 
                 }

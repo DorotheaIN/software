@@ -393,3 +393,38 @@ object GetAllCommentByQuestionIdAndAnswerIdRepository {
         emit(result)
     }
 }
+
+object CommentAnswerRepository {
+    fun addAnswer(content:String,questionId: String,userId: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val addAnswerResponse = Network.addAnswer(content,questionId,userId)
+            if (addAnswerResponse.code == 200) {
+                addAnswerResponse.result
+            } else {
+                println("response status is not ok!")
+            }
+            null
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
+
+    fun comment(answerId: String,content:String,userId: String)= liveData(Dispatchers.IO){
+        val result = try {
+            val commentResponse = Network.comment(answerId,content,userId)
+            if (commentResponse.code == 200) {
+                commentResponse.result
+            } else {
+                println("response status is not ok!")
+            }
+            null
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}

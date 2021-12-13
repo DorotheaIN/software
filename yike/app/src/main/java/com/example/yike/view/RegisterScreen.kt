@@ -67,7 +67,7 @@ fun ResgisterScreen(navController: NavController,
                     ){
 
     val sendEmailInfo = sendEmailViewModel.sendEmailInfo.observeAsState()
-    println("222222222222222222222")
+//    println("222222222222222222222")
 //    println(sendEmailInfo.value)
     RegisterScreenContent(navController, sendEmailInfo.value){
         email ->  sendEmailViewModel.checksendStatus(email)
