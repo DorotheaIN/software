@@ -161,6 +161,13 @@ class MainActivity : ComponentActivity() {
                         val commentViewModel = CommentViewModel()
                         CommentScreen(navController = navController,commentViewModel,answerId)
                     }
+
+                    composable(
+                        route = "publishQuestion_Screen"
+                    ){
+                        val addQuestionViewModel = AddQuestionViewModel()
+                        PublishQuestionScreen(navController,addQuestionViewModel)
+                    }
                 }
 
             }

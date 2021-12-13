@@ -611,3 +611,21 @@ object OfficialRepository {
         emit(result)
     }
 }
+
+object AddQuestionRepository {
+    fun addQuestion(content: String,title:String,userId: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val addQuestionResponse = Network.addQuestion(content, title, userId)
+            if(addQuestionResponse.code == 200){
+                addQuestionResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}

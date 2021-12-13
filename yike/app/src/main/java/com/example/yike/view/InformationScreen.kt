@@ -80,7 +80,7 @@ import com.example.yike.viewModel.PublishQuestionViewModel
 
 @Composable
 fun MainInfo(navController: NavController){
-
+    
     Surface(
         modifier = Modifier
             .padding(0.dp, 0.dp)
@@ -92,8 +92,10 @@ fun MainInfo(navController: NavController){
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color(0xC84090C5),
-                            Color(0xDDC0A02C)),
+                        colors = listOf(
+                            Color(0xC84090C5),
+                            Color(0xDDC0A02C)
+                        ),
                         start = Offset(0f, Float.POSITIVE_INFINITY),
                         end = Offset(Float.POSITIVE_INFINITY, 0f)
                     )
@@ -106,6 +108,7 @@ fun MainInfo(navController: NavController){
             ToQuestion(navController)
             Spacer(Modifier.height(40.dp))
             ToCollect(navController)
+            Spacer(Modifier.height(60.dp))
             NavBottomBar(navController, "Info")
         }
     }

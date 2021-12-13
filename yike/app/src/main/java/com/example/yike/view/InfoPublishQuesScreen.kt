@@ -5,17 +5,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.yike.data.Taylor
@@ -40,7 +43,7 @@ fun QuestionList(questionsList:List<PublishQuestion>?,navController: NavControll
     LazyColumn()
     {
         item {
-            PubQuesTable()
+            PubQuesTable(navController)
         }
         item(questionsList){
             if(questionsList != null) {
@@ -55,13 +58,36 @@ fun QuestionList(questionsList:List<PublishQuestion>?,navController: NavControll
 }
 
 @Composable
-fun PubQuesTable(){
-    Text(
-        text = "我提出的问题",
-        color = Color.Black,
-        style = MaterialTheme.typography.h5,
-        modifier = Modifier.padding(16.dp,16.dp,16.dp,16.dp)
-    )
+fun PubQuesTable(
+    navController: NavController
+){
+    Row(
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        IconButton(
+            onClick = {
+                navController.popBackStack()//回退
+            } //do something
+        ) {
+            Icon(
+                Icons.Filled.ArrowBack,
+                null,
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterVertically),
+                tint = Color(0xFFB1A8A1)
+            )
+        }
+        Spacer(modifier = Modifier.width(5.dp))
+        Text(
+            text = "我提出的问题",
+            color = Color.Black,
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier
+                .padding(16.dp, 16.dp, 16.dp, 16.dp)
+                .align(Alignment.CenterVertically),
+        )
+    }
 }
 
 @Composable

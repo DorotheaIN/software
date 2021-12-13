@@ -1,24 +1,49 @@
 package com.example.yike
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.yike.viewModel.AddAnswerViewModel
+import com.example.yike.viewModel.AddQuestionViewModel
+import com.example.yike.viewModel.GlobalViewModel
 
-@Preview
 @Composable
-fun Publish(){
+fun PublishQuestionScreen(
+    navController: NavController,
+    addQuestionViewModel: AddQuestionViewModel
+){
+    val inputAddQuestionInfo = addQuestionViewModel.inputAddQuestionInfo.observeAsState()
+
+    PublishScreenContent(navController){
+            content, title, userId ->  addQuestionViewModel.addQues(content, title, userId)
+    }
+}
+
+
+
+@Composable
+fun PublishScreenContent(
+    navController: NavController,
+    clickEvent:(content: String,title:String,userId: String) -> Unit
+){
+    val quesInput = remember {NameInputState()}
+    val quesContentInput = remember {NameInputState()}
     Scaffold(
         Modifier.padding(0.dp),
         topBar = {
             TopAppBar(
                 title = {
-                    Button(onClick = { },
+                    Button(onClick = {
+                        navController.popBackStack()//回退
+                    },
                         colors = ButtonDefaults.buttonColors(
                             Color(0xFFFFFF),
                             Color(0xFFFFFF)
@@ -34,7 +59,15 @@ fun Publish(){
                 contentColor = Color(0xFFFFFF),
                 elevation = 0.dp,
                 actions = {
-                    Button(onClick = { },
+                    Button(onClick = {
+                        if (quesInput.isValid && quesContentInput.isValid){
+                            GlobalViewModel.getUserInfo()?.let {
+                                clickEvent(quesContentInput.text,quesInput.text,
+                                    it.id)
+                            }
+                            navController.popBackStack()//回退
+                        }
+                    },
                         colors = ButtonDefaults.buttonColors(
                             Color(0xFFFFFF),
                             Color(0xFFFFFF)
@@ -50,63 +83,90 @@ fun Publish(){
         },
     ) {
         Column {
-            InputQues()
+            InputQues(quesInput)
+            Spacer(modifier = Modifier.height(20.dp))
+            InputQuesIntroduction(quesContentInput)
         }
     }
 }
 
 @Composable
-fun InputQues(){
-    var text by remember{ mutableStateOf("") }
+fun InputQues(
+    quesInput:NameInputState
+){
+    var textQues = remember {
+        NameInputState()
+    }
+    Surface(
+        color = Color(0x51E4DFDB),
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        TextField(
+            value = textQues.text,
+            onValueChange = {newString ->
+                textQues.text = newString
+                quesInput.text = textQues.text
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color(0xFF0D0D0E),
+                backgroundColor = Color.Transparent,
+                cursorColor = Color(0xFF045DA0),
+            ),
+            textStyle = androidx.compose.ui.text.TextStyle(
+                fontSize = 26.sp
+            ),
+            placeholder = {
+                Text(
+                    "输入一个问题吧",
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    color = Color(0xFFBBB4B4),
+                    fontSize = 26.sp,
+                )
+            },
+            shape = RoundedCornerShape(30.dp)
+        )
+    }
 
-    TextField(
-        value = text,
-        onValueChange = {
-            text = it
-        },
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = Color(0xFF0D0D0E),
-            backgroundColor = Color.Transparent,
-            cursorColor = Color(0xFF045DA0),
-        ),
-        textStyle = androidx.compose.ui.text.TextStyle(
-            fontSize = 26.sp
-        ),
-//    label = {
-//        Text(text = "hello")
-//        },
-        placeholder = { Text("输入问题并以问号结尾",
-        fontSize = 26.sp
-            ) },
-//        colors = TextFieldDefaults.textFieldColors(
-//            textColor = Color(0xFF0079D3),
-    )
 }
 
 @Composable
-fun InputQuesIntroduction(){
-    var text by remember{ mutableStateOf("") }
+fun InputQuesIntroduction(
+    quesContentInput:NameInputState
+){
+    var textQuesContent = remember {
+        NameInputState()
+    }
+    Surface(
+        color = Color(0x51E4DFDB),
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
 
-    TextField(
-        value = text,
-        onValueChange = {
-            text = it
-        },
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = Color(0xFF0D0D0E),
-            backgroundColor = Color.Transparent,
-            cursorColor = Color(0xFF045DA0),
-        ),
-        textStyle = androidx.compose.ui.text.TextStyle(
-            fontSize = 16.sp
-        ),
-//    label = {
-//        Text(text = "hello")
-//        },
-        placeholder = { Text("对问题补充说明（选填）",
-            fontSize = 16.sp
-        ) },
-//        colors = TextFieldDefaults.textFieldColors(
-//            textColor = Color(0xFF0079D3),
-    )
+        TextField(
+            value = textQuesContent.text,
+            onValueChange = { newString ->
+                textQuesContent.text = newString
+                quesContentInput.text = textQuesContent.text
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color(0xFF0D0D0E),
+                backgroundColor = Color.Transparent,
+                cursorColor = Color(0xFF045DA0),
+            ),
+            textStyle = androidx.compose.ui.text.TextStyle(
+                fontSize = 16.sp
+            ),
+            placeholder = {
+                Text(
+                    "给提出的问题一些补充吧",
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    color = Color(0xFFBBB4B4),
+                    fontSize = 16.sp,
+                )
+            },
+        )
+    }
 }

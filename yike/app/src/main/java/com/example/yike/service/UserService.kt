@@ -136,5 +136,8 @@ interface UserService {
 
     @GET("signUp")
     fun officialRegister(@Query("avator")avator:String,@Query("certification")certification:String,@Query("introduction")introduction:String,@Query("password")password:String,@Query("userName")userName:String):Call<OfficialRegisterResponse>
+
+    @POST("discuss/addQuestion")
+    fun addQuestion(@Query("content")content:String,@Query("title")title:String,@Query("userId")userId:String):Call<AddQuestionResponse>
 }
 

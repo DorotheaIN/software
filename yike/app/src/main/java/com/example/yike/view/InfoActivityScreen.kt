@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -72,7 +73,7 @@ fun ActivityScreenContent(
     } else{
         LazyColumn(Modifier){
             item {
-                ActivityTable()
+                ActivityTable(navController)
             }
             item{
                 activityList.forEach{
@@ -85,13 +86,34 @@ fun ActivityScreenContent(
 }
 
 @Composable
-private fun ActivityTable(){
-    Text(
-        text = "我报名的活动",
-        color = Color.Black,
-        style = MaterialTheme.typography.h5,
-        modifier = Modifier.padding(16.dp,16.dp,16.dp,16.dp)
-    )
+private fun ActivityTable(
+    navController: NavController
+){
+    Row() {
+        IconButton(
+            onClick = {
+                navController.popBackStack()//回退
+            } //do something
+        ) {
+            Icon(
+                Icons.Filled.ArrowBack,
+                null,
+                modifier = Modifier
+                    .size(30.dp)
+                    .align(Alignment.CenterVertically),
+                tint = Color(0xFFB1A8A1)
+            )
+        }
+        Spacer(modifier = Modifier.width(5.dp))
+        Text(
+            text = "我报名的活动",
+            color = Color.Black,
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier
+                .padding(16.dp, 16.dp, 16.dp, 16.dp)
+                .align(Alignment.CenterVertically),
+        )
+    }
 }
 
 

@@ -125,6 +125,9 @@ object Network {
     suspend fun officialRegister(avator:String,certification:String,introduction:String,password:String,userName:String) =
         userService.officialRegister(avator, certification, introduction, password, userName).await()
 
+    suspend fun addQuestion(content: String,title:String,userId: String) =
+        userService.addQuestion(content, title, userId).await()
+
 
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之

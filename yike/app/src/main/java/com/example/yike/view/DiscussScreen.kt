@@ -64,6 +64,7 @@ private fun DiscussScreenScaffold(
                 paddingValues,
                 questionList,
                 questionTheme,
+                navController,
                 { question ->
                     println(question.id)
                     navController.navigate("question/${question.id}") },
@@ -97,6 +98,7 @@ private fun DiscussScreenContent(
     paddingValues: PaddingValues,
     questionList: ArrayList<Question>,
     questionTheme: ArrayList<QTheme>,
+    navController: NavController,//whl增加
     routeEvent1: (q: Question) -> Unit,
     routeEvent2: (q: QTheme) -> Unit
 
@@ -123,7 +125,8 @@ private fun DiscussScreenContent(
 
             DiscussItemsSection(
                 questionList,
-                routeEvent1
+                navController,
+                routeEvent1,
             )
         }
     }
@@ -132,6 +135,7 @@ private fun DiscussScreenContent(
 @Composable
 private fun DiscussItemsSection(
     items: ArrayList<Question>,
+    navController: NavController,//whl增加
     routeEvent: (q: Question) -> Unit
 ) {
 
@@ -162,13 +166,16 @@ private fun DiscussItemsSection(
             modifier = Modifier
                 .size(24.dp)
         )
-
-        Icon(
-            Icons.Outlined.Add,
-            contentDescription = "Add",
-            modifier = Modifier
-                .size(24.dp)
-        )
+        IconButton(onClick = {
+            navController.navigate("publishQuestion_Screen")
+        }) {
+            Icon(
+                Icons.Outlined.Add,
+                contentDescription = "Add",
+                modifier = Modifier
+                    .size(24.dp)
+            )
+        }
     }
 
     Column(
