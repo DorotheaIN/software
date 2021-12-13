@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.yike.R
 import com.example.yike.viewModel.Answer
 
@@ -38,11 +41,13 @@ fun AnswerCard(
         Row(
             modifier = Modifier.padding(all = 8.dp) // 在我们的 Card 周围添加 padding
         ) {
-            UserAvatar(avatar = R.drawable.fiddle_leaf)
+
+            UserAvatar(avatar = answerInfo.userInfo.avatar)
             Spacer(Modifier.padding(horizontal = 8.dp)) // 添加一个空的控件用来填充水平间距，设置 padding 为 8.dp
             Column {
                 Text(text = answerInfo.userInfo.name)
                 Spacer(Modifier.padding(vertical = 4.dp))
+//                AnswerContent(content = answerInfo.content)
                 AnswerContent(content = answerInfo.content)
             }
         }
@@ -72,14 +77,16 @@ private fun AnswerContent(content: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(content)
+        Text(text = content,
+            maxLines = 1,
+        )
     }
 }
 
 @Composable
-private fun UserAvatar(avatar: Int) {
+private fun UserAvatar(avatar: String) {
     Image(
-        painterResource(id = avatar),
+        rememberImagePainter(avatar),
         contentDescription = "profile picture",
         modifier = Modifier
             .size(50.dp) // 改变 Image 元素的大小

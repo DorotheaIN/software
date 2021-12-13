@@ -447,3 +447,20 @@ object MyRepository {
     }
 }
 
+object OfficialRepository {
+    fun officialRegister(avator:String,certification:String,introduction:String,password:String,userName:String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val officialRegisterResponse = Network.officialRegister(avator, certification, introduction, password, userName)
+            if(officialRegisterResponse.code == 200){
+                officialRegisterResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}

@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             YikeTheme {
                 val navController = rememberNavController()
-
+//navController.popBackStack()//回退
                 NavHost(
                     navController = navController,
                     startDestination = "login",
@@ -112,17 +112,18 @@ class MainActivity : ComponentActivity() {
                         DetailedScreen(navController = navController,detailedAnswerViewModel)
                     }
                     composable(
-                        route = "publishAnswer_screen/{questionId}/{questionTitle}/{answerId}",
+//                        route = "publishAnswer_screen/{questionId}/{questionTitle}/{answerId}",
+                        route = "publishAnswer_screen/{questionId}/{questionTitle}",
                         arguments = listOf(
                             navArgument("questionId") { type = NavType.StringType},
                             navArgument("questionTitle") { type = NavType.StringType},
-                            navArgument("answerId") { type = NavType.StringType}
+//                            navArgument("answerId") { type = NavType.StringType}
                             )
                     ){
                         val questionId = it.arguments?.getString("questionId")?:""
                         val questionTitle = it.arguments?.getString("questionTitle")?:""
-                        val answerId = it.arguments?.getString("answerId")?:""
-                        val addAnswerViewModel = AddAnswerViewModel(questionId,questionTitle,answerId)
+//                        val answerId = it.arguments?.getString("answerId")?:""
+                        val addAnswerViewModel = AddAnswerViewModel(questionId,questionTitle)
                         AnswerScreen(navController = navController,addAnswerViewModel)
                     }
                     composable(

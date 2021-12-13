@@ -45,7 +45,8 @@ fun RegisterUI(){
             ResgisterScreen(navController = navController, viewModel)
         }
         composable("officialRegister_screen"){
-            RegisterOfficialScreen(navController = navController)
+            val officialRegisterViewModel = OfficialRegisterViewModel()
+            RegisterOfficialScreen(navController = navController,officialRegisterViewModel)
         }
         composable(
             route = "personRegister2_screen",

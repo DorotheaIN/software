@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.yike.data.ActivityDetail
 import com.example.yike.data.activityDetailList
 import com.example.yike.viewModel.Activity
@@ -32,8 +33,8 @@ fun InfoActivityScreen(
     navController: NavController,
     viewModel: InfoActivityViewModel
 ){
-    val isGet = viewModel.isGet.value
-    if(isGet != true){
+    val isGet = viewModel.isGet.observeAsState()
+    if(isGet.value != true){
         viewModel.getMyActivities()
     }else {
         val myActivityList = viewModel.myActivities.observeAsState()
@@ -73,12 +74,14 @@ fun ActivityScreenContent(
             item {
                 ActivityTable()
             }
-            items(activityDetailList){
-                ActivityItem(it,navController)
+            item{
+                activityList.forEach{
+                    ActivityItem(it,navController)
+                }
             }
         }
     }
-    
+
 }
 
 @Composable
@@ -93,7 +96,7 @@ fun ActivityTable(){
 
 
 @Composable
-fun ActivityItem(item: ActivityDetail, navController: NavController){
+fun ActivityItem(item: Activity, navController: NavController){
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
@@ -107,9 +110,9 @@ fun ActivityItem(item: ActivityDetail, navController: NavController){
                     .fillMaxSize()
                     .size(600.dp, 170.dp)
                     .clickable {
-                        navController.navigate("activitydetail_screen/${item.id}")
+                        navController.navigate("activitydetail/${item.id}")
                     },
-                painter = painterResource(item.img),
+                painter = rememberImagePainter(item.img),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
             )
@@ -122,7 +125,7 @@ fun ActivityItem(item: ActivityDetail, navController: NavController){
             ){
                 Row(modifier = Modifier.padding(all = 8.dp)) {
                     Image(
-                        painter = painterResource(item.organizer.img),
+                        painter = rememberImagePainter(item.organizer.avator),
                         contentDescription = null,
                         modifier = Modifier
                             .padding(0.dp, 5.dp)
@@ -144,7 +147,7 @@ fun ActivityItem(item: ActivityDetail, navController: NavController){
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = item.organizer.name,
+                            text = item.organizer.username,
                             color = Color(0xFF7A7A7A),
                             style = MaterialTheme.typography.caption
                         )

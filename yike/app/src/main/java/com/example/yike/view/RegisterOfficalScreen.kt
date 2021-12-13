@@ -1,6 +1,7 @@
 package com.example.yike
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Face
 import androidx.compose.material.icons.sharp.NoteAdd
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -19,10 +21,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.yike.view.RegisterButton
+import com.example.yike.viewModel.OfficialRegisterViewModel
 
 
 @Composable
-fun RegisterOfficialScreen(navController: NavController){
+fun RegisterOfficialScreen(
+    navController: NavController,
+    officialRegisterViewModel: OfficialRegisterViewModel){
+
+    val officialRegister = officialRegisterViewModel.officialRegisterInfo.observeAsState()
+
+    RegisterOfficialScreenContent(navController){
+        avator, certification, introduction, password, userName ->  officialRegisterViewModel.checkOfficialRegisterStatus(avator, certification, introduction, password, userName)
+    }
+}
+
+@Composable
+fun RegisterOfficialScreenContent(
+    navController: NavController,
+    clickEvent:(avator:String,certification:String,introduction:String,password:String,userName:String) ->Unit
+){
+    val officialNameInput = remember { NameInputState() }
+    val officialCodeInput = remember { PasswordInputState() }
+    val officialIntroInput = remember { NameInputState() }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -41,15 +62,21 @@ fun RegisterOfficialScreen(navController: NavController){
         Spacer(Modifier.height(70.dp))
         RegistOfficialDescript()
         Spacer(Modifier.height(50.dp))
-        TextName()
+        OfficialTextName(officialNameInput)
         Spacer(Modifier.height(10.dp))
-        TextCode()
+        OfficialTextCode(officialCodeInput)
         Spacer(Modifier.height(10.dp))
-        TextIntro()
+        TextIntro(officialIntroInput)
         Spacer(Modifier.height(10.dp))
         UploadPicFile()
         Spacer(Modifier.height(10.dp))
-//        RegisterButton()
+        OfficialRegisterButton(
+            onClick = {
+                if(officialNameInput.isValid && officialCodeInput.isValid && officialNameInput.isValid){
+                    clickEvent("","",officialIntroInput.text,officialCodeInput.text,officialNameInput.text)
+                }
+            }
+        )
     }
 }
 
@@ -87,10 +114,11 @@ fun RegistOfficialDescript(){
     }
 }
 
-@Preview
 @Composable
-fun TextName(){
-    var text by remember{ mutableStateOf("") }
+fun OfficialTextName(nameInput:NameInputState){
+    val textName = remember {
+        NameInputState()
+    }
     Surface(
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
@@ -100,9 +128,10 @@ fun TextName(){
             .fillMaxWidth()
     ) {
         TextField(
-            value = text,
-            onValueChange = {
-                text = it
+            value = textName.text,
+            onValueChange = {newString ->
+                textName.text = newString
+                nameInput.text = textName.text
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color(0xFF0D0D0E),
@@ -110,9 +139,9 @@ fun TextName(){
                 cursorColor = Color(0xFF045DA0),
             ),
             maxLines = 1,
-            placeholder = { Text("请输入名称",
+            placeholder = { Text("请输入组织名称",
                 modifier = Modifier
-                    .padding(start = 115.dp, end = 90.dp)
+                    .padding(start = 115.dp, end = 50.dp)
                     .fillMaxWidth(),
                 color = Color(0xFFFFFFFF)
             ) },
@@ -122,8 +151,10 @@ fun TextName(){
 }
 
 @Composable
-fun TextCode(){
-    var text by remember{ mutableStateOf("") }
+fun OfficialTextCode(passwordInput:PasswordInputState){
+    val textCode = remember {
+        PasswordInputState()
+    }
     Surface(
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
@@ -133,9 +164,10 @@ fun TextCode(){
             .fillMaxWidth()
     ) {
         TextField(
-            value = text,
-            onValueChange = {
-                text = it
+            value = textCode.text,
+            onValueChange = {newText ->
+                textCode.text = newText
+                passwordInput.text = textCode.text
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color(0xFF0D0D0E),
@@ -155,8 +187,10 @@ fun TextCode(){
 }
 
 @Composable
-fun TextIntro(){
-    var text by remember{ mutableStateOf("") }
+fun TextIntro(officialIntroInput:NameInputState){
+    val textIntro = remember {
+        NameInputState()
+    }
     Surface(
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
@@ -166,9 +200,10 @@ fun TextIntro(){
             .fillMaxWidth()
     ) {
         TextField(
-            value = text,
-            onValueChange = {
-                text = it
+            value = textIntro.text,
+            onValueChange = {newText ->
+                textIntro.text = newText
+                officialIntroInput.text = textIntro.text
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color(0xFF0D0D0E),
@@ -214,4 +249,32 @@ Row(
         )
     }
 }
+}
+
+
+@Composable
+fun OfficialRegisterButton(
+    onClick: () -> Unit
+){
+    Surface(
+        shape = RoundedCornerShape(30.dp),
+        color = Color(0xFFFFFFFF),
+        modifier = Modifier
+            .size(width = 700.dp, height = 50.dp)
+            .padding(start = 30.dp, end = 30.dp)
+            .fillMaxWidth()
+            .clickable(
+                onClick = onClick
+            )
+    ) {
+        Text("点击注册",
+            modifier = Modifier
+                .padding(start = 135.dp, end = 100.dp, top = 15.dp, bottom = 15.dp)
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            style =MaterialTheme.typography.button,
+            color = Color(0xFF0D0D0E),
+            fontSize = 18.sp
+        )
+    }
 }

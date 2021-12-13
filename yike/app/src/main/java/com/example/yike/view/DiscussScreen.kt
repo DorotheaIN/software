@@ -53,7 +53,7 @@ private fun DiscussScreenScaffold(
 ) {
     Scaffold(
         bottomBar = {
-            NavBottomBar(navController)
+            NavBottomBar(navController, "Discuss")
         }
     ) { paddingValues ->
         if (questionList == null || questionTheme == null) {

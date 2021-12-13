@@ -25,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
+import com.example.yike.component.NavBottomBar
 import com.example.yike.data.Taylor
 import com.example.yike.ui.screens.ActivityDetailDisplayScreen
 import com.example.yike.view.InfoFollowQuesScreen
@@ -84,7 +85,7 @@ fun MainInfo(navController: NavController){
         modifier = Modifier
             .padding(0.dp, 0.dp)
             .fillMaxSize()
-            .background(Color(0xffededed))
+            .background(Color(0xffededed)),
     ){
         Column(
             modifier = Modifier
@@ -105,6 +106,7 @@ fun MainInfo(navController: NavController){
             ToQuestion(navController)
             Spacer(Modifier.height(40.dp))
             ToCollect(navController)
+            NavBottomBar(navController, "Info")
         }
     }
 }

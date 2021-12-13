@@ -16,14 +16,14 @@ data class InputAnswer(
 class AddAnswerViewModel (
     _questionId:String,
     _questionTitle:String,
-    _answerId:String,
+//    _answerId:String,
         ):ViewModel(){
 
     private val inputAnswer = MutableLiveData<InputAnswer>()
 
     val questionId = _questionId
     val questionTitle = _questionTitle
-    val answerId = _answerId
+//    val answerId = _answerId
 
     //界面变量
     val inputAnswerInfo = Transformations.switchMap(inputAnswer) { it ->

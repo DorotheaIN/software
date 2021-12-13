@@ -18,9 +18,6 @@ class GetPersonRegisterViewModel : ViewModel(){
     }
     //用户方法
     fun checkPersonRegisterStatus(email:String,name:String,password: String) {
-        println(email)
-        println(name)
-        println(password)
         inputRegisterInfos.value = InputRegisterInfo(email,name,password)
     }
 

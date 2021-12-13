@@ -85,6 +85,10 @@ object Network {
 
     suspend fun getMyActivities(email: String) =
         userService.getMyActivities(email).await()
+
+    suspend fun officialRegister(avator:String,certification:String,introduction:String,password:String,userName:String) =
+        userService.officialRegister(avator, certification, introduction, password, userName).await()
+
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
     private suspend fun <T> Call<T>.await() :T {

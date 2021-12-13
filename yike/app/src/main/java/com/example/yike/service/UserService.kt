@@ -20,10 +20,10 @@ interface UserService {
 //    @GET("answer")
 //    fun getAnswerList(@Query("questionId") questionId: String): Call<AnswerResponse>
 
-    @GET("followQuestion")
+    @POST("discuss/takeAntiFocusQuestion")
     fun postQuestionStatus(@Query("questionId") questionId: String, @Query("userId") userId: String): Call<PostResponse>
 
-    @GET("checkQuestion")
+    @GET("discuss/checkFocusQuestion")
     fun checkQuestionStatus(@Query("questionId") questionId: String, @Query("userId") userId: String): Call<CheckResponse>
 
     @GET("login")
@@ -89,6 +89,10 @@ interface UserService {
 
     @GET("getMyActivities")
     fun getMyActivities(@Query("email") email: String):Call<ActivityResponse>
+
+    @GET("signUp")
+    fun officialRegister(@Query("avator")avator:String,@Query("certification")certification:String,@Query("introduction")introduction:String,@Query("password")password:String,@Query("userName")userName:String):Call<OfficialRegisterResponse>
+
 }
 
 //getAllCommentByQuestionIdAndAnswerId

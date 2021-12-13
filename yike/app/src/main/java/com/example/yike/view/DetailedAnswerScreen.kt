@@ -66,7 +66,9 @@ fun DetailAnswer(
                 title={},
                     navigationIcon = {
                         IconButton(
-                            onClick = { } //do something
+                            onClick = {
+                                navController.popBackStack()//回退
+                            } //do something
                         ) {
                             Icon(Icons.Filled.ArrowBack,
                                 null,
@@ -81,7 +83,8 @@ fun DetailAnswer(
                     TextButton(onClick = {
                         val questionId = questionId
                         val questionTitle = questionAnswerInfoList?.question
-                        navController.navigate("publishAnswer_screen/${questionId}/${questionTitle}/${answererId}")
+//                        navController.navigate("publishAnswer_screen/${questionId}/${questionTitle}/${answererId}")
+                        navController.navigate("publishAnswer_screen/${questionId}/${questionTitle}")
                     }) {
                         Text("写回答",
                             color = Color(0xFF1084E0)

@@ -26,8 +26,8 @@ fun  AnswerScreen(
     val inputAnswerInfo =addAnswerViewModel.inputAnswerInfo.observeAsState()
     val quetionTitle = addAnswerViewModel.questionTitle
     val questionId = addAnswerViewModel.questionId
-    val answerId = addAnswerViewModel.answerId
-    AnswerScreenContent(navController = navController,quetionTitle,questionId,answerId){
+//    val answerId = addAnswerViewModel.answerId
+    AnswerScreenContent(navController = navController,quetionTitle,questionId){
         content,questionId,userId -> addAnswerViewModel.checkInputAnswer(content, questionId, userId)
     }
 }
@@ -37,7 +37,7 @@ fun AnswerScreenContent(
     navController: NavController,
     questionTitle:String,
     questionId:String,
-    answerId:String,
+//    answerId:String,
     clickEvent:(content:String,questionId: String,userId: String) -> Unit,
 ){
     val answerInput = remember {NameInputState()}
@@ -46,7 +46,9 @@ fun AnswerScreenContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Button(onClick = { },
+                    Button(onClick = {
+                        navController.popBackStack()//回退
+                    },
                         colors = buttonColors(Color(0xFFFFFF),
                             Color(0xFFFFFF)),
                         elevation = elevation(0.dp,0.dp,0.dp)
@@ -67,7 +69,8 @@ fun AnswerScreenContent(
                                     clickEvent(answerInput.text,questionId,
                                         it.id)
                                 }
-                                navController.navigate("detailed_screen/${questionId}/${answerId}")
+//                                navController.navigate("detailed_screen/${questionId}/${answerId}")
+                                navController.popBackStack()//回退
                             }
                     },
                         colors = buttonColors(Color(0xFFFFFF),
