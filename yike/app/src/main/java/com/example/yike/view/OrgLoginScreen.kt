@@ -15,11 +15,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.yike.EmailState
 import com.example.yike.PasswordInputState
@@ -32,19 +34,24 @@ import com.example.yike.viewModel.Organization
 @Composable
 fun OrgLoginScreen(
     viewModel: OrgLoginViewModel,
-    routeEvent:()->Unit = {}
+    routeEvent:()->Unit = {},
+    changeEvent:()->Unit = {}
 ){
     val orgInfo = viewModel.orgInfo.observeAsState()
-    LoginContent(orgInfo = orgInfo.value, routeEvent){ id, password ->
-        viewModel.checkLoginStatus(id,password)
-    }
+    LoginContent(orgInfo = orgInfo.value, routeEvent,
+        { id, password ->
+            viewModel.checkLoginStatus(id,password)
+        },
+        changeEvent
+    )
 }
 
 @Composable
 private fun LoginContent(
     orgInfo:Organization?,
     routeEvent:()->Unit = {},
-    clickEvent:(id:Int,password:String) -> Unit
+    clickEvent:(id:Int,password:String) -> Unit,
+    changeEvent:()->Unit = {}
 ){
     if(orgInfo != null) {
         println(orgInfo)
@@ -91,6 +98,8 @@ private fun LoginContent(
                     }
                 }
             })
+
+            ChangeLoginEntry(changeEvent)
         }
     }
 }
@@ -246,4 +255,30 @@ private fun LogInHeader() {
                 bottom = 16.dp,
             )
     )
+}
+
+@Composable
+private fun ChangeLoginEntry(
+    onClick: () -> Unit = {}
+){
+    Box(
+        Modifier.fillMaxSize()
+    ){
+        Box(
+            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(0.dp,20.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "个人用户登录入口",
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Center,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier
+                    .paddingFromBaseline(top = 24.dp)
+                    .clickable { onClick() },
+                color = Color(0xFF172A8F)
+            )
+        }
+    }
+
 }

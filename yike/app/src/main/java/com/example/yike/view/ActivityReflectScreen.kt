@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.livedata.observeAsState
@@ -23,15 +24,15 @@ import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.yike.component.NavBottomBar
 import com.example.yike.component.OriganizationTopBar
 import com.example.yike.component.TitleRec
-import com.example.yike.viewModel.ActivityReflectViewModel
-import com.example.yike.viewModel.EvaluationAnalysis
-import com.example.yike.viewModel.UserInfo
+import com.example.yike.viewModel.*
 
 @Composable
 fun ActivityReflectScreen(
@@ -44,7 +45,9 @@ fun ActivityReflectScreen(
     }else {
         val evaluationAnalysis = viewModel.evaluationAnalysis.observeAsState()
         val subscriberList = viewModel.subscriberList.observeAsState()
-        ActivityReflectContent(evaluationAnalysis.value, subscriberList.value){
+        val activity = viewModel.activityDetail.observeAsState()
+        val evaluationList = viewModel.evaluationList.observeAsState()
+        ActivityReflectContent(evaluationAnalysis.value, subscriberList.value,evaluationList.value,activity.value){
             navController.navigate("organization")
         }
     }
@@ -54,6 +57,8 @@ fun ActivityReflectScreen(
 fun ActivityReflectContent(
     anaylsis:EvaluationAnalysis?,
     subscriberList:ArrayList<UserInfo>?,
+    evaluationList: ArrayList<Evaluation>?,
+    activity:ActivityDetail?,
     clickEvent:()->Unit
 ){
     Scaffold(
@@ -65,11 +70,19 @@ fun ActivityReflectContent(
             Loader(paddingValues)
         }else {
             LazyColumn() {
-                item{
-                    ImageDisplay(text = "评论词云", img = anaylsis.cloud)
-                }
-                item{
-                    ImageDisplay(text = "情感分析", img = anaylsis.emo_ANALYSIS)
+                if( anaylsis.cloud == "" || anaylsis.emo_ANALYSIS == "" ){
+                    if(evaluationList != null){
+                        item {
+                            EvaluationDiplay(evaluationList)
+                        }
+                    }
+                }else {
+                    item{
+                        ImageDisplay(text = "评论词云", img = anaylsis.cloud)
+                    }
+                    item{
+                        ImageDisplay(text = "情感分析", img = anaylsis.emo_ANALYSIS)
+                    }
                 }
                 item{
                     SubscriberDisplay(subscriberList)
@@ -96,6 +109,8 @@ private fun Loader(
         )
     }
 }
+
+
 
 
 @Composable
@@ -199,4 +214,70 @@ fun SubscriberDisplay(
 
 }
 
+@Composable
+fun EvaluationDiplay(
+    evaluationList: ArrayList<Evaluation>,
+){
+    Column() {
+        TitleRec("活动评论")
+        if(evaluationList.size == 0){
+            Text(
+                text = "还没有人评论~",
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .paddingFromBaseline(top = 24.dp),
+                color = Color(0xFFC7C7C7)
+            )
+        }else{
+            evaluationList.forEach{it->
+                EvaluationItem(it)
+            }
+        }
+    }
+}
 
+@Composable
+fun EvaluationItem(
+    evaluation: Evaluation,
+){
+    Box(
+        modifier = Modifier
+            .size(550.dp, 85.dp)
+            .padding(20.dp, 0.dp, 0.dp, 0.dp)
+            .clickable { }
+            .background(Color.White)
+    ){
+        Row(modifier = Modifier.padding(all = 8.dp)) {
+            Image(
+                painter = rememberImagePainter(evaluation.reviewerAvator),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(0.dp, 5.dp)
+                    .size(55.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .fillMaxSize()
+//                .border(1.5.dp, MaterialTheme.colors.secondary, RoundedCornerShape(7.dp))
+            )
+            Spacer(modifier = Modifier.width(15.dp))
+
+            Column (modifier = Modifier
+                .size(250.dp, 65.dp)
+                .clickable { }){
+                Text(
+                    text = evaluation.reviewerName,
+                    color = Color.Black,
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = evaluation.content,
+                    color = Color(0xFF7A7A7A),
+                    style = MaterialTheme.typography.caption
+                )
+            }
+        }
+    }
+}

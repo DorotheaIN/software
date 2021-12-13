@@ -46,9 +46,14 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("orgLogin") {
                         val viewModel = OrgLoginViewModel()
-                        OrgLoginScreen(viewModel){
-                            navController.navigate("organization")
-                        }
+                        OrgLoginScreen(viewModel,
+                            {
+                                navController.navigate("organization")
+                            },
+                            {
+                                navController.navigate("login")
+                            }
+                        )
                     }
                     composable("discuss") {
                         val viewModel = DiscussViewModel()

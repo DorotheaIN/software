@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.example.yike.service.ActivityRepository
 import com.example.yike.service.OrganizationRepository
 
 data class EvaluationAnalysis(
@@ -30,8 +31,16 @@ class ActivityReflectViewModel(
         OrganizationRepository.getEvaAnalysis(activityID)
     }
 
+    val activityDetail = Transformations.switchMap(_isGet){
+        ActivityRepository.getActivityDetail(activityID)
+    }
+
     val subscriberList = Transformations.switchMap(_isGet){
         OrganizationRepository.getSubscriberList(activityID)
+    }
+
+    val evaluationList = Transformations.switchMap(_isGet){
+        ActivityRepository.getEvaluationList(activityID)
     }
 
     fun getAll(){

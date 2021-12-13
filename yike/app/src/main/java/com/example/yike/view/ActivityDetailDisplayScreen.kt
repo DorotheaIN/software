@@ -217,7 +217,9 @@ fun Bottom(
     Row(
         Modifier
             .background(Color.White)
-            .border(1.dp, Color(0xFFE4E4E4), RoundedCornerShape(7.dp))
+//            .border(1.dp, Color(0xFFE4E4E4), RoundedCornerShape(7.dp))
+            .border(1.dp, Color(0xFFE4E4E4))
+            .fillMaxWidth()
     ) {
         SubscribeIcon(activityDetail,subscribeStatus)
         LikeIcon(activityDetail,likeStatus)
@@ -233,7 +235,6 @@ fun Bottom(
 @Composable
 fun LikeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>){
     val likenum = remember{mutableStateOf(activityDetail.likeNum)}
-//    val selected by remember{mutableStateOf("false")}
     val change = remember{mutableStateOf(false)}
     val buttonSize by animateDpAsState(
         targetValue = if(change.value) 45.dp else 32.dp
@@ -315,11 +316,10 @@ fun SubscribeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>)
         change = false
     }
     Box(
-        modifier = Modifier.padding(30.dp,5.dp)
+        modifier = Modifier.padding(20.dp,5.dp,15.dp,5.dp)
     ){
         Row(){
             IconButton(onClick = {
-                /////////////////?????????????????
                 change = true
                 selected.value = !selected.value
             }) {
@@ -619,7 +619,6 @@ fun EvaluationItem(
                     .size(55.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .fillMaxSize()
-//                .border(1.5.dp, MaterialTheme.colors.secondary, RoundedCornerShape(7.dp))
             )
             Spacer(modifier = Modifier.width(15.dp))
 

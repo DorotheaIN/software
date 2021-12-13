@@ -3,10 +3,7 @@ package com.example.yike.service
 import androidx.lifecycle.liveData
 import com.example.yike.model.CheckResponse
 import com.example.yike.model.QuestionResponse
-import com.example.yike.viewModel.Activity
-import com.example.yike.viewModel.Organization
-import com.example.yike.viewModel.Question
-import com.example.yike.viewModel.UserInfo
+import com.example.yike.viewModel.*
 import kotlinx.coroutines.Dispatchers
 import java.lang.Exception
 
@@ -158,7 +155,11 @@ object ActivityRepository{
         val result = try {
             val evaluationList = Network.getEvaluationList(activityID)
             if (evaluationList.code == 200) {
-                evaluationList.result
+                if(evaluationList.msg == "查询成功"){
+                    evaluationList.result
+                }else{
+                    ArrayList<Evaluation>()
+                }
             } else {
                 println("response status is not ok!")
                 null

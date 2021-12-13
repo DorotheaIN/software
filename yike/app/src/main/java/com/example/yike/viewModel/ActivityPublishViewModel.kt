@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import com.example.yike.service.ActivityRepository
 import com.example.yike.service.OrgLoginRepository
 import com.example.yike.service.OrganizationRepository
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 class ActivityPublishViewModel() : ViewModel(
 ){
@@ -27,7 +29,8 @@ class ActivityPublishViewModel() : ViewModel(
         OrganizationRepository.publishActivity(it.capacity,it.content,it.date,it.form,it.genres,it.img,it.introduction,it.organizer.id,it.place,it.status,it.title)
     }
 
-    fun publish(activity: Activity){
+    fun publish(activity: Activity) = runBlocking{
         activityToPub.value = activity
+        delay(250)
     }
 }

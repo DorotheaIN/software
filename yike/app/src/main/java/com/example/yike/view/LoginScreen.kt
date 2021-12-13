@@ -270,14 +270,14 @@ private fun ChangeLoginEntry(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "组织用户登录",
-                style = MaterialTheme.typography.body2,
+                text = "组织用户登录入口",
+                style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Center,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier
                     .paddingFromBaseline(top = 24.dp)
                     .clickable { onClick() },
-                color = Color(0xFFA2E2FF)
+                color = Color(0xFF172A8F)
             )
         }
     }
