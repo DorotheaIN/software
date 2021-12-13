@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -126,6 +127,7 @@ fun ActivityDetailScreenContent(
         }
     ) {
         Scaffold(
+            modifier = Modifier.background(color = Color(0xffecedef)),
             bottomBar = {
                 if(activityDetail!=null){
                     if(likeStatus!=null && subscribeStatus!=null){
@@ -141,7 +143,8 @@ fun ActivityDetailScreenContent(
                 if(activityDetail!=null && id != null){
                     Surface(
                         modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colors.background
+//                        color = MaterialTheme.colors.background,
+                        color = Color(0xffecedef)
                     ) {
                         // ToolBar 最大向上位移量
                         // 56.dp 参考自 androidx.compose.material AppBar.kt 里面定义的 private val AppBarHeight = 56.dp
@@ -180,7 +183,16 @@ fun ActivityDetailScreenContent(
 //                                }
                                 if(evaluationList != null){
                                     item{
-                                        EvaluationDiplay(evaluationList,id,delReviwEvent)
+                                        Surface(
+                                            shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
+                                            elevation = 5.dp,
+                                            modifier = Modifier
+                                                .padding(0.dp, 0.dp,0.dp,3.dp)
+                                                .fillMaxWidth(),
+                                            color = Color.White
+                                        ) {
+                                            EvaluationDiplay(evaluationList,id,delReviwEvent)
+                                        }
                                     }
                                 }
                                 item {
@@ -307,7 +319,6 @@ fun EvaluateIcon(
 @Composable
 fun SubscribeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>){
     var subscriberList = activityDetail.subscriberNum
-//    var selected by remember{mutableStateOf(status)}
     var change by remember{mutableStateOf(false)}
     val buttonSize by animateDpAsState(
         targetValue = if(change) 45.dp else 32.dp
@@ -365,7 +376,7 @@ fun PictureItem(item: Activity){
 fun BasicInfoDisplay(item:ActivityDetail){
     Box(){
         Column(
-            modifier = Modifier.padding(9.dp,3.dp,9.dp,3.dp)
+            modifier = Modifier.padding(3.dp,3.dp,3.dp,3.dp)
         ) {
             //基本信息
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
@@ -384,18 +395,18 @@ fun BasicInfoDisplay(item:ActivityDetail){
                         contentDescription = "time",
                         modifier = Modifier
                             .size(52.dp, 44.dp)
-                            .padding(16.dp, 12.dp, 8.dp, 12.dp)
+                            .padding(16.dp, 12.dp, 3.dp, 12.dp)
                     )
                     Text(
                         text = "日期：",
                         color = Color.DarkGray,
-                        style = MaterialTheme.typography.h6,
+//                        style = MaterialTheme.typography.h6,
                         modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                     )
                     Text(
                         text = item.date,
                         color = Color.DarkGray,
-                        style = MaterialTheme.typography.h6,
+//                        style = MaterialTheme.typography.h6,
                         modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                     )
                 }
@@ -406,18 +417,18 @@ fun BasicInfoDisplay(item:ActivityDetail){
                     contentDescription = "place",
                     modifier = Modifier
                         .size(52.dp, 44.dp)
-                        .padding(16.dp, 12.dp, 8.dp, 12.dp)
+                        .padding(16.dp, 12.dp, 3.dp, 12.dp)
                 )
                 Text(
                     text = "地点：",
                     color = Color.DarkGray,
-                    style = MaterialTheme.typography.h6,
+//                    style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                 )
                 Text(
                     text = item.place,
                     color = Color.DarkGray,
-                    style = MaterialTheme.typography.h6,
+//                    style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                 )
             }
@@ -427,30 +438,30 @@ fun BasicInfoDisplay(item:ActivityDetail){
                     contentDescription = "form",
                     modifier = Modifier
                         .size(52.dp, 44.dp)
-                        .padding(16.dp, 12.dp, 8.dp, 12.dp)
+                        .padding(16.dp, 12.dp, 3.dp, 12.dp)
                 )
                 Text(
                     text = "形式：",
                     color = Color.DarkGray,
-                    style = MaterialTheme.typography.h6,
+//                    style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                 )
                 Text(
                     text = item.form,
                     color = Color.DarkGray,
-                    style = MaterialTheme.typography.h6,
+//                    style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            Divider(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(start = 18.dp, end = 18.dp),
-                //颜色
-                color = Color.LightGray,
-            )
+//            Divider(
+//                Modifier
+//                    .fillMaxWidth()
+//                    .height(1.dp)
+//                    .padding(start = 18.dp, end = 18.dp),
+//                //颜色
+//                color = Color.LightGray,
+//            )
         }
 
     }
@@ -460,24 +471,24 @@ fun BasicInfoDisplay(item:ActivityDetail){
 fun IntroductionDisplay(item:ActivityDetail){
     Box() {
         Column(
-            modifier = Modifier.padding(9.dp,3.dp,9.dp,3.dp)
+            modifier = Modifier.padding(3.dp,3.dp,3.dp,3.dp)
         ){
             GenresRow(item.genres)
             Text(
                 text = item.introduction,
                 color = Color.DarkGray,
-                style = MaterialTheme.typography.h6,
+//                style = MaterialTheme.typography.h6,
                 modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            Divider(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(start = 18.dp, end = 18.dp),
-                //颜色
-                color = Color.LightGray,
-            )
+//            Divider(
+//                Modifier
+//                    .fillMaxWidth()
+//                    .height(1.dp)
+//                    .padding(start = 18.dp, end = 18.dp),
+//                //颜色
+//                color = Color.LightGray,
+//            )
         }
     }
 }
@@ -486,12 +497,15 @@ fun IntroductionDisplay(item:ActivityDetail){
 fun ContentDisplay(item:ActivityDetail){
     Box() {
         Column(
-            modifier = Modifier.padding(9.dp,3.dp,9.dp,3.dp)
+            modifier = Modifier.padding(3.dp,3.dp,3.dp,3.dp)
         ){
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
                 Text(
                     text = "活动内容",
                     color = Color.Black,
+//                    style = TextStyle(
+//                        fontFeatureSettings = "smcp"
+//                    ),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
                     fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
@@ -500,18 +514,18 @@ fun ContentDisplay(item:ActivityDetail){
             Text(
                 text = item.content,
                 color = Color.DarkGray,
-                style = MaterialTheme.typography.h6,
+//                style = MaterialTheme.typography.h6,
                 modifier = Modifier.padding(20.dp, 8.dp, 20.dp, 0.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            Divider(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .padding(start = 18.dp, end = 18.dp),
-                //颜色
-                color = Color.LightGray,
-            )
+//            Divider(
+//                Modifier
+//                    .fillMaxWidth()
+//                    .height(1.dp)
+//                    .padding(start = 18.dp, end = 18.dp),
+//                //颜色
+//                color = Color.LightGray,
+//            )
         }
     }
 }
@@ -554,18 +568,21 @@ fun ActivityRecommendedDisplay(activityList: ArrayList<Activity>){
 
 @Composable
 fun GenresRow(genres:String){
-    val list = genres.split(',')
-    LazyRow(contentPadding = PaddingValues(8.dp,8.dp,8.dp,0.dp)){
+    val list = genres.split(',','，')
+    LazyRow(contentPadding = PaddingValues(3.dp,8.dp,3.dp,0.dp)){
         items(list){ it->
             Text(
-                text = it,
-                color = Color(0xFF5B96FC),
+                text = "  "+it + ">  ",
+//                color = Color(0xFF626669),
+                color = Color(0xFF425CEC),
                 style = MaterialTheme.typography.body2,
                 modifier = Modifier
                     .padding(12.dp, 0.dp, 0.dp, 0.dp)
-                    .clip(RoundedCornerShape(5.dp))
+                    .clip(RoundedCornerShape(15.dp))
+//                    .background(Color(0xFFF7F7F7))
                     .background(Color(0xFFD0E7FF))
-                    .padding(7.dp, 4.dp)
+                    .padding(7.dp, 4.dp)//f2f2f2
+//                    .border(1.dp,Color(0xFFF2F2F2),RoundedCornerShape(15.dp))
             )
         }
     }
@@ -574,9 +591,36 @@ fun GenresRow(genres:String){
 
 @Composable
 fun InfoDisplay(item:ActivityDetail){
-    IntroductionDisplay(item)
-    BasicInfoDisplay(item)
-    ContentDisplay(item)
+    Surface(
+        shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
+        elevation = 5.dp,
+        modifier = Modifier
+            .padding(0.dp, 0.dp,0.dp,3.dp)
+            .fillMaxWidth(),
+        color = Color.White
+    ) {
+        IntroductionDisplay(item)
+    }
+    Surface(
+        shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
+        elevation = 5.dp,
+        modifier = Modifier
+            .padding(0.dp, 0.dp,0.dp,3.dp)
+            .fillMaxWidth(),
+        color = Color.White
+    ) {
+        BasicInfoDisplay(item)
+    }
+    Surface(
+        shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
+        elevation = 5.dp,
+        modifier = Modifier
+            .padding(0.dp, 0.dp,0.dp,3.dp)
+            .fillMaxWidth(),
+        color = Color.White
+    ) {
+        ContentDisplay(item)
+    }
 }
 
 
@@ -587,6 +631,15 @@ fun EvaluationDiplay(
     delReviwEvent:() -> Unit
 ){
     Column() {
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
+            Text(
+                text = "活动评论",
+                color = Color.Black,
+                style = MaterialTheme.typography.h5,
+                modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
+                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+            )
+        }
         evaluationList.forEach{it->
             if(it.reviewerID == id){
                 EvaluationItem(it,true,delReviwEvent)
@@ -606,7 +659,7 @@ fun EvaluationItem(
     Box(
         modifier = Modifier
             .size(550.dp, 85.dp)
-            .padding(20.dp, 0.dp,0.dp,0.dp)
+            .padding(20.dp, 0.dp, 0.dp, 0.dp)
             .clickable { }
             .background(Color.White)
     ){
@@ -622,7 +675,9 @@ fun EvaluationItem(
             )
             Spacer(modifier = Modifier.width(15.dp))
 
-            Column (modifier = Modifier.size(250.dp,65.dp).clickable {  }){
+            Column (modifier = Modifier
+                .size(250.dp, 65.dp)
+                .clickable { }){
                 Text(
                     text = evaluation.reviewerName,
                     color = Color.Black,
