@@ -422,6 +422,13 @@ object CommentAnswerRepository {
             }
             null
         } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}
+
 object MyRepository {
     fun getMyActivities(email: String) = liveData(Dispatchers.IO) {
         val result = try {
@@ -439,3 +446,4 @@ object MyRepository {
         emit(result)
     }
 }
+

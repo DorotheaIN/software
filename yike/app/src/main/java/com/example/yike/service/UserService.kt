@@ -86,6 +86,7 @@ interface UserService {
 
     @POST("discuss/addComment")
     fun comment(@Query("answerId")answerId: String,@Query("content")content: String,@Query("userId")userID: String):Call<CommentResponse>
+
     @GET("getMyActivities")
     fun getMyActivities(@Query("email") email: String):Call<ActivityResponse>
 }
