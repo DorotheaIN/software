@@ -16,6 +16,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -113,10 +114,11 @@ fun RegistOfficialDescript(){
         Text(
             "官方组织注册",
             color = Color(0xFFFFFFFF),
+            textAlign = TextAlign.Center,
             style = MaterialTheme.typography.h4,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 100.dp, end = 80.dp)
+//                .padding(start = 100.dp, end = 80.dp)
         )
     }
 }
@@ -148,9 +150,10 @@ fun OfficialTextName(nameInput:NameInputState){
             maxLines = 1,
             placeholder = { Text("请输入组织名称",
                 modifier = Modifier
-                    .padding(start = 115.dp, end = 50.dp)
+//                    .padding(start = 115.dp, end = 50.dp)
                     .fillMaxWidth(),
-                color = Color(0xFFFFFFFF)
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center
             ) },
             shape = RoundedCornerShape(30.dp)
         )
@@ -184,9 +187,10 @@ fun OfficialTextCode(passwordInput:PasswordInputState){
             maxLines = 1,
             placeholder = { Text("请输入密码",
                 modifier = Modifier
-                    .padding(start = 115.dp, end = 50.dp)
+//                    .padding(start = 115.dp, end = 50.dp)
                     .fillMaxWidth(),
-                color = Color(0xFFFFFFFF)
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center
             ) },
             shape = RoundedCornerShape(30.dp)
         )
@@ -220,10 +224,11 @@ fun TextIntro(officialIntroInput:NameInputState){
             maxLines = 1,
             placeholder = { Text("请输入简介",
                 modifier = Modifier
-                    .padding(start = 115.dp, end = 50.dp)
+//                    .padding(start = 115.dp, end = 50.dp)
                     .fillMaxWidth()
                 ,
-                color = Color(0xFFFFFFFF)
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center
             ) },
             shape = RoundedCornerShape(30.dp)
         )
@@ -274,14 +279,21 @@ fun OfficialRegisterButton(
                 onClick = onClick
             )
     ) {
-        Text("点击注册",
-            modifier = Modifier
-                .padding(start = 135.dp, end = 100.dp, top = 15.dp, bottom = 15.dp)
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            style =MaterialTheme.typography.button,
-            color = Color(0xFF0D0D0E),
-            fontSize = 18.sp
-        )
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Text("点击注册",
+                modifier = Modifier
+                    .padding(vertical = 15.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                style =MaterialTheme.typography.button,
+                color = Color(0xFF0D0D0E),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }

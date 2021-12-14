@@ -13,6 +13,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key.Companion.Sleep
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -151,14 +152,18 @@ fun RegistDescript(){
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(
-            "开启我的大学一刻",
-            color = Color(0xFFFFFFFF),
-            style = MaterialTheme.typography.h4,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 60.dp, end = 60.dp)
-        )
+        Column() {
+            Text(
+                "开启我的大学一刻",
+                color = Color(0xFFFFFFFF),
+                style = MaterialTheme.typography.h5,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+//                .padding(start = 60.dp, end = 60.dp)
+            )
+        }
+
     }
 }
 
@@ -174,8 +179,8 @@ fun TextEmail(emailInput:EmailState){
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
         modifier = Modifier
-            .size(width = 700.dp,height = 51.dp)
-            .padding(start = 30.dp,end = 30.dp)
+            .size(width = 700.dp, height = 51.dp)
+            .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
     ) {
         TextField(
@@ -192,9 +197,10 @@ fun TextEmail(emailInput:EmailState){
             maxLines = 1,
             placeholder = { Text("请输入邮箱号进行注册",
                 modifier = Modifier
-                    .padding(start = 75.dp ,end =50.dp )
+//                    .padding(start = 75.dp ,end =50.dp )
                     .fillMaxWidth(),
-                color = Color(0xFFFFFFFF)
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center
                 ) },
 //            shape = RoundedCornerShape(30.dp)
         )
@@ -212,21 +218,29 @@ fun VerifyButton(
         shape = RoundedCornerShape(30.dp),
         color = Color(0xFFFFFFFF),
         modifier = Modifier
-            .size(width = 700.dp,height = 50.dp)
-            .padding(start = 30.dp,end = 30.dp)
+            .size(width = 700.dp, height = 50.dp)
+            .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
             .clickable(
                 onClick = onClick
             )
     ) {
-        Text("获取邮箱验证码",
-            modifier = Modifier
-                .padding(start = 105.dp ,end =90.dp ,top = 15.dp,bottom = 15.dp)
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            style =MaterialTheme.typography.button,
-            color = Color(0xFF0D0D0E),
-            fontSize = 18.sp
-        )
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("获取邮箱验证码",
+                modifier = Modifier
+                .padding(vertical = 15.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                style =MaterialTheme.typography.button,
+                color = Color(0xFF0D0D0E),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+
     }
 }

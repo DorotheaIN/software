@@ -335,7 +335,7 @@ fun SubscribeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>)
         change = false
     }
     Box(
-        modifier = Modifier.padding(20.dp,5.dp,15.dp,5.dp)
+        modifier = Modifier.padding(20.dp,5.dp,15.dp,5.dp).fillMaxWidth(0.27f)
     ){
         Row(){
             IconButton(onClick = {
@@ -665,8 +665,7 @@ fun EvaluationItem(
     delReviwEvent:() -> Unit
 ){
     Box(
-        modifier = Modifier
-            .size(550.dp, 85.dp)
+        modifier = Modifier.fillMaxSize()
             .padding(20.dp, 0.dp, 0.dp, 0.dp)
             .clickable { }
             .background(Color.White)
@@ -684,7 +683,7 @@ fun EvaluationItem(
             Spacer(modifier = Modifier.width(15.dp))
 
             Column (modifier = Modifier
-                .size(250.dp, 65.dp)
+//                .size(250.dp, 65.dp)
                 .clickable { }){
                 Text(
                     text = evaluation.reviewerName,

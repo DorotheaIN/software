@@ -150,7 +150,7 @@ private fun DiscussItemsSection(
             .padding(horizontal = 16.dp)
     ) {
         Text(
-            text = "Discuss List",
+            text = "话题速览",
             style = MaterialTheme.typography.h6,
             modifier = Modifier
                 .paddingFromBaseline(
@@ -229,7 +229,7 @@ private fun DiscussThemesSection(
     routeEvent: (q: QTheme) -> Unit
 ) {
     Text(
-        text = "Themes",
+        text = "精选讨论",
         style = MaterialTheme.typography.h6,
         modifier = Modifier
             .paddingFromBaseline(32.dp)

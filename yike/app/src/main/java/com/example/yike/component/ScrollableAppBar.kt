@@ -121,7 +121,7 @@ fun ScrollableAppBar(
                     color = Color(0xFFFFFFFF),
                     modifier = Modifier
                         .padding(start = 20.dp),
-                    fontSize = 23.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
             }

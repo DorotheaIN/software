@@ -18,9 +18,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.yike.R
 import com.example.yike.component.AnswerCard
 import com.example.yike.component.DiscussTopBar
 import com.example.yike.viewModel.Answer
@@ -162,18 +166,25 @@ private fun QuestionSection(
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
-        modifier = Modifier.padding(all = 8.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(all = 8.dp)
+            .fillMaxWidth()
     ) {
-        Column{
+        Column(
+            Modifier.padding(15.dp,15.dp)
+        ){
             Text(
                 text = questionBody.title,
-                style = MaterialTheme.typography.h3
+                fontSize = 26.sp,
+                fontWeight = FontWeight.SemiBold
             )
-
+            Spacer(modifier = Modifier.height(10.dp))
             Text(//折叠的
                 text = questionBody.description,
-                style = MaterialTheme.typography.h6
+                fontSize = 18.sp,
+                color = Color(0xFF5F5F5F)
             )
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }
@@ -199,49 +210,70 @@ private fun UserOperationSection(
             change.value = false
         }
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
+            Modifier.fillMaxWidth(1f)
         ){
-            IconButton(
-                onClick = {
-                    clickEvent1()
-                    change.value = true
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Column() {
-                    Icon(
-                        Icons.Outlined.Star,//交互
-                        contentDescription = "Star",
-                        modifier = Modifier.size(buttonSize),
-                        tint = if (questionStatus == 1) Color.Yellow else Color.Gray
-                    )
+            Column(
+                modifier = Modifier
+                    .padding(40.dp, 5.dp, 15.dp, 5.dp)
+                    .fillMaxWidth(0.45f)
+            ){
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ){
+                    IconButton(
+                        onClick = {
+                            clickEvent1()
+                            change.value = true
+                        },
+//                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(painter = painterResource(id = if(questionStatus == 1) R.drawable.collect_selected else R.drawable.collect),
+                            contentDescription = "Star",
+                            modifier = Modifier.size(buttonSize),
+                            tint = if(questionStatus == 1) Color(0xFFEEBB21) else Color.Gray
+                        )
+                    }
                     Text(text="关注",color = Color.DarkGray,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.weight(0.5f).padding(0.dp, 0.dp, 0.dp, 0.dp)
+                        fontSize = 18.sp,
+//                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 0.dp)
                     )
+
+
                 }
             }
-
-            IconButton(
-                onClick = {
-                          navController.navigate("publishAnswer_screen/${questionId}/${questionTitle}")
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Column() {
-                    Icon(
-                        Icons.Outlined.Edit,//交互
-                        contentDescription = "Edit"
-                    )
+            Column(
+                modifier = Modifier.padding(40.dp,5.dp,15.dp,5.dp)
+            ){
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ){
+                    IconButton(
+                        onClick = {
+                            navController.navigate("publishAnswer_screen/${questionId}/${questionTitle}")
+                        },
+//                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(
+                            Icons.Outlined.Edit,//交互
+                            contentDescription = "Edit"
+                        )
+                    }
                     Text(text="回答",color = Color.DarkGray,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.weight(0.5f).padding(0.dp, 0.dp, 0.dp, 0.dp))
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 0.dp)
+                    )
                 }
             }
         }
+
+
     }
 
 }
