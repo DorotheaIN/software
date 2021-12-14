@@ -1,8 +1,11 @@
 package com.example.yike.view
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -16,12 +19,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.yike.EmailState
 import com.example.yike.PasswordInputState
 import com.example.yike.component.PrimaryButton
@@ -36,16 +45,17 @@ import kotlin.reflect.typeOf
 fun LoginScreen(
     viewModel: LoginViewModel,
     routeEvent: () -> Unit = {},
-    changeEvent:()->Unit = {} //跳转到组织登录
+    changeEvent:()->Unit = {},
+    registerEvent:()->Unit = {}//跳转到组织登录
 ) {
     val userInfo = viewModel.userInfo.observeAsState()
-    LoginContent(userInfo = userInfo.value, routeEvent,changeEvent) { email, password ->
+    LoginContent(userInfo = userInfo.value, routeEvent,changeEvent,registerEvent) { email, password ->
         viewModel.checkLoginStatus(email, password)
     }
 }
 
 @Composable
-private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},changeEvent:()->Unit = {},
+private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},changeEvent:()->Unit = {},registerEvent:()->Unit = {},
                          clickEvent: (email: String, password: String) -> Unit
 ) {
     val loginStatus = userInfo?.status
@@ -70,12 +80,14 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 42.dp,vertical = 20.dp),
         ) {
 
 //            MyExample()
 
             LogInHeader()
+
+            Spacer(Modifier.height(12.dp))
 
             EmailInput(emailInput)
 
@@ -84,7 +96,7 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
             PasswordInput(passwordInput)
 
 
-            TermsOfServiceLabel()
+            TermsOfServiceLabel(registerEvent)
 
             Spacer(Modifier.height(16.dp))
 
@@ -105,21 +117,77 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
 
 @Composable
 private fun LoginButton( onClick: () -> Unit) {
-    PrimaryButton(
-        buttonText = "Log in",
-        onClick = onClick
-    )
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color(0xD83D59FC)
+        ),
+        modifier = Modifier.fillMaxWidth(0.92f)
+    ) {
+        Text(
+            "登录",
+            color = Color.White,
+            style = TextStyle(
+//                fontWeight = FontWeight.SemiBold, //设置字体粗细
+                fontSize = 20.sp,
+                letterSpacing = 25.sp
+            )
+        )
+    }
+//    PrimaryButton(
+//        buttonText = "Log in",
+//        onClick = onClick,
+//    )
 }
 
 @Composable
-private fun TermsOfServiceLabel() {
-    Text(
-        text = "By clicking below you agree to our Terms of Use and consent to our Privacy Policy.",
-        style = MaterialTheme.typography.body2,
-        textAlign = TextAlign.Center,
+private fun TermsOfServiceLabel(
+    registerEvent: () -> Unit = {}
+) {
+    val text = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = Color(0xFFC7C7C7),
+                fontSize = 16.sp
+            )
+        ){
+            append("还没有账号？")
+        }
+        pushStringAnnotation(
+            tag = "tag",
+            annotation = "转到注册界面"
+        )
+        withStyle(
+            style = SpanStyle(
+                color = Color(0xFF227AFF),
+                fontSize = 16.sp
+            )
+        ) {
+            append("马上注册")
+        }
+        pop()
+    }
+    ClickableText(
+        text = text,
         modifier = Modifier
             .paddingFromBaseline(top = 24.dp),
+        onClick = { offset ->
+            text.getStringAnnotations(
+                tag = "tag", start = offset,
+                end = offset
+            ).firstOrNull()?.let { annotation ->
+                run(registerEvent)
+//                Log.d(TAG, "你已经点到 ${annotation.item} 啦")
+            }
+        },
     )
+//    Text(
+//        text = "还没有账号？马上注册",
+//        style = MaterialTheme.typography.body2,
+//        textAlign = TextAlign.Center,
+//        modifier = Modifier
+//            .paddingFromBaseline(top = 24.dp),
+//    )
 }
 
 @Composable
@@ -266,7 +334,10 @@ private fun ChangeLoginEntry(
         Modifier.fillMaxSize()
     ){
         Box(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(0.dp,20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(0.dp, 20.dp),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -277,7 +348,9 @@ private fun ChangeLoginEntry(
                 modifier = Modifier
                     .paddingFromBaseline(top = 24.dp)
                     .clickable { onClick() },
-                color = Color(0xFF172A8F)
+                color = Color(0xFF227AFF)
+//                color = Color(0xFF172A8F),
+
             )
         }
     }

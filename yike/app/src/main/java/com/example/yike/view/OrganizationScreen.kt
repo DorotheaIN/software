@@ -130,11 +130,18 @@ fun header(organization:Organization){
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color(0xffdaa545), Color(0xffe08c29)),
+                        colors = listOf(Color(0xB2806FA0), Color(0xE14256C4)),
                         start = Offset(0f, Float.POSITIVE_INFINITY),
                         end = Offset(Float.POSITIVE_INFINITY, 0f)
                     )
                 )
+//                .background(
+//                    brush = Brush.linearGradient(
+//                        colors = listOf(Color(0xffdaa545), Color(0xffe08c29)),
+//                        start = Offset(0f, Float.POSITIVE_INFINITY),
+//                        end = Offset(Float.POSITIVE_INFINITY, 0f)
+//                    )
+//                )
         ) {
             Spacer(Modifier.height(40.dp))
             Box(
@@ -294,14 +301,15 @@ fun PublishItem(navController: NavController){
         elevation = 5.dp,
         modifier = Modifier
             .padding(0.dp, 10.dp, 0.dp, 15.dp)
-            .fillMaxWidth()
+            .fillMaxWidth().clickable {
+                navController.navigate("activity_publish")
+            },
+        color = Color(0xFFFFFFFF),
     ) {
         Box(
             Modifier
                 .padding(148.dp, 10.dp)
-                .clickable {
-                    navController.navigate("activity_publish")
-                }
+
         ){
             Column(
                 modifier = Modifier
@@ -318,7 +326,7 @@ fun PublishItem(navController: NavController){
                 ) {
                     Text(
                         text = "发布活动",
-                        color = Color(0xBCDC9D3C),
+                        color = Color(0xFF253ECC),
                         style = TextStyle(
                             fontWeight = FontWeight.Bold, //设置字体粗细
                             fontSize = 18.sp,
@@ -332,7 +340,7 @@ fun PublishItem(navController: NavController){
                         modifier = Modifier
                             .size(30.dp)
                             .padding(5.dp, 0.dp),
-                        tint = Color(0xC8DC9D3C)
+                        tint = Color(0xFF253ECC)
                     )
                 }
             }

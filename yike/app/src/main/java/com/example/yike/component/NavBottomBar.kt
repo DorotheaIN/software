@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 
@@ -16,7 +17,7 @@ fun NavBottomBar(
     dir: String
 ) {
     BottomAppBar(
-        backgroundColor = MaterialTheme.colors.primary,
+        backgroundColor = Color(0xFFF1F1F1),
     ) {
         BottomButton(
             selected = dir == "Discuss",

@@ -11,8 +11,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.yike.component.OriganizationTopBar
 import com.example.yike.component.*
@@ -46,7 +48,8 @@ fun ActivityPublishContent(
             OriganizationTopBar(organization.username){
                 navController.navigate("organization")
             }
-        }
+        },
+        modifier = Modifier.padding(horizontal = 15.dp)
     ) {
         //val activity = remember { mutableStateOf(Activity("","","","","","","","",0,0,1,0, organization,0)) }
         val title = remember { RequiredInputState()}
@@ -129,19 +132,23 @@ fun PublishSubmitButton(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xffdaa545)),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color(0xD83D59FC)
+            ),
             shape = RoundedCornerShape(50),
             onClick = onClick,
             modifier = Modifier
-                .fillMaxWidth(0.4f)
-                .height(48.dp)
+//                .fillMaxWidth(0.4f)
                 .padding(horizontal = 16.dp),
         ) {
             Text(
                 text = "提交",
                 color = Color.White,
-                style = MaterialTheme.typography.h5,
-                fontFamily = FontFamily.SansSerif
+                style = TextStyle(
+//                fontWeight = FontWeight.SemiBold, //设置字体粗细
+                    fontSize = 20.sp,
+                    letterSpacing = 7.sp
+                ),
             )
         }
     }

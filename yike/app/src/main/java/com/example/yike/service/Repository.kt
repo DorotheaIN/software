@@ -401,8 +401,12 @@ object OrganizationRepository{
             if(subscriberList.code == 200){
                 subscriberList.result
             } else {
-                println("response status is not ok!")
-                null
+                if(subscriberList.msg == "数据库无此信息") {///提醒ssg改成[]
+                    ArrayList<UserInfo>()
+                }else{
+                    println("response status is not ok!")
+                    null
+                }
             }
         } catch (e:Exception){
             println(e)

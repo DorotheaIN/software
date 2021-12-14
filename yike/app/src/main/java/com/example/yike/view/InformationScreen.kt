@@ -114,7 +114,6 @@ fun MainInfo(navController: NavController){
                 Spacer(Modifier.height(40.dp))
                 ToCollect(navController)
                 Spacer(Modifier.height(60.dp))
-                NavBottomBar(navController, "Info")
             }
         }
     }

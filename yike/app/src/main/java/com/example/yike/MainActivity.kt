@@ -41,6 +41,9 @@ class MainActivity : ComponentActivity() {
                             },
                             {
                                 navController.navigate("orgLogin")
+                            },
+                            {
+                                navController.navigate("register/personRegister_screen")
                             }
                         )
                     }
@@ -52,8 +55,18 @@ class MainActivity : ComponentActivity() {
                             },
                             {
                                 navController.navigate("login")
+                            },
+                            {
+                                navController.navigate("register/officialRegister_screen")
                             }
                         )
+                    }
+                    composable(
+                        route = "register/{start}",
+                        arguments = listOf(navArgument("start") { type = NavType.StringType })
+                    ) {
+                        val start = it.arguments?.getString("start")?:""
+                        RegisterUI(start)
                     }
                     composable("discuss") {
                         val viewModel = DiscussViewModel()
@@ -161,7 +174,6 @@ class MainActivity : ComponentActivity() {
                         val commentViewModel = CommentViewModel()
                         CommentScreen(navController = navController,commentViewModel,answerId)
                     }
-
                     composable(
                         route = "publishQuestion_Screen"
                     ){

@@ -54,14 +54,21 @@ fun RegisterTwoScreenContent(
             .fillMaxSize()
             .background(
                 brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xC84090C5),
-                        Color(0xDDC0A02C)
-                    ),
+                    colors = listOf(Color(0xB2806FA0), Color(0xE14256C4)),
                     start = Offset(0f, Float.POSITIVE_INFINITY),
                     end = Offset(Float.POSITIVE_INFINITY, 0f)
                 )
             )
+//            .background(
+//                brush = Brush.linearGradient(
+//                    colors = listOf(
+//                        Color(0xC84090C5),
+//                        Color(0xDDC0A02C)
+//                    ),
+//                    start = Offset(0f, Float.POSITIVE_INFINITY),
+//                    end = Offset(Float.POSITIVE_INFINITY, 0f)
+//                )
+//            )
     ) {
         RegisterTwoTable(navController)
         Spacer(Modifier.height(70.dp))

@@ -32,13 +32,15 @@ import kotlinx.coroutines.delay
 //data class BackStackEntry(val email: String?,val verifyCode:String?)
 
 
-@Preview
+
 @Composable
-fun RegisterUI(){
+fun RegisterUI(
+    start:String
+){
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = "personRegister_screen",
+        startDestination = start,
     ){
         composable("personRegister_screen"){
             val viewModel = SendEmailViewModel()
@@ -68,12 +70,9 @@ fun ResgisterScreen(navController: NavController,
                     ){
 
     val sendEmailInfo = sendEmailViewModel.sendEmailInfo.observeAsState()
-//    println("222222222222222222222")
-//    println(sendEmailInfo.value)
     RegisterScreenContent(navController, sendEmailInfo.value){
         email ->  sendEmailViewModel.checksendStatus(email)
     }
-
 }
 
 @Composable
@@ -93,14 +92,21 @@ fun RegisterScreenContent(navController: NavController,
             .fillMaxSize()
             .background(
                 brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xC84090C5),
-                        Color(0xDDC0A02C)
-                    ),
+                    colors = listOf(Color(0xB2806FA0), Color(0xE14256C4)),
                     start = Offset(0f, Float.POSITIVE_INFINITY),
                     end = Offset(Float.POSITIVE_INFINITY, 0f)
                 )
             )
+//            .background(
+//                brush = Brush.linearGradient(
+//                    colors = listOf(
+//                        Color(0xC84090C5),
+//                        Color(0xDDC0A02C)
+//                    ),
+//                    start = Offset(0f, Float.POSITIVE_INFINITY),
+//                    end = Offset(Float.POSITIVE_INFINITY, 0f)
+//                )
+//            )
     ) {
         RegisterTable(navController)
         Spacer(Modifier.height(70.dp))

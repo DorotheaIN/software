@@ -64,9 +64,11 @@ fun ActivityReflectContent(
     Scaffold(
         topBar = {
             if(activity!=null){
+                println(activity.title)
                 OriganizationTopBar(activity.title,clickEvent)
             }
-        }
+        },
+        modifier = Modifier.padding(horizontal = 15.dp)
     ){ paddingValues ->
         if(anaylsis == null || subscriberList == null){
             Loader(paddingValues)
@@ -170,44 +172,59 @@ fun SubscriberDisplay(
                     fontFamily = FontFamily.SansSerif
                 )
             }
-            subscriberList.forEach{ it->
-                Box(
-                    modifier = Modifier
-                        .size(550.dp, 85.dp)
-                        .padding(20.dp, 0.dp)
-                        .clickable { }
-                        .background(Color.White)
+            if(subscriberList.size == 0){
+                Row(
+                    horizontalArrangement = Arrangement.Center
                 ){
-                    Row(modifier = Modifier.padding(all = 8.dp)) {
-                        Image(
-                            painter = rememberImagePainter(it.avator),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .padding(0.dp, 5.dp)
-                                .size(55.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .fillMaxSize()
+                    Text(
+                        text = "还没有人报名~",
+                        style = MaterialTheme.typography.body1,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .paddingFromBaseline(top = 24.dp),
+                        color = Color(0xFFA3A3A3)
+                    )
+                }
+            }else{
+                subscriberList.forEach{ it->
+                    Box(
+                        modifier = Modifier
+                            .size(550.dp, 85.dp)
+                            .padding(20.dp, 0.dp)
+                            .clickable { }
+                            .background(Color.White)
+                    ){
+                        Row(modifier = Modifier.padding(all = 8.dp)) {
+                            Image(
+                                painter = rememberImagePainter(it.avator),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(0.dp, 5.dp)
+                                    .size(55.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .fillMaxSize()
 //                .border(1.5.dp, MaterialTheme.colors.secondary, RoundedCornerShape(7.dp))
-                        )
-                        Spacer(modifier = Modifier.width(15.dp))
-
-                        Column (modifier = Modifier.size(300.dp,65.dp)){
-                            Text(
-                                text = it.user_NAME,
-                                color = Color.Black,
-                                style = MaterialTheme.typography.h6,
-                                modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                             )
+                            Spacer(modifier = Modifier.width(15.dp))
 
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Column (modifier = Modifier.size(300.dp,65.dp)){
+                                Text(
+                                    text = it.user_NAME,
+                                    color = Color.Black,
+                                    style = MaterialTheme.typography.h6,
+                                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                                )
 
-                            Text(
-                                text = it.id,
-                                color = Color(0xFF7A7A7A),
-                                style = MaterialTheme.typography.caption
-                            )
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Text(
+                                    text = it.id,
+                                    color = Color(0xFF7A7A7A),
+                                    style = MaterialTheme.typography.caption
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(15.dp))
                         }
-                        Spacer(modifier = Modifier.width(15.dp))
                     }
                 }
             }
@@ -220,17 +237,23 @@ fun SubscriberDisplay(
 fun EvaluationDiplay(
     evaluationList: ArrayList<Evaluation>,
 ){
-    Column() {
+    Column(
+        Modifier.fillMaxWidth(1f)
+    ) {
         TitleRec("活动评论")
         if(evaluationList.size == 0){
-            Text(
-                text = "还没有人评论~",
-                style = MaterialTheme.typography.body1,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .paddingFromBaseline(top = 24.dp),
-                color = Color(0xFFC7C7C7)
-            )
+            Row(
+                horizontalArrangement = Arrangement.Center
+            ){
+                Text(
+                    text = "         还没有收到评论~",
+                    style = MaterialTheme.typography.body1,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .paddingFromBaseline(top = 24.dp),
+                    color = Color(0xFFA5A5A5)
+                )
+            }
         }else{
             evaluationList.forEach{it->
                 EvaluationItem(it)
