@@ -143,7 +143,7 @@ fun header(organization:Organization){
 //                    )
 //                )
         ) {
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(60.dp))//
             Box(
                 modifier = Modifier
                     .size(550.dp, 105.dp)
@@ -193,7 +193,7 @@ fun header(organization:Organization){
                 //颜色
                 color = Color(0x2CFFFFFF),
             )
-            Spacer(Modifier.height(60.dp))
+            Spacer(Modifier.height(80.dp))//
         }
     }
 }
@@ -252,7 +252,7 @@ fun ActivityPublishedItem(
                                 text = item.title,
                                 color = Color.Black,
                                 style = TextStyle(
-                                    fontSize = 18.sp,
+                                    fontSize = 16.sp,//
                                     letterSpacing = 1.sp
                                 ),
                                 fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
@@ -329,7 +329,7 @@ fun PublishItem(navController: NavController){
                         color = Color(0xFF253ECC),
                         style = TextStyle(
                             fontWeight = FontWeight.Bold, //设置字体粗细
-                            fontSize = 18.sp,
+                            fontSize = 16.sp,//
                             letterSpacing = 1.sp
                         ),
                         fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif

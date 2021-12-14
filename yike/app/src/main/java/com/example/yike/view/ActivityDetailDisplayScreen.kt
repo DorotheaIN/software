@@ -38,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.yike.R
@@ -156,11 +157,18 @@ fun ActivityDetailScreenContent(
                         // 现在，让我们创建与嵌套滚动系统的连接并聆听子 LazyColumn 中发生的滚动
                         val nestedScrollConnection = remember {
                             object : NestedScrollConnection {
-                                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                                    // try to consume before LazyColumn to collapse toolbar if needed, hence pre-scroll
-                                    val delta = available.y
+                                override fun onPostScroll(
+                                    consumed: Offset,
+                                    available: Offset,
+                                    source: NestedScrollSource
+                                ): Offset {
+                                    println("tollbarOffsetHeightPx:"+toolbarOffsetHeightPx.value.toString())
+                                    val delta = consumed.y
+                                    println("avaliable.y:"+available.y.toString())
                                     val newOffset = toolbarOffsetHeightPx.value + delta
+                                    println("newOffset:"+newOffset.toString())
                                     toolbarOffsetHeightPx.value = newOffset.coerceIn(-maxUpPx, minUpPx)
+                                    println("tollbarOffsetHeightPx:"+toolbarOffsetHeightPx.value.toString())
                                     return Offset.Zero
                                 }
                             }
@@ -249,13 +257,13 @@ fun LikeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>){
     val likenum = remember{mutableStateOf(activityDetail.likeNum)}
     val change = remember{mutableStateOf(false)}
     val buttonSize by animateDpAsState(
-        targetValue = if(change.value) 45.dp else 32.dp
+        targetValue = if(change.value) 32.dp else 26.dp
     )
-    if(buttonSize == 45.dp) {
+    if(buttonSize == 32.dp) {
         change.value = false
     }
     Box(
-        modifier = Modifier.padding(30.dp,5.dp)
+        modifier = Modifier.padding(20.dp,5.dp)
     ){
         Row(){
             IconButton(onClick = {
@@ -277,7 +285,7 @@ fun LikeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>){
                 Text(
                     text = likenum.value.toString(),
                     color = Color.DarkGray,
-                    style = MaterialTheme.typography.h5,
+                    fontSize = 18.sp,
                     modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                 )
             }
@@ -292,21 +300,21 @@ fun EvaluateIcon(
     clickEvent:()->Unit
 ){
     Box(
-        modifier = Modifier.padding(30.dp,5.dp)
+        modifier = Modifier.padding(20.dp,5.dp)
     ){
         Row(){
             IconButton(onClick = clickEvent ) {
                 Icon(painter = painterResource(id = R.drawable.review),
                     contentDescription = null,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(26.dp),
                     tint = Color(0xFFB0B8C0)
                 )
             }
-            Box(){
+            Column(){
                 Text(
                     text = evaluationNum.toString(),
                     color = Color.DarkGray,
-                    style = MaterialTheme.typography.h5,
+                    fontSize = 18.sp,
                     modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                 )
             }
@@ -321,9 +329,9 @@ fun SubscribeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>)
     var subscriberList = activityDetail.subscriberNum
     var change by remember{mutableStateOf(false)}
     val buttonSize by animateDpAsState(
-        targetValue = if(change) 45.dp else 32.dp
+        targetValue = if(change) 32.dp else 26.dp
     )
-    if(buttonSize == 45.dp) {
+    if(buttonSize == 32.dp) {
         change = false
     }
     Box(
@@ -340,12 +348,12 @@ fun SubscribeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>)
                     tint = if(selected.value) Color(0xFFEEBB21) else Color.Gray
                 )
             }
-            Box(){
+            Column(){
                 Text(
                     text = "报名",
                     color = Color.DarkGray,
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp).clickable {  }
                 )
             }
         }

@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.yike.component.NavBottomBar
@@ -44,9 +45,11 @@ fun ActivityScreenContent(
     activityList:ArrayList<Activity>?
 ){
     Scaffold(
+        modifier = Modifier.background(color = Color(0xffecedef)),
         bottomBar = {
             NavBottomBar(navController,"Activity")
-        }
+        },
+//        modifier = Modifier.background(color = Color(0xffecedef)),
     ) { paddingValues ->
         if( activityList == null){
             Loader(paddingValues)
@@ -93,10 +96,11 @@ private fun Loader(
 @Composable
 fun ActivityTable(){
     Text(
-        text = "活动一览",
+        text = "活动速览",
         color = Color.Black,
-        style = MaterialTheme.typography.h5,
-        modifier = Modifier.padding(16.dp,16.dp,16.dp,16.dp)
+        fontSize = 20.sp,
+//        style = MaterialTheme.typography.h5,
+        modifier = Modifier.padding(18.dp,16.dp,16.dp,16.dp)
     )
 }
 
@@ -110,10 +114,55 @@ fun ActivityItem(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
         modifier = Modifier
-            .padding(0.dp, 7.dp)
+            .padding(15.dp, 11.dp)
             .fillMaxWidth()
     ) {
         Column() {
+//            Spacer(modifier = Modifier.width(15.dp))
+            Box(
+                modifier = Modifier
+//                    .size(550.dp, 85.dp)
+                    .padding(3.dp, 15.dp, 0.dp, 5.dp)
+                    .clickable { }
+                    .background(Color.White)
+            ){
+                Row(modifier = Modifier.padding(horizontal = 8.dp)) {
+                    Column(
+//                        verticalArrangement = Arrangement.Center,
+//                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Image(
+                            painter = rememberImagePainter(item.organizer.avator),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(0.dp, 5.dp)
+                                .size(35.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .fillMaxSize().clickable {  }
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(15.dp))
+
+                    Column (){
+                        Text(
+                            text = item.organizer.username,
+                            color = Color.Black,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(2.dp))
+
+                        Text(
+                            text = item.organizer.introduction,
+                            color = Color(0xFF7A7A7A),
+                            fontSize = 12.sp,
+                        )
+                    }
+                }
+            }
+//            Spacer(modifier = Modifier.width(5.dp))
             Image(
                 modifier = Modifier
                     .fillMaxSize()
@@ -125,48 +174,44 @@ fun ActivityItem(
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
             )
+//            Spacer(modifier = Modifier.width(10.dp))
             Box(
                 modifier = Modifier
-                    .size(550.dp, 85.dp)
-                    .padding(3.dp, 0.dp)
+//                    .size(550.dp, 85.dp)
+                    .padding(3.dp, 10.dp, 3.dp, 15.dp)
                     .clickable { }
                     .background(Color.White)
             ){
-                Row(modifier = Modifier.padding(all = 8.dp)) {
-                    Image(
-                        painter = rememberImagePainter(item.organizer.avator),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(0.dp, 5.dp)
-                            .size(55.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .fillMaxSize()
-//                .border(1.5.dp, MaterialTheme.colors.secondary, RoundedCornerShape(7.dp))
-                    )
-                    Spacer(modifier = Modifier.width(15.dp))
+                Row(modifier = Modifier.padding(horizontal = 8.dp)) {
 
-                    Column (modifier = Modifier.size(300.dp,65.dp)){
+                    Column (){
                         Text(
                             text = item.title,
                             color = Color.Black,
-                            style = MaterialTheme.typography.h6,
-                            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                            fontSize = 17.sp,
+                            modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 0.dp)
                         )
 
                         Spacer(modifier = Modifier.height(4.dp))
 
-                        Text(
-                            text = item.organizer.username,
-                            color = Color(0xFF7A7A7A),
-                            style = MaterialTheme.typography.caption
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(15.dp))
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(Icons.Filled.Add,null)
+                        Row(){
+                            Text(
+                                text = item.date,
+                                color = Color(0xFF7A7A7A),
+                                fontSize = 13.sp
+                            )
+                            Spacer(modifier = Modifier.width(15.dp))
+                            Text(
+                                text = item.place,
+                                color = Color(0xFF7A7A7A),
+                                fontSize = 13.sp
+                            )
+                        }
+
                     }
                 }
             }
+//            Spacer(modifier = Modifier.width(15.dp))
         }
     }
 

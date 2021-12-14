@@ -42,7 +42,6 @@ fun ScrollableAppBar(
     navigationIcon: @Composable (() -> Unit) =
         { Icon(imageVector = Icons.Filled.ArrowBack,
             modifier = Modifier.clickable {
-
             },
             contentDescription = "ArrowBack",
             tint = Color.White) }, //默认为返回键
