@@ -39,11 +39,15 @@ fun ActivityScreen(
 }
 
 @Composable
-fun ActivityScreenContent(navController: NavController,activityList:ArrayList<Activity>?){
+fun ActivityScreenContent(
+    navController: NavController,
+    activityList:ArrayList<Activity>?
+){
     Scaffold(
         bottomBar = {
-            NavBottomBar(navController,"Activity")})
-    { paddingValues ->
+            NavBottomBar(navController,"Activity")
+        }
+    ) { paddingValues ->
         if( activityList == null){
             Loader(paddingValues)
         }else{

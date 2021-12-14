@@ -2,6 +2,7 @@ package com.example.yike
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -80,38 +81,44 @@ import com.example.yike.viewModel.PublishQuestionViewModel
 
 @Composable
 fun MainInfo(navController: NavController){
-    
-    Surface(
-        modifier = Modifier
-            .padding(0.dp, 0.dp)
-            .fillMaxSize()
-            .background(Color(0xffededed)),
-    ){
-        Column(
+    Scaffold(bottomBar = {
+        NavBottomBar(navController, "Info")
+    }) {
+        Surface(
             modifier = Modifier
+                .padding(0.dp, 0.dp)
                 .fillMaxSize()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xC84090C5),
-                            Color(0xDDC0A02C)
-                        ),
-                        start = Offset(0f, Float.POSITIVE_INFINITY),
-                        end = Offset(Float.POSITIVE_INFINITY, 0f)
-                    )
-                )
-        ) {
-            UserInfo()
-            Spacer(Modifier.height(40.dp))
-            ToActivity(navController)
-            Spacer(Modifier.height(40.dp))
-            ToQuestion(navController)
-            Spacer(Modifier.height(40.dp))
-            ToCollect(navController)
-            Spacer(Modifier.height(60.dp))
-            NavBottomBar(navController, "Info")
+                .background(Color(0xffededed)),
+        ){
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+//                    .background(
+//                        brush = Brush.linearGradient(
+//                            colors = listOf(
+//                                Color(0xFF4959B3),
+//                                Color(0xFF856AB6)
+////                                        Color(0xC84090C5),
+////                                Color(0xDDC0A02C)
+//                            ),
+//                            start = Offset(0f, Float.POSITIVE_INFINITY),
+//                            end = Offset(Float.POSITIVE_INFINITY, 0f)
+//                        )
+//                    )
+            ) {
+                UserInfo()
+                Spacer(Modifier.height(20.dp))
+                ToActivity(navController)
+                Spacer(Modifier.height(40.dp))
+                ToQuestion(navController)
+                Spacer(Modifier.height(40.dp))
+                ToCollect(navController)
+                Spacer(Modifier.height(60.dp))
+                NavBottomBar(navController, "Info")
+            }
         }
     }
+
 }
 
 @Preview
@@ -130,7 +137,7 @@ fun UserInfo(){
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFF4090C5), Color(0xFFC0A02C)),
+                        colors = listOf(Color(0xB2806FA0), Color(0xE14256C4)),
                         start = Offset(0f, Float.POSITIVE_INFINITY),
                         end = Offset(Float.POSITIVE_INFINITY, 0f)
                     )
@@ -195,21 +202,21 @@ fun UserInfo(){
 fun ToActivity(navController: NavController){
         Surface(
             modifier = Modifier
-                .padding(bottom = 10.dp)
+                .padding(bottom = 5.dp)
                 .fillMaxWidth(),
             shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
-            elevation = 2.dp,
+            elevation = 10.dp,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(Color(0xFF4090C5), Color(0xFFC0A02C)),
-                            start = Offset(0f, Float.POSITIVE_INFINITY),
-                            end = Offset(Float.POSITIVE_INFINITY, 0f)
-                        )
-                    )
+//                    .background(
+//                        brush = Brush.linearGradient(
+//                            colors = listOf(Color(0x77A6B4FD), Color(0xFFFFFFFF)),
+//                            start = Offset(0f, Float.POSITIVE_INFINITY),
+//                            end = Offset(Float.POSITIVE_INFINITY, 0f)
+//                        )
+//                    )
             ) {
                 Icon(
                     painterResource(id = R.drawable.activity_pic),
@@ -220,7 +227,7 @@ fun ToActivity(navController: NavController){
                         .padding(0.dp, 5.dp)
                         .size(80.dp)
                         .fillMaxSize(),
-                    tint = Color(0xA6E7EAEC)
+                    tint = Color(0xFF6679E4)
                 )
                 Spacer(modifier = Modifier.width(15.dp))
                 TextButton(onClick = {
@@ -244,21 +251,21 @@ fun ToActivity(navController: NavController){
 fun ToQuestion(navController: NavController){
     Surface(
         modifier = Modifier
-            .padding(bottom = 10.dp)
+            .padding(bottom = 5.dp)
             .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
-        elevation = 2.dp,
+        elevation = 10.dp,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFF4090C5), Color(0xFFC0A02C)),
-                        start = Offset(0f, Float.POSITIVE_INFINITY),
-                        end = Offset(Float.POSITIVE_INFINITY, 0f)
-                    )
-                )
+//                .background(
+//                    brush = Brush.linearGradient(
+//                        colors = listOf(Color(0xFF4090C5), Color(0xFFC0A02C)),
+//                        start = Offset(0f, Float.POSITIVE_INFINITY),
+//                        end = Offset(Float.POSITIVE_INFINITY, 0f)
+//                    )
+//                )
         ) {
             Icon(
                 painterResource(id = R.drawable.sharp_live_help_black_36),
@@ -269,7 +276,7 @@ fun ToQuestion(navController: NavController){
                     .padding(0.dp, 5.dp)
                     .size(80.dp)
                     .fillMaxSize(),
-                tint = Color(0xA6E7EAEC)
+                tint = Color(0xEDE95009)
             )
             Spacer(modifier = Modifier.width(15.dp))
             TextButton(onClick = {
@@ -294,21 +301,21 @@ fun ToQuestion(navController: NavController){
 fun ToCollect(navController: NavController){
     Surface(
         modifier = Modifier
-            .padding(bottom = 10.dp)
+            .padding(bottom = 5.dp)
             .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
-        elevation = 2.dp,
+        elevation = 10.dp,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFF4090C5), Color(0xFFC0A02C)),
-                        start = Offset(0f, Float.POSITIVE_INFINITY),
-                        end = Offset(Float.POSITIVE_INFINITY, 0f)
-                    )
-                )
+//                .background(
+//                    brush = Brush.linearGradient(
+//                        colors = listOf(Color(0xFF4090C5), Color(0xFFC0A02C)),
+//                        start = Offset(0f, Float.POSITIVE_INFINITY),
+//                        end = Offset(Float.POSITIVE_INFINITY, 0f)
+//                    )
+//                )
         ) {
             Icon(
                 Icons.Sharp.Star,
@@ -320,7 +327,7 @@ fun ToCollect(navController: NavController){
                     .padding(0.dp, 5.dp)
                     .size(80.dp)
                     .fillMaxSize(),
-                tint = Color(0xA6E7EAEC)
+                tint = Color(0xFFEECD6B)
             )
             Spacer(modifier = Modifier.width(15.dp))
             TextButton(onClick = {
