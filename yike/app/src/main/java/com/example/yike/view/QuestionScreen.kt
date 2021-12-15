@@ -175,13 +175,13 @@ private fun QuestionSection(
         ){
             Text(
                 text = questionBody.title,
-                fontSize = 26.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(//折叠的
                 text = questionBody.description,
-                fontSize = 18.sp,
+//                fontSize = 15.sp,
                 color = Color(0xFF5F5F5F)
             )
             Spacer(modifier = Modifier.height(10.dp))

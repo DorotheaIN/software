@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                         arguments = listOf(navArgument("start") { type = NavType.StringType })
                     ) {
                         val start = it.arguments?.getString("start")?:""
-                        RegisterUI(start)
+                        RegisterUI(start,navController)
                     }
                     composable("discuss") {
                         val viewModel = DiscussViewModel()
@@ -179,6 +179,20 @@ class MainActivity : ComponentActivity() {
                     ){
                         val addQuestionViewModel = AddQuestionViewModel()
                         PublishQuestionScreen(navController,addQuestionViewModel)
+                    }
+                    composable("personRegister_screen"){
+                        val viewModel = SendEmailViewModel()
+                        ResgisterScreen(navController = navController, viewModel)
+                    }
+                    composable("officialRegister_screen"){
+                        val officialRegisterViewModel = OfficialRegisterViewModel()
+                        RegisterOfficialScreen(navController = navController,officialRegisterViewModel)
+                    }
+                    composable(
+                        route = "personRegister2_screen",
+                    ){
+                        val getPersonRegisterViewModel = GetPersonRegisterViewModel()
+                        RegisterTwoScreen(navController = navController,getPersonRegisterViewModel)
                     }
                 }
 

@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -307,22 +308,17 @@ fun PublishItem(navController: NavController){
         color = Color(0xFFFFFFFF),
     ) {
         Box(
-            Modifier
-                .padding(148.dp, 10.dp)
-
+            Modifier.fillMaxSize()
         ){
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Box(
+                Modifier.fillMaxWidth(0.6f).align(Alignment.Center),
+                contentAlignment = Alignment.Center
+            ){
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(0.dp),
+                    horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth().clickable {  }
                 ) {
                     Text(
                         text = "发布活动",
@@ -332,7 +328,7 @@ fun PublishItem(navController: NavController){
                             fontSize = 16.sp,//
                             letterSpacing = 1.sp
                         ),
-                        fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                        textAlign = TextAlign.Center,
                     )
                     Icon(
                         painterResource(id = R.drawable.edit),

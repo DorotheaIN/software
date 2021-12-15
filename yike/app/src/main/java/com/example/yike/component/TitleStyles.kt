@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 fun TitleRec(
     text:String
 ){
-    Row(Modifier.padding(10.dp,20.dp)){
+    Row(Modifier.padding(10.dp,20.dp,10.dp,5.dp)){
         Box(
             Modifier.size(110.dp,41.dp)
         ){

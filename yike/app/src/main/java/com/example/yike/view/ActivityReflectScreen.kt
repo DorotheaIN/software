@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.yike.component.NavBottomBar
@@ -122,6 +123,7 @@ fun ImageDisplay(
     text:String,
     img:String
 ){
+    val boxHeight = if(text == "评论词云") 200.dp else 280.dp
     Surface(
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
@@ -129,27 +131,39 @@ fun ImageDisplay(
             .padding(0.dp, 0.dp, 0.dp, 15.dp)
             .fillMaxWidth()
     ) {
-        Box(){
-            Column() {
+        Box(
+            Modifier.fillMaxWidth()
+        ){
+            Column(
+                Modifier.fillMaxWidth()
+            ) {
                 TitleRec(text)
 //                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
 //                    Text(
 //                        text = text,
 //                        color = Color.Black,
+////                        fontSize = 18.sp,
 //                        style = MaterialTheme.typography.h5,
 //                        modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
 //                        fontFamily = FontFamily.SansSerif
 //                    )
 //                }
-                Image(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .size(600.dp, 300.dp)
-                        .padding(15.dp, 5.dp),
-                    painter = rememberImagePainter(img),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit
-                )
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(boxHeight)
+                        .clickable { }
+                ){
+                    Image(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(15.dp, 5.dp),
+                        painter = rememberImagePainter(img),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit
+                    )
+                }
+
             }
         }
     }
@@ -163,15 +177,16 @@ fun SubscriberDisplay(
 ){
     Box(){
         Column() {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
-                Text(
-                    text = "报名用户",
-                    color = Color.Black,
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
-                    fontFamily = FontFamily.SansSerif
-                )
-            }
+            TitleRec(text = "报名用户")
+//            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high){
+//                Text(
+//                    text = "报名用户",
+//                    color = Color.Black,
+//                    style = MaterialTheme.typography.h5,
+//                    modifier = Modifier.padding(20.dp, 8.dp, 0.dp, 0.dp),
+//                    fontFamily = FontFamily.SansSerif
+//                )
+//            }
             if(subscriberList.size == 0){
                 Row(
                     horizontalArrangement = Arrangement.Center

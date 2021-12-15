@@ -122,7 +122,7 @@ fun ActivityItem(
             Box(
                 modifier = Modifier
 //                    .size(550.dp, 85.dp)
-                    .padding(3.dp, 15.dp, 0.dp, 5.dp)
+                    .padding(3.dp, 3.dp, 0.dp, 5.dp)
                     .clickable { }
                     .background(Color.White)
             ){
@@ -178,7 +178,7 @@ fun ActivityItem(
             Box(
                 modifier = Modifier
 //                    .size(550.dp, 85.dp)
-                    .padding(3.dp, 10.dp, 3.dp, 15.dp)
+                    .padding(3.dp, 5.dp, 3.dp, 15.dp)
                     .clickable { }
                     .background(Color.White)
             ){

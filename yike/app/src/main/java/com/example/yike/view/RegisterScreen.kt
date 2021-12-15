@@ -36,7 +36,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun RegisterUI(
-    start:String
+    start:String,
+    navController: NavController
 ){
     val navController = rememberNavController()
     NavHost(
@@ -53,13 +54,8 @@ fun RegisterUI(
         }
         composable(
             route = "personRegister2_screen",
-//            arguments = listOf(
-//                navArgument("email"){type = NavType.StringType},
-//                navArgument("verifyCode"){type = NavType.StringType})
             ){
             val getPersonRegisterViewModel = GetPersonRegisterViewModel()
-//            val email = it.arguments?.getString("email")?:""
-//            val verifyCode = it.arguments?.getString("verifyCode")?:""
             RegisterTwoScreen(navController = navController,getPersonRegisterViewModel)
         }
     }

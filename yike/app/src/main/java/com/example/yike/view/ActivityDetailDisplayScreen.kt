@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -128,7 +129,7 @@ fun ActivityDetailScreenContent(
         }
     ) {
         Scaffold(
-            modifier = Modifier.background(color = Color(0xffecedef)),
+//            modifier = Modifier.background(color = Color(0xffecedef)),
             bottomBar = {
                 if(activityDetail!=null){
                     if(likeStatus!=null && subscribeStatus!=null){
@@ -204,7 +205,7 @@ fun ActivityDetailScreenContent(
                                     }
                                 }
                                 item {
-                                    Spacer(modifier = Modifier.height(70.dp))
+                                    Spacer(modifier = Modifier.height(55.dp))
                                 }
                             }
                             ScrollableAppBar(
@@ -603,7 +604,7 @@ fun InfoDisplay(item:ActivityDetail){
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
         modifier = Modifier
-            .padding(0.dp, 0.dp,0.dp,3.dp)
+            .padding(0.dp, 0.dp,0.dp,5.dp)
             .fillMaxWidth(),
         color = Color.White
     ) {
@@ -613,7 +614,7 @@ fun InfoDisplay(item:ActivityDetail){
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
         modifier = Modifier
-            .padding(0.dp, 0.dp,0.dp,3.dp)
+            .padding(0.dp, 0.dp,0.dp,5.dp)
             .fillMaxWidth(),
         color = Color.White
     ) {
@@ -623,7 +624,7 @@ fun InfoDisplay(item:ActivityDetail){
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
         modifier = Modifier
-            .padding(0.dp, 0.dp,0.dp,3.dp)
+            .padding(0.dp, 0.dp,0.dp,5.dp)
             .fillMaxWidth(),
         color = Color.White
     ) {
@@ -648,13 +649,29 @@ fun EvaluationDiplay(
                 fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
             )
         }
-        evaluationList.forEach{it->
-            if(it.reviewerID == id){
-                EvaluationItem(it,true,delReviwEvent)
-            }else{
-                EvaluationItem(it,false,delReviwEvent)
+        if(evaluationList.size == 0){
+            Row(
+                horizontalArrangement = Arrangement.Center
+            ){
+                Text(
+                    text = "     还没有收到评论~",
+                    style = MaterialTheme.typography.body1,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .paddingFromBaseline(top = 24.dp),
+                    color = Color(0xFF707070)
+                )
+            }
+        }else{
+            evaluationList.forEach{it->
+                if(it.reviewerID == id){
+                    EvaluationItem(it,true,delReviwEvent)
+                }else{
+                    EvaluationItem(it,false,delReviwEvent)
+                }
             }
         }
+        Spacer(modifier = Modifier.height(10.dp))
     }
 }
 

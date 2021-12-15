@@ -4,12 +4,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.QuestionAnswer
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.yike.R
 import com.example.yike.viewModel.Question
 
 @Composable
@@ -27,6 +32,8 @@ fun QuestionList(item: Question, onClick: ()-> Unit = {}) {
         Column {
             TitleDescriptionCheckboxRow(item)
 
+            Spacer(modifier = Modifier.height(10.dp))
+
             Divider()
         }
     }
@@ -36,9 +43,8 @@ fun QuestionList(item: Question, onClick: ()-> Unit = {}) {
 private fun TitleDescriptionCheckboxRow(item: Question) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-    ) {
+    ){
         TitleAndDescription(item)
-
         MyIcon(item)
     }
 }
@@ -48,24 +54,27 @@ private fun MyIcon(item: Question) {
 //    val checkedState = remember {
 //        mutableStateOf(false)
 //    }
-    Column() {
+    Row() {
         Icon(
-            Icons.Outlined.Star,
+            painter = painterResource(R.drawable.collect),
             contentDescription = "Follow",
             modifier = Modifier
-                .size(24.dp)
+                .size(24.dp),
+            tint = Color(0xFF696969)
         )
 
-        Text(text = item.followNum.toString())
+        Text(text = item.followNum.toString(),color = Color(0xFF696969))
 
+        Spacer(modifier = Modifier.width(10.dp))
         Icon(
-            Icons.Outlined.QuestionAnswer,
+            painter = painterResource(R.drawable.comment),
             contentDescription = "Answer",
             modifier = Modifier
-                .size(24.dp)
+                .size(24.dp),
+            tint = Color(0xFF696969)
         )
 
-        Text(text = item.answerNum.toString())
+        Text(text = item.answerNum.toString(),color = Color(0xFF696969))
     }
 //    Checkbox(
 //        checked = checkedState.value,
@@ -89,7 +98,7 @@ private fun RowScope.TitleAndDescription(item: Question) {
     ) {
         Text(
             text = item.title,
-            style = MaterialTheme.typography.h6,
+            fontSize = 20.sp,
             modifier = Modifier
                 .paddingFromBaseline(top = 24.dp)
         )

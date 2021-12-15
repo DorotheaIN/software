@@ -17,7 +17,7 @@ fun DiscussTopBar(
     backEvent: () -> Unit = {}
 ) {
     TopAppBar(
-        backgroundColor = Color(0xFF4A5EC9),
+        backgroundColor = Color(0xFFFFFFFF),
     ) {
         IconButton(onClick = backEvent) {
             Icon(
