@@ -1,5 +1,6 @@
 package com.example.yike
 
+import android.widget.Space
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
@@ -18,11 +19,14 @@ import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.sharp.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -99,46 +103,26 @@ fun DetailAnswer(
                 contentColor = Color(0xFFFFFF),
                 elevation = 0.dp,
                 contentPadding = PaddingValues(start = 10.dp,end= 5.dp),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
             content = {
                 ThumbUpButton()
-                Box(Modifier.padding(horizontal = 80.dp))
-                Collect()
+//                Box(Modifier.padding(horizontal = 80.dp))
+                Spacer(Modifier.width(230.dp))
+//                Collect()
                 CommentButton(navController, answererId)
             }
             )
         }
     ) {
             LazyColumn(Modifier) {
-//                item {
-//                    questionPart(ans = AnswerData)
-//                    UserPart()
-//                    ShowAnswer(ans = AnswerData)
-//                }
                 item {
-//                item(questionAnswerInfoList) {
-//                    if(questionAnswerInfoList!=null) {
-//                        questionAnswerInfoList[] {
-//                            DetailedQuestionPart(it)
-//                            DetailedUserPart(it)
-//                            ShowAnswer(it)
-//                        }
-//                    questionAnswerInfoList?.get(0)?.let { it1 -> DetailedQuestionPart(it1) }
-//                    questionAnswerInfoList?.get(0)?.let { it1 -> DetailedUserPart(it1) }
-//                    questionAnswerInfoList?.get(0)?.let { it1 -> ShowAnswer(it1) }
-
                     if (questionAnswerInfoList != null) {
                         DetailedQuestionPart(questionAnswerInfoList)
                         DetailedUserPart(questionAnswerInfoList)
                         ShowAnswer(questionAnswerInfoList)
                     }
                 }
-//                items(comments) { comment, ->
-//                    CommentCard(com= comment)
-//                }
-//                item(comments) { comment, ->
-//                    CommentCard(com= comment)
-//                }
                 if (questionAnswerInfoList != null) {
                     item(questionAnswerInfoList.comment){
                         questionAnswerInfoList.comment.forEach() {
@@ -162,7 +146,7 @@ fun DetailedUserPart(answerer:QuesAnswer){
             .padding(all = 8.dp),
     ) {
         Row(
-            modifier = Modifier.padding(all = 8.dp)
+            modifier = Modifier.padding(start = 8.dp,end = 8.dp)
         ) {
             Image(
 //                painterResource(id = answerer.info.pic),
@@ -175,13 +159,14 @@ fun DetailedUserPart(answerer:QuesAnswer){
             Spacer(modifier = Modifier.padding(horizontal = 8.dp))
             Column {
                 Text(
-                    text = answerer.info.name,
-                    style = MaterialTheme.typography.subtitle2 // 添加 style
+                    text = answerer.info.name,//回答者名字
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.subtitle1 // 添加 style
                 )
                 Spacer(modifier = Modifier.padding(vertical = 4.dp))
                 Text(
-                    text = answerer.info.intro,
-                    style = MaterialTheme.typography.body2, // 添加 style
+                    text = answerer.info.intro,//回答者简介
+                    style = MaterialTheme.typography.body1, // 添加 style
                 )
             }
         }
@@ -195,10 +180,17 @@ fun DetailedQuestionPart(ques:QuesAnswer)
         Spacer(modifier = Modifier.padding(vertical = 6.dp))
         Row {
             Box(Modifier.padding(horizontal = 4.dp))
-            Text(
-                text = ques.question,//展示问题内容
-                fontSize = 20.sp,
-            )
+            Surface(
+                modifier = Modifier.padding(5.dp)
+            ) {
+                Text(
+                    text = ques.question,//展示问题内容
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.h4,
+//                    modifier = Modifier.padding(start = 5.dp,end = 5.dp)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(10.dp))
         Divider(
@@ -220,9 +212,8 @@ Column() {
 //        text = AnswerData.answer.answerContent,
         text = ans.answer,//展示回答内容
         modifier = Modifier.padding(horizontal = 10.dp),
-        style = TextStyle(
-            letterSpacing =0.4.sp
-        )
+        fontSize = 20.sp,
+        style = MaterialTheme.typography.body1, // 添加 style
         )
 }
 }
@@ -291,7 +282,7 @@ fun CommentCard(com:CommentInfo){
                     rememberImagePainter(com.info.pic),//评论者头像
                     contentDescription = "profile picture", //这个描述用于无障碍
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(35.dp)
                         .clip(CircleShape)
                 )
                 Spacer(modifier = Modifier.padding(horizontal = 8.dp))
@@ -334,6 +325,14 @@ fun CommentCard(com:CommentInfo){
 
 @Composable
 fun ThumbUpButton(){
+//    val like = remember{mutableStateOf(false)}
+//    val dislike = remember{mutableStateOf(false)}
+//    val change = remember{mutableStateOf(false)}
+//    val check:Boolean = false
+
+//    if(check==false){
+//        change.value == false
+//    }
     Surface(
         shape = RoundedCornerShape(10.dp), // 使用 MaterialTheme 自带的形状
         color = Color(0x252C7DB4),
@@ -342,11 +341,12 @@ fun ThumbUpButton(){
         Row(
             horizontalArrangement = Arrangement.End
         ) {
-            TextButton(onClick = { /*TODO*/ } ,
+            TextButton(
                 modifier = Modifier
                     .size(50.dp)
                     .padding(0.dp, 1.dp)
                     .clickable { },
+                onClick = {},
             ) {
                 Text(
                     "赞同",
@@ -365,6 +365,60 @@ fun ThumbUpButton(){
         }
     }
 }
+
+//@Preview
+//@Composable
+//fun Thumbed(){
+//    Surface(
+//        shape = RoundedCornerShape(10.dp), // 使用 MaterialTheme 自带的形状
+//        color = Color(0x252C7DB4),
+//        modifier = Modifier.padding(10.dp,10.dp)
+//    ) {
+//        Row(
+//            horizontalArrangement = Arrangement.End
+//        ) {
+//            TextButton(onClick = { } ,
+//                modifier = Modifier
+////                    .size(50.dp)
+//                    .padding(0.dp, 1.dp)
+//                    .clickable { }
+//                    .align(Alignment.CenterVertically),
+//            ) {
+//                Text(
+//                    "已赞同",
+//                    color = Color(0xFF1084E0),
+//                )
+//            }
+//        }
+//    }
+//}
+//
+//@Preview
+//@Composable
+//fun DisLiked(){
+//    Surface(
+//        shape = RoundedCornerShape(10.dp), // 使用 MaterialTheme 自带的形状
+//        color = Color(0x252C7DB4),
+//        modifier = Modifier.padding(10.dp,10.dp)
+//    ) {
+//        Row(
+//            horizontalArrangement = Arrangement.End
+//        ) {
+//            TextButton(onClick = { /*TODO*/ } ,
+//                modifier = Modifier
+////                    .size(50.dp)
+//                    .padding(0.dp, 1.dp)
+//                    .clickable { }
+//                    .align(Alignment.CenterVertically),
+//            ) {
+//                Text(
+//                    "已踩",
+//                    color = Color(0xFF1084E0),
+//                )
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun CommentButton(

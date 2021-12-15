@@ -67,7 +67,8 @@ fun PubQuesTable(
         IconButton(
             onClick = {
                 navController.popBackStack()//回退
-            } //do something
+            } ,//do something
+            modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Icon(
                 Icons.Filled.ArrowBack,
