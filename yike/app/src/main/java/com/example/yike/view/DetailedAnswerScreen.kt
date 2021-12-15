@@ -22,6 +22,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -105,13 +106,10 @@ fun DetailAnswer(
                 contentPadding = PaddingValues(start = 10.dp,end= 5.dp),
                 modifier = Modifier
                     .fillMaxWidth(),
-            content = {
-                ThumbUpButton()
-//                Box(Modifier.padding(horizontal = 80.dp))
-                Spacer(Modifier.width(230.dp))
-//                Collect()
-                CommentButton(navController, answererId)
-            }
+                content = {
+                    ThumbUpButton()
+                    CommentButton(navController, answererId,)
+                }
             )
         }
     ) {
@@ -137,6 +135,37 @@ fun DetailAnswer(
 
     }
 }
+
+//@Preview
+//@Composable
+//fun test(){
+//    Surface(
+//
+//    ) {
+//        Row(
+//
+//        ) {
+//            ThumbUpButton()
+////                Box(Modifier.padding(horizontal = 80.dp))
+//            Spacer(Modifier.width(100.dp))
+////                Collect()
+//            IconButton(onClick = { },
+//            modifier = Modifier.align(Alignment.CenterVertically)
+//                )
+//             {
+//                Icon(
+//                    painterResource(id = R.drawable.comment),
+//                    contentDescription = "Comment",
+//                    modifier = Modifier
+//                        .size(30.dp)
+//                        .padding(5.dp, 0.dp),
+//                    tint = Color(0xFF1084E0)
+//                )
+//
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun DetailedUserPart(answerer:QuesAnswer){
@@ -404,7 +433,7 @@ fun ThumbUpButton(){
 //        Row(
 //            horizontalArrangement = Arrangement.End
 //        ) {
-//            TextButton(onClick = { /*TODO*/ } ,
+//            TextButton(onClick = {  } ,
 //                modifier = Modifier
 ////                    .size(50.dp)
 //                    .padding(0.dp, 1.dp)
@@ -425,9 +454,10 @@ fun CommentButton(
     navController: NavController,
     answererId: String,
     ){
-    IconButton(onClick = {
-        navController.navigate("inputComment_Screen/${answererId}")
-    }) {
+    IconButton(
+        onClick = {
+        navController.navigate("inputComment_Screen/${answererId}") },
+        ) {
         Icon(
             painterResource(id = R.drawable.comment),
             contentDescription = "Comment",
