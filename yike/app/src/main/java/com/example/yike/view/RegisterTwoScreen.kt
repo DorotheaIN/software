@@ -16,10 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.yike.NameInputState
-import com.example.yike.PasswordInputState
-import com.example.yike.RegistDescript
-import com.example.yike.VerifyCodeInputState
+import com.example.yike.*
 import com.example.yike.viewModel.GetPersonRegisterViewModel
 import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.GlobalViewModel.sendEmailInfo
@@ -29,7 +26,6 @@ fun RegisterTwoScreen(
     navController: NavController,
     getPersonRegisterViewModel: GetPersonRegisterViewModel
     ) {
-    println("3333333333333333")
     println(sendEmailInfo.value)
     val getPersonRegisterInfo = getPersonRegisterViewModel.personRegisterInfo.observeAsState()
     RegisterTwoScreenContent(navController, GlobalViewModel.getEmail().toString() , verifyCode = GlobalViewModel.getVerifyCode()){
@@ -49,7 +45,8 @@ fun RegisterTwoScreenContent(
     val nameInput = remember { NameInputState() }
     val passwordInput = remember { PasswordInputState() }
     val verifyCodeInput = remember { VerifyCodeInputState() }
-    Column(
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
@@ -58,35 +55,42 @@ fun RegisterTwoScreenContent(
                     start = Offset(0f, Float.POSITIVE_INFINITY),
                     end = Offset(Float.POSITIVE_INFINITY, 0f)
                 )
-            )
-//            .background(
-//                brush = Brush.linearGradient(
-//                    colors = listOf(
-//                        Color(0xC84090C5),
-//                        Color(0xDDC0A02C)
-//                    ),
-//                    start = Offset(0f, Float.POSITIVE_INFINITY),
-//                    end = Offset(Float.POSITIVE_INFINITY, 0f)
-//                )
-//            )
+            ),
     ) {
-        RegisterTwoTable(navController)
-        Spacer(Modifier.height(70.dp))
-        RegistDescript()
-        Spacer(Modifier.height(50.dp))
-        TextName(nameInput)
-        Spacer(Modifier.height(10.dp))
-        TextCode(passwordInput)
-        Spacer(Modifier.height(10.dp))
-        TextVerify(verifyCodeInput)
-        Spacer(Modifier.height(10.dp))
-        RegisterButton(
-            onClick = {
-                if(passwordInput.isValid && nameInput.isValid && verifyCodeInput.isValid && verifyCodeInput.text == verifyCode){
-                    clickEvent(email,nameInput.text,passwordInput.text)
-                }
+        Box(
+            Modifier.align(Alignment.TopStart)
+        ){
+            RegisterTwoTable(navController)
+        }
+        Box(
+            Modifier.fillMaxSize().align(Alignment.Center)
+        ){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 22.dp, vertical = 100.dp)
+            ) {
+
+                Spacer(Modifier.height(50.dp))
+                RegistDescript()
+                Spacer(Modifier.height(30.dp))
+                TextName(nameInput)
+                Spacer(Modifier.height(10.dp))
+                TextCode(passwordInput)
+                Spacer(Modifier.height(10.dp))
+                TextVerify(verifyCodeInput)
+                Spacer(Modifier.height(10.dp))
+                RegisterButton(
+                    onClick = {
+                        if(passwordInput.isValid && nameInput.isValid && verifyCodeInput.isValid && verifyCodeInput.text == verifyCode){
+                            clickEvent(email,nameInput.text,passwordInput.text)
+                        }
+                    }
+                )
+
             }
-        )
+        }
     }
 }
 
@@ -114,7 +118,7 @@ fun TextName(nameInput:NameInputState){
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
         modifier = Modifier
-            .size(width = 700.dp, height = 50.dp)
+            .size(width = 700.dp, height = 55.dp)
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
     ) {
@@ -150,7 +154,7 @@ fun TextCode(passwordInput:PasswordInputState){
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
         modifier = Modifier
-            .size(width = 700.dp, height = 50.dp)
+            .size(width = 700.dp, height = 55.dp)
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
     ) {
@@ -186,7 +190,7 @@ fun TextVerify(verifyCodeInput:VerifyCodeInputState){
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
         modifier = Modifier
-            .size(width = 700.dp, height = 50.dp)
+            .size(width = 700.dp, height = 55.dp)
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
     ) {
@@ -221,7 +225,7 @@ fun RegisterButton(
         shape = RoundedCornerShape(30.dp),
         color = Color(0xFFFFFFFF),
         modifier = Modifier
-            .size(width = 700.dp, height = 50.dp)
+            .size(width = 700.dp, height = 55.dp)
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
             .clickable(
