@@ -87,7 +87,7 @@ fun OrganizationScreenContent(
         ) {
             LazyColumn(Modifier){
                 item {
-                    header(organization)
+                    header(organization,navController)
                 }
                 item{
                     PublishItem(navController)
@@ -118,7 +118,7 @@ private fun Loader(
 }
 
 @Composable
-fun header(organization:Organization){
+fun header(organization:Organization,navController: NavController){
     Surface(
         modifier = Modifier
             .padding(bottom = 7.dp)
@@ -128,7 +128,7 @@ fun header(organization:Organization){
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth().clickable {  }
                 .background(
                     brush = Brush.linearGradient(
                         colors = listOf(Color(0xB2806FA0), Color(0xE14256C4)),
@@ -136,15 +136,9 @@ fun header(organization:Organization){
                         end = Offset(Float.POSITIVE_INFINITY, 0f)
                     )
                 )
-//                .background(
-//                    brush = Brush.linearGradient(
-//                        colors = listOf(Color(0xffdaa545), Color(0xffe08c29)),
-//                        start = Offset(0f, Float.POSITIVE_INFINITY),
-//                        end = Offset(Float.POSITIVE_INFINITY, 0f)
-//                    )
-//                )
         ) {
-            Spacer(Modifier.height(60.dp))//
+            LoginOutItem(navController = navController)
+            Spacer(Modifier.height(20.dp))//
             Box(
                 modifier = Modifier
                     .size(550.dp, 105.dp)
@@ -302,7 +296,8 @@ fun PublishItem(navController: NavController){
         elevation = 5.dp,
         modifier = Modifier
             .padding(0.dp, 10.dp, 0.dp, 15.dp)
-            .fillMaxWidth().clickable {
+            .fillMaxWidth()
+            .clickable {
                 navController.navigate("activity_publish")
             },
         color = Color(0xFFFFFFFF),
@@ -311,14 +306,17 @@ fun PublishItem(navController: NavController){
             Modifier.fillMaxSize()
         ){
             Box(
-                Modifier.fillMaxWidth(0.6f).align(Alignment.Center),
+                Modifier
+                    .fillMaxWidth(0.6f)
+                    .align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ){
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .fillMaxWidth().clickable {  }
+                        .fillMaxWidth()
+                        .clickable { }
                 ) {
                     Text(
                         text = "发布活动",
@@ -341,6 +339,23 @@ fun PublishItem(navController: NavController){
                 }
             }
 
+        }
+    }
+}
+
+@Composable
+private fun LoginOutItem(navController: NavController){
+    Box(Modifier.fillMaxSize().clickable {  }){
+        Box(modifier = Modifier
+            .align(Alignment.TopEnd)){
+            IconButton(onClick = { navController.navigate("orgLogin") }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.loginout),
+                    contentDescription = "login out",
+                    Modifier.size(24.dp),
+                    tint = White
+                )
+            }
         }
     }
 }

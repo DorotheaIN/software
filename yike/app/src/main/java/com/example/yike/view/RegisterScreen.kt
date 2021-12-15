@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -13,7 +14,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key.Companion.Sleep
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,36 +34,6 @@ import com.example.yike.viewModel.GlobalViewModel.checksendStatus
 import com.example.yike.viewModel.GlobalViewModel.sendEmailInfo
 import kotlinx.coroutines.delay
 
-//data class BackStackEntry(val email: String?,val verifyCode:String?)
-
-
-
-@Composable
-fun RegisterUI(
-    start:String,
-    navController: NavController
-){
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = start,
-    ){
-        composable("personRegister_screen"){
-            val viewModel = SendEmailViewModel()
-            ResgisterScreen(navController = navController, viewModel)
-        }
-        composable("officialRegister_screen"){
-            val officialRegisterViewModel = OfficialRegisterViewModel()
-            RegisterOfficialScreen(navController = navController,officialRegisterViewModel)
-        }
-        composable(
-            route = "personRegister2_screen",
-            ){
-            val getPersonRegisterViewModel = GetPersonRegisterViewModel()
-            RegisterTwoScreen(navController = navController,getPersonRegisterViewModel)
-        }
-    }
-}
 
 @Composable
 fun ResgisterScreen(navController: NavController,
@@ -84,47 +58,108 @@ fun RegisterScreenContent(navController: NavController,
         println(code)
         navController.navigate("personRegister2_screen")
     }
-    Column(
+    Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(Color(0xB2806FA0), Color(0xE14256C4)),
-                    start = Offset(0f, Float.POSITIVE_INFINITY),
-                    end = Offset(Float.POSITIVE_INFINITY, 0f)
-                )
+        .fillMaxSize()
+        .background(
+            brush = Brush.linearGradient(
+                colors = listOf(Color(0xB2806FA0), Color(0xE14256C4)),
+                start = Offset(0f, Float.POSITIVE_INFINITY),
+                end = Offset(Float.POSITIVE_INFINITY, 0f)
             )
-//            .background(
-//                brush = Brush.linearGradient(
-//                    colors = listOf(
-//                        Color(0xC84090C5),
-//                        Color(0xDDC0A02C)
-//                    ),
-//                    start = Offset(0f, Float.POSITIVE_INFINITY),
-//                    end = Offset(Float.POSITIVE_INFINITY, 0f)
-//                )
-//            )
+        ),
     ) {
-        RegisterTable(navController)
-        Spacer(Modifier.height(70.dp))
-        RegistDescript()
-        Spacer(Modifier.height(50.dp))
-        TextEmail(emailInput)
-        Spacer(Modifier.height(10.dp))
-        VerifyButton(
-            onClick = {
-                if (emailInput.isValid) {
-                    clickEvent(emailInput.text)
-                    GlobalViewModel.updateEmail(emailInput.text)
+        Box(
+            Modifier.align(Alignment.TopStart)
+        ){
+            RegisterTable(navController)
+        }
+        Box(
+            Modifier.fillMaxSize().align(Alignment.Center)
+        ){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 22.dp, vertical = 100.dp)
+            ) {
+
+                Spacer(Modifier.height(50.dp))
+                RegistDescript()
+                Spacer(Modifier.height(30.dp))
+                TextEmail(emailInput)
+                Spacer(Modifier.height(10.dp))
+                VerifyButton(
+                    onClick = {
+                        if (emailInput.isValid) {
+                            clickEvent(emailInput.text)
+                            GlobalViewModel.updateEmail(emailInput.text)
 //                    GlobalViewModel.updateVerifyCode(verifyCode)
-                    println("check!2222222")
+                            println("check!2222222")
 //                    println(GlobalViewModel.getVerifyCode())
-                }
+                        }
+                    }
+                )
+
             }
-        )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(0.dp,30.dp),
+            contentAlignment = Alignment.Center
+        ){
+            TermsOfServiceLabel(){
+                navController.navigate("login")
+            }
+        }
     }
+
 }
 
+
+@Composable
+private fun TermsOfServiceLabel(
+    registerEvent: () -> Unit = {}
+) {
+    val text = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = Color(0xFFC7C7C7),
+                fontSize = 16.sp
+            )
+        ){
+            append("已有账号？")
+        }
+        pushStringAnnotation(
+            tag = "tag",
+            annotation = "转到登录界面"
+        )
+        withStyle(
+            style = SpanStyle(
+                color = Color(0xFF227AFF),
+                fontSize = 16.sp
+            )
+        ) {
+            append("立刻登录")
+        }
+        pop()
+    }
+    ClickableText(
+        text = text,
+        modifier = Modifier
+            .paddingFromBaseline(top = 24.dp),
+        onClick = { offset ->
+            text.getStringAnnotations(
+                tag = "tag", start = offset,
+                end = offset
+            ).firstOrNull()?.let { annotation ->
+                run(registerEvent)
+            }
+        },
+    )
+}
 
 @Composable
 fun RegisterTable(navController: NavController){
@@ -175,7 +210,7 @@ fun TextEmail(emailInput:EmailState){
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
         modifier = Modifier
-            .size(width = 700.dp, height = 51.dp)
+            .size(width = 700.dp, height = 55.dp)
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
     ) {
@@ -196,7 +231,8 @@ fun TextEmail(emailInput:EmailState){
 //                    .padding(start = 75.dp ,end =50.dp )
                     .fillMaxWidth(),
                 color = Color(0xFFFFFFFF),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp,
                 ) },
 //            shape = RoundedCornerShape(30.dp)
         )
@@ -214,7 +250,7 @@ fun VerifyButton(
         shape = RoundedCornerShape(30.dp),
         color = Color(0xFFFFFFFF),
         modifier = Modifier
-            .size(width = 700.dp, height = 50.dp)
+            .size(width = 700.dp, height = 55.dp)
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
             .clickable(
@@ -228,7 +264,7 @@ fun VerifyButton(
         ) {
             Text("获取邮箱验证码",
                 modifier = Modifier
-                .padding(vertical = 15.dp)
+                    .padding(vertical = 15.dp)
                     .fillMaxWidth()
                     .fillMaxHeight(),
                 style =MaterialTheme.typography.button,

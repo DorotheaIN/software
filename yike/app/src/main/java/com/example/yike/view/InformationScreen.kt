@@ -11,14 +11,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.sharp.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -34,51 +39,6 @@ import com.example.yike.viewModel.FollowQuestionViewModel
 import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.PublishQuestionViewModel
 
-
-//@Composable
-//fun MainInfoScreen(){
-//    val navController = rememberNavController()
-//    NavHost(
-//        navController = navController,
-//        startDestination = "mainInfo_screen" ,
-//    ){
-//        composable("mainInfo_screen"){
-//            MainInfo(navController = navController)
-//        }
-//        composable("infoactivity_screen"){
-//            InfoActivityScreen(navController = navController)
-//        }
-//        composable("infoPublishQuestion_screen")
-//        {
-//            val publishQuestionViewModel = PublishQuestionViewModel()
-//            InfoPublishQuesScreen(navController = navController,publishQuestionViewModel)
-//        }
-//        composable("infoFollowQuestion_screen")
-//        {
-//            val followQuestionViewModel = FollowQuestionViewModel()
-//            InfoFollowQuesScreen(navController = navController,followQuestionViewModel)
-//        }
-//        composable("detailed_screen"){
-//            DetailedScreen(navController = navController)
-//        }
-//        composable("publishAnswer_screen"){
-//            AnswerScreen(navController = navController)
-//        }
-////        composable(
-////            "activitydetail_screen/{id}",
-////            arguments = listOf(navArgument("id"){type = NavType.IntType})
-////        ){
-////                entry->
-////            val id = entry.arguments?.getInt("id")
-////            if (id != null) {
-////                ActivityDetailDisplayScreen(id,navController = navController)
-////            }
-////        }
-//    }
-//
-//}
-
-
 @Composable
 fun MainInfo(navController: NavController){
     Scaffold(bottomBar = {
@@ -93,20 +53,8 @@ fun MainInfo(navController: NavController){
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-//                    .background(
-//                        brush = Brush.linearGradient(
-//                            colors = listOf(
-//                                Color(0xFF4959B3),
-//                                Color(0xFF856AB6)
-////                                        Color(0xC84090C5),
-////                                Color(0xDDC0A02C)
-//                            ),
-//                            start = Offset(0f, Float.POSITIVE_INFINITY),
-//                            end = Offset(Float.POSITIVE_INFINITY, 0f)
-//                        )
-//                    )
             ) {
-                UserInfo()
+                UserInfo(navController)
                 Spacer(Modifier.height(20.dp))
                 ToActivity(navController)
                 Spacer(Modifier.height(40.dp))
@@ -120,10 +68,10 @@ fun MainInfo(navController: NavController){
 
 }
 
-@Preview
 @Composable
-fun UserInfo(){
-//    val tay= Taylor
+fun UserInfo(
+    navController: NavController
+){
     Surface(
         modifier = Modifier
             .padding(bottom = 7.dp)
@@ -142,7 +90,8 @@ fun UserInfo(){
                     )
                 )
         ) {
-            Spacer(Modifier.height(40.dp))
+            LoginOutItem(navController)
+            Spacer(Modifier.height(20.dp))
             Box(
                 modifier = Modifier
                     .size(550.dp, 85.dp)
@@ -193,6 +142,26 @@ fun UserInfo(){
                 color = Color(0x2CFFFFFF),
             )
             Spacer(Modifier.height(60.dp))
+        }
+    }
+}
+
+@Composable
+private fun LoginOutItem(navController: NavController){
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .clickable { }){
+        Box(modifier = Modifier
+            .align(Alignment.TopEnd)){
+            IconButton(onClick = { navController.navigate("login") }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.loginout),
+                    contentDescription = "login out",
+                    Modifier.size(24.dp),
+                    tint = Color.White
+                )
+            }
         }
     }
 }
@@ -345,3 +314,4 @@ fun ToCollect(navController: NavController){
         }
     }
 }
+

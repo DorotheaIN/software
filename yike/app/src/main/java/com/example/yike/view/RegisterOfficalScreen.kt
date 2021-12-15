@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Face
@@ -16,12 +17,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.yike.view.RegisterButton
+import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.OfficialRegisterViewModel
 
 
@@ -45,7 +50,7 @@ fun RegisterOfficialScreenContent(
     val officialNameInput = remember { NameInputState() }
     val officialCodeInput = remember { PasswordInputState() }
     val officialIntroInput = remember { NameInputState() }
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
@@ -54,37 +59,54 @@ fun RegisterOfficialScreenContent(
                     start = Offset(0f, Float.POSITIVE_INFINITY),
                     end = Offset(Float.POSITIVE_INFINITY, 0f)
                 )
-            )
-//            .background(
-//                brush = Brush.linearGradient(
-//                    colors = listOf(
-//                        Color(0xC84090C5),
-//                        Color(0xDDC0A02C)
-//                    ),
-//                    start = Offset(0f, Float.POSITIVE_INFINITY),
-//                    end = Offset(Float.POSITIVE_INFINITY, 0f)
-//                )
-//            )
+            ),
     ) {
-        OfficialRegisterTable(navController)
-        Spacer(Modifier.height(70.dp))
-        RegistOfficialDescript()
-        Spacer(Modifier.height(50.dp))
-        OfficialTextName(officialNameInput)
-        Spacer(Modifier.height(10.dp))
-        OfficialTextCode(officialCodeInput)
-        Spacer(Modifier.height(10.dp))
-        TextIntro(officialIntroInput)
-        Spacer(Modifier.height(10.dp))
-        UploadPicFile()
-        Spacer(Modifier.height(10.dp))
-        OfficialRegisterButton(
-            onClick = {
-                if(officialNameInput.isValid && officialCodeInput.isValid && officialNameInput.isValid){
-                    clickEvent("","",officialIntroInput.text,officialCodeInput.text,officialNameInput.text)
-                }
+        Box(
+            Modifier.align(Alignment.TopStart)
+        ){
+            OfficialRegisterTable(navController)
+        }
+        Box(
+            Modifier.fillMaxSize().align(Alignment.Center)
+        ){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 22.dp, vertical = 100.dp)
+            ) {
+                Spacer(Modifier.height(50.dp))
+                RegistOfficialDescript()
+                Spacer(Modifier.height(30.dp))
+                OfficialTextName(officialNameInput)
+                Spacer(Modifier.height(10.dp))
+                OfficialTextCode(officialCodeInput)
+                Spacer(Modifier.height(10.dp))
+                TextIntro(officialIntroInput)
+//        Spacer(Modifier.height(10.dp))
+//        UploadPicFile()
+                Spacer(Modifier.height(10.dp))
+                OfficialRegisterButton(
+                    onClick = {
+                        if(officialNameInput.isValid && officialCodeInput.isValid && officialNameInput.isValid){
+                            clickEvent("","",officialIntroInput.text,officialCodeInput.text,officialNameInput.text)
+                        }
+                    }
+                )
+
             }
-        )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(0.dp,30.dp),
+            contentAlignment = Alignment.Center
+        ){
+            TermsOfServiceLabel(){
+                navController.navigate("orgLogin")
+            }
+        }
     }
 }
 
@@ -103,6 +125,48 @@ fun OfficialRegisterTable(navController: NavController){
     }
 }
 
+@Composable
+private fun TermsOfServiceLabel(
+    registerEvent: () -> Unit = {}
+) {
+    val text = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = Color(0xFFC7C7C7),
+                fontSize = 16.sp
+            )
+        ){
+            append("已有账号？")
+        }
+        pushStringAnnotation(
+            tag = "tag",
+            annotation = "转到登录界面"
+        )
+        withStyle(
+            style = SpanStyle(
+                color = Color(0xFF227AFF),
+                fontSize = 16.sp
+            )
+        ) {
+            append("立刻登录")
+        }
+        pop()
+    }
+    ClickableText(
+        text = text,
+        modifier = Modifier
+            .paddingFromBaseline(top = 24.dp),
+        onClick = { offset ->
+            text.getStringAnnotations(
+                tag = "tag", start = offset,
+                end = offset
+            ).firstOrNull()?.let { annotation ->
+                run(registerEvent)
+            }
+        },
+    )
+}
+
 @Preview
 @Composable
 fun RegistOfficialDescript(){
@@ -115,7 +179,7 @@ fun RegistOfficialDescript(){
             "官方组织注册",
             color = Color(0xFFFFFFFF),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.h5,
             modifier = Modifier
                 .fillMaxWidth()
 //                .padding(start = 100.dp, end = 80.dp)
@@ -132,7 +196,7 @@ fun OfficialTextName(nameInput:NameInputState){
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
         modifier = Modifier
-            .size(width = 700.dp, height = 50.dp)
+            .size(width = 700.dp, height = 55.dp)
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
     ) {
@@ -169,7 +233,7 @@ fun OfficialTextCode(passwordInput:PasswordInputState){
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
         modifier = Modifier
-            .size(width = 700.dp, height = 50.dp)
+            .size(width = 700.dp, height = 55.dp)
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
     ) {
@@ -206,7 +270,7 @@ fun TextIntro(officialIntroInput:NameInputState){
         shape = RoundedCornerShape(30.dp),
         color = Color(0x51E4DFDB),
         modifier = Modifier
-            .size(width = 700.dp, height = 50.dp)
+            .size(width = 700.dp, height = 55.dp)
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
     ) {

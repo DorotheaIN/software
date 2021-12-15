@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("orgLogin")
                             },
                             {
-                                navController.navigate("register/personRegister_screen")
+                                navController.navigate("personRegister_screen")
                             }
                         )
                     }
@@ -57,17 +57,19 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("login")
                             },
                             {
-                                navController.navigate("register/officialRegister_screen")
+                                navController.navigate("officialRegister_screen")
                             }
                         )
                     }
-                    composable(
-                        route = "register/{start}",
-                        arguments = listOf(navArgument("start") { type = NavType.StringType })
-                    ) {
-                        val start = it.arguments?.getString("start")?:""
-                        RegisterUI(start,navController)
-                    }
+//                    composable(
+//                        route = "register/{start}",
+//                        arguments = listOf(navArgument("start") { type = NavType.StringType })
+//                    ) {
+//                        val start = it.arguments?.getString("start")?:""
+//                        if(start == "personRegister_screen"){
+//
+//                        }
+//                    }
                     composable("discuss") {
                         val viewModel = DiscussViewModel()
                         DiscussScreen(viewModel, navController)
@@ -172,7 +174,7 @@ class MainActivity : ComponentActivity() {
                     ){
                         val answerId = it.arguments?.getString("answerId")?:""
                         val commentViewModel = CommentViewModel()
-                        CommentScreen(navController = navController,commentViewModel,answerId)
+                        CommentScreen(navController,commentViewModel,answerId)
                     }
                     composable(
                         route = "publishQuestion_Screen"
@@ -182,17 +184,17 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("personRegister_screen"){
                         val viewModel = SendEmailViewModel()
-                        ResgisterScreen(navController = navController, viewModel)
+                        ResgisterScreen(navController, viewModel)
                     }
                     composable("officialRegister_screen"){
                         val officialRegisterViewModel = OfficialRegisterViewModel()
-                        RegisterOfficialScreen(navController = navController,officialRegisterViewModel)
+                        RegisterOfficialScreen(navController,officialRegisterViewModel)
                     }
                     composable(
                         route = "personRegister2_screen",
                     ){
                         val getPersonRegisterViewModel = GetPersonRegisterViewModel()
-                        RegisterTwoScreen(navController = navController,getPersonRegisterViewModel)
+                        RegisterTwoScreen(navController,getPersonRegisterViewModel)
                     }
                 }
 

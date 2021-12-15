@@ -177,17 +177,9 @@ private fun TermsOfServiceLabel(
                 end = offset
             ).firstOrNull()?.let { annotation ->
                 run(registerEvent)
-//                Log.d(TAG, "你已经点到 ${annotation.item} 啦")
             }
         },
     )
-//    Text(
-//        text = "还没有账号？马上注册",
-//        style = MaterialTheme.typography.body2,
-//        textAlign = TextAlign.Center,
-//        modifier = Modifier
-//            .paddingFromBaseline(top = 24.dp),
-//    )
 }
 
 @Composable
@@ -354,7 +346,6 @@ private fun ChangeLoginEntry(
             )
         }
     }
-
 }
 
 //@Composable
