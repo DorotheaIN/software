@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.example.yike.service.ActivityRepository
 import com.example.yike.service.OrgLoginRepository
 import com.example.yike.service.OrganizationRepository
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class ActivityCorrectViewModel() : ViewModel(
 ){
@@ -36,7 +39,14 @@ class ActivityCorrectViewModel() : ViewModel(
         activityID.value = id
     }
 
-    fun correct(activity: Activity){
-        activityToCorrect.value = activity
+    fun correct(activity: Activity)= runBlocking{
+        val correct = launch {
+            activityToCorrect.value = activity
+        }
+        correct.join()
+        val wait = launch {
+            delay(280)
+        }
+        wait.join()
     }
 }

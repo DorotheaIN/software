@@ -428,11 +428,11 @@ object OrgLoginRepository{
                     "unregister" -> -2
                     else -> -1
                 }
-                Organization(-1,status = s,"","","")
+                null
             }
         } catch (e: Exception){
             println(e)
-            Organization(-1,status = 0,"","","")
+            null
         }
         emit(result)
     }
@@ -501,11 +501,12 @@ object GetPersonRegisterRepository {
         val result = try {
             val getPersonRegisterResponse = Network.getPersonRegister(email,name,password)
             if (getPersonRegisterResponse.code == 200) {
-                getPersonRegisterResponse.result
+//                getPersonRegisterResponse.result
+                "success"
             } else {
                 println("response status is not ok!")
+                ""
             }
-            ""
         } catch (e: Exception){
             println(e)
             UserInfo()

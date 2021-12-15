@@ -308,6 +308,7 @@ fun PublishItem(navController: NavController){
             Box(
                 Modifier
                     .fillMaxWidth(0.6f)
+                    .padding(vertical = 5.dp)
                     .align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ){
@@ -316,7 +317,6 @@ fun PublishItem(navController: NavController){
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { }
                 ) {
                     Text(
                         text = "发布活动",

@@ -7,6 +7,7 @@ import com.example.yike.service.ActivityRepository
 import com.example.yike.service.OrgLoginRepository
 import com.example.yike.service.OrganizationRepository
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class ActivityPublishViewModel() : ViewModel(
@@ -30,7 +31,13 @@ class ActivityPublishViewModel() : ViewModel(
     }
 
     fun publish(activity: Activity) = runBlocking{
-        activityToPub.value = activity
-        delay(250)
+        val publish = launch {
+            activityToPub.value = activity
+        }
+        publish.join()
+        val wait = launch {
+            delay(260)
+        }
+        publish.join()
     }
 }

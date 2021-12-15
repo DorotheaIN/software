@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,6 +21,7 @@ import com.example.yike.*
 import com.example.yike.viewModel.GetPersonRegisterViewModel
 import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.GlobalViewModel.sendEmailInfo
+import com.example.yike.viewModel.InputRegisterInfo
 
 @Composable
 fun RegisterTwoScreen(
@@ -28,7 +30,7 @@ fun RegisterTwoScreen(
     ) {
     println(sendEmailInfo.value)
     val getPersonRegisterInfo = getPersonRegisterViewModel.personRegisterInfo.observeAsState()
-    RegisterTwoScreenContent(navController, GlobalViewModel.getEmail().toString() , verifyCode = GlobalViewModel.getVerifyCode()){
+    RegisterTwoScreenContent(getPersonRegisterInfo.value,navController, GlobalViewModel.getEmail().toString() , verifyCode = GlobalViewModel.getVerifyCode()){
         email,name,password -> getPersonRegisterViewModel.checkPersonRegisterStatus(email,name,password)
     }
 }
@@ -36,6 +38,7 @@ fun RegisterTwoScreen(
 
 @Composable
 fun RegisterTwoScreenContent(
+    registerResult: String?,
     navController: NavController,
     email:String,
     verifyCode:String?,
@@ -45,7 +48,10 @@ fun RegisterTwoScreenContent(
     val nameInput = remember { NameInputState() }
     val passwordInput = remember { PasswordInputState() }
     val verifyCodeInput = remember { VerifyCodeInputState() }
-
+    if(registerResult == "success"){
+        GlobalViewModel.updateUserInfo(email,nameInput.text,1,"","")
+        navController.navigate("mainInfo_screen")
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -136,9 +142,10 @@ fun TextName(nameInput:NameInputState){
             maxLines = 1,
             placeholder = { Text("请输入名称",
                 modifier = Modifier
-                    .padding(start = 115.dp, end = 50.dp)
+//                    .padding(start = 115.dp, end = 50.dp)
                     .fillMaxWidth(),
-                color = Color(0xFFFFFFFF)
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center
             ) },
             shape = RoundedCornerShape(30.dp)
         )
@@ -172,9 +179,10 @@ fun TextCode(passwordInput:PasswordInputState){
             maxLines = 1,
             placeholder = { Text("请输入密码",
                 modifier = Modifier
-                    .padding(start = 115.dp, end = 50.dp)
+//                    .padding(start = 115.dp, end = 50.dp)
                     .fillMaxWidth(),
-                color = Color(0xFFFFFFFF)
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center
             ) },
             shape = RoundedCornerShape(30.dp)
         )
@@ -208,9 +216,10 @@ fun TextVerify(verifyCodeInput:VerifyCodeInputState){
             maxLines = 1,
             placeholder = { Text("请输入邮箱验证码",
                 modifier = Modifier
-                    .padding(start = 95.dp, end = 50.dp)
+//                    .padding(start = 95.dp, end = 50.dp)
                     .fillMaxWidth(),
-                color = Color(0xFFFFFFFF)
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center
             ) },
             shape = RoundedCornerShape(30.dp)
         )
@@ -234,12 +243,13 @@ fun RegisterButton(
     ) {
         Text("点击注册",
             modifier = Modifier
-                .padding(start = 135.dp, end = 100.dp, top = 15.dp, bottom = 15.dp)
+                .padding(vertical =  15.dp)
                 .fillMaxWidth()
                 .fillMaxHeight(),
             style =MaterialTheme.typography.button,
             color = Color(0xFF0D0D0E),
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center
         )
     }
 }

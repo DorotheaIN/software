@@ -57,7 +57,7 @@ fun NaviIcon(navController: NavController,activityDetailViewModel: ActivityDetai
     Icon(imageVector = Icons.Filled.ArrowBack,
         modifier = Modifier.clickable {
             activityDetailViewModel.save(like,subscribe)
-            navController.navigate("activity")
+            navController.popBackStack()
         },
         contentDescription = "ArrowBack",
         tint = Color.White
@@ -89,7 +89,7 @@ fun ActivityDetailDisplayScreen(
             likeStatus.value,subscribeStatus.value,viewModel,
             { like,subscribe->
                 viewModel.save(like,subscribe)
-                navController.navigate("activity")
+                navController.popBackStack()
             },
             { text->
                 viewModel.review(text)

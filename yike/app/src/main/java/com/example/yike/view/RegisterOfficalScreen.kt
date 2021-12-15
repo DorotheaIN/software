@@ -37,7 +37,7 @@ fun RegisterOfficialScreen(
 
     val officialRegister = officialRegisterViewModel.officialRegisterInfo.observeAsState()
 
-    RegisterOfficialScreenContent(navController){
+    RegisterOfficialScreenContent(navController,officialRegister.value){
         avator, certification, introduction, password, userName ->  officialRegisterViewModel.checkOfficialRegisterStatus(avator, certification, introduction, password, userName)
     }
 }
@@ -45,11 +45,15 @@ fun RegisterOfficialScreen(
 @Composable
 fun RegisterOfficialScreenContent(
     navController: NavController,
+    registerResult:String?,
     clickEvent:(avator:String,certification:String,introduction:String,password:String,userName:String) ->Unit
 ){
     val officialNameInput = remember { NameInputState() }
     val officialCodeInput = remember { PasswordInputState() }
     val officialIntroInput = remember { NameInputState() }
+    if(registerResult !=null){
+        navController.navigate("orgLogin")
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()

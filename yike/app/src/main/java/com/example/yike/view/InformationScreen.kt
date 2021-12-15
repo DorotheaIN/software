@@ -98,9 +98,21 @@ fun UserInfo(
                     .padding(15.dp, 0.dp)
                     .clickable { }
             ){
+                val getImg = GlobalViewModel.getUserInfo()?.avator
+                val getIntro = GlobalViewModel.getUserInfo()?.introduction
+                val img = if(getImg == ""){
+                    "http://101.132.138.14/files/user/"+ (1..199).random().toString()+".jpg"
+                }else{
+                    getImg
+                }
+                val intro = if(getIntro == ""){
+                    "还未填写简介"
+                }else{
+                    getIntro
+                }
                 Row(modifier = Modifier.padding(all = 8.dp)) {
                     Image(
-                        painter = rememberImagePainter(GlobalViewModel.getUserInfo()?.avator),
+                        painter = rememberImagePainter(img),
                         contentDescription = null,
                         modifier = Modifier
                             .padding(0.dp, 5.dp)
@@ -122,7 +134,7 @@ fun UserInfo(
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = GlobalViewModel.getUserInfo()?.introduction.toString(),
+                            text = intro.toString(),
                             color = Color(0x7EFFFFFF),
                             style = MaterialTheme.typography.caption
                         )
