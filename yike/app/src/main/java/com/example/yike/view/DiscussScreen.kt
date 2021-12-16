@@ -228,6 +228,7 @@ private fun DiscussThemesSection(
     themes: ArrayList<QTheme>,
     routeEvent: (q: QTheme) -> Unit
 ) {
+
     Text(
         text = "精选讨论",
         style = MaterialTheme.typography.h6,

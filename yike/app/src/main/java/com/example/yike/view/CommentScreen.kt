@@ -44,7 +44,9 @@ fun CommentScreenContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Button(onClick = { },
+                    Button(onClick = {
+                        navController.popBackStack()//回退
+                    },
                         colors = ButtonDefaults.buttonColors(
                             Color(0xFFFFFF),
                             Color(0xFFFFFF)
@@ -67,6 +69,7 @@ fun CommentScreenContent(
                                           clickEvent(answerId,commentInput.text,
                                               it.id)
                                       }
+                                      navController.popBackStack()//回退
                                   }
                         },
                         colors = ButtonDefaults.buttonColors(

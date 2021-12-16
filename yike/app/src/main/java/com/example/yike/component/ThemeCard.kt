@@ -12,6 +12,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import com.example.yike.DiscussTheme
 import com.example.yike.R
 import com.example.yike.defaultDiscussThemes
@@ -34,7 +35,8 @@ fun ThemeCard(
     ) {
         Column {
             Image(
-                painterResource(id = R.drawable.fiddle_leaf),
+//                painterResource(id = R.drawable.fiddle_leaf),
+                rememberImagePainter(theme.avatar),
                 contentDescription = "${theme.title} Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
