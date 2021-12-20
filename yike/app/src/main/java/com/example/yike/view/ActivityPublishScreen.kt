@@ -5,14 +5,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -43,13 +44,14 @@ fun ActivityPublishContent(
     organization: Organization,
     clickEvent: (activity: Activity) ->Unit
 ){
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             OriganizationTopBar(organization.username){
                 navController.navigate("organization")
             }
         },
-        modifier = Modifier.padding(horizontal = 15.dp)
+        modifier = Modifier.padding(horizontal = 10.dp)
     ) {
         //val activity = remember { mutableStateOf(Activity("","","","","","","","",0,0,1,0, organization,0)) }
         val title = remember { RequiredInputState()}
@@ -61,19 +63,29 @@ fun ActivityPublishContent(
         val intro = remember { RequiredInputState() }
         val genres = remember { RequiredInputState() }
 
+        // 形式：长期-日期+日期，短期-日期+时间+时间，线下-地点，线上-平台名+号码
         LazyColumn(Modifier){
             item{
                 TitleTextField(title,true)
             }
             item{
-                TimeTextField(time,true)
+                RadioGroupDemo()
             }
+            item{
+                DatePicker(context = context,"Long")
+            }
+            item{
+                TimePicker(context = context, type = "Short")
+            }
+//            item{
+//                TimeTextField(time,true)
+//            }
             item{
                 PlaceTextField(place,true)
             }
-            item{
-                FormTextField(form,true)
-            }
+//            item{
+//                FormTextField(form,true)
+//            }
             item{
                 CapacityTextField(capacity,true)
             }
@@ -84,7 +96,7 @@ fun ActivityPublishContent(
                 ContentTextField(content,true)
             }
             item {
-                GenresTextField(genres,true)
+                CheckBoxTest()
             }
             item{
                 Spacer(Modifier.height(15.dp))
@@ -153,3 +165,6 @@ fun PublishSubmitButton(
         }
     }
 }
+
+
+

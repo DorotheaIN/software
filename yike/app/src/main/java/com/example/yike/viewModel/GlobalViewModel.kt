@@ -46,7 +46,8 @@ object GlobalViewModel: ViewModel() {
     }
 
     fun getOrgInfo():Organization?{
-        return globalOrgInfo.value
+//        return globalOrgInfo.value
+        return Organization(79355314,1,"","同济小软家","")
     }
 
     fun getQuestion(id: String): Question? {
