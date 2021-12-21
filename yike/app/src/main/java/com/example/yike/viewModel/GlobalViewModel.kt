@@ -42,7 +42,8 @@ object GlobalViewModel: ViewModel() {
     }
 
     fun getUserInfo(): UserInfo? { //为啥用这个 因为observe有问题 不知道为何？ 可以再试试
-        return globalUserInfo.value
+//        return globalUserInfo.value
+        return UserInfo("1@126.com","hcy1658339245",1,"","")
     }
 
     fun getOrgInfo():Organization?{

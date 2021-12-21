@@ -9,18 +9,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.yike.component.NavBottomBar
+import com.example.yike.component.*
 import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.ActivityViewModel
 
@@ -95,13 +96,37 @@ private fun Loader(
 
 @Composable
 fun ActivityTable(){
-    Text(
-        text = "活动速览",
-        color = Color.Black,
-        fontSize = 20.sp,
-//        style = MaterialTheme.typography.h5,
-        modifier = Modifier.padding(18.dp,16.dp,16.dp,16.dp)
-    )
+    Column {
+//        Text(
+//            text = "活动速览",
+//            color = Color.Black,
+//            fontSize = 20.sp,
+////        style = MaterialTheme.typography.h5,
+//            modifier = Modifier.padding(18.dp,16.dp,16.dp,16.dp)
+//        )
+        DropDownMenu()
+//        val context = LocalContext.current
+//        var operatorPos by remember { mutableStateOf(1) }
+//        val operator = remember { listOf("admin", "小明", "小王") }
+//        Spinner(
+//            modifier = Modifier
+//                .weight(1f)
+//                .padding(2.dp),
+//            onSpinnerItemSelected = { operatorPos = it },
+//            position = operatorPos,
+//            itemList = operator,
+//            title = "检测人员",
+//            context = context
+//        )
+
+//        DropDownList(
+//            false,
+//            listOf("x","y","z"),
+//        )
+//        CountrySelection()
+    }
+
+
 }
 
 
@@ -139,7 +164,8 @@ fun ActivityItem(
                                 .padding(0.dp, 5.dp)
                                 .size(35.dp)
                                 .clip(RoundedCornerShape(10.dp))
-                                .fillMaxSize().clickable {  }
+                                .fillMaxSize()
+                                .clickable { }
                         )
                     }
                     Spacer(modifier = Modifier.width(15.dp))

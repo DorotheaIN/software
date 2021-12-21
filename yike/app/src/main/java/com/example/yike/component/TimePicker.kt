@@ -20,7 +20,7 @@ import java.util.Calendar.MINUTE
 
 
 @Composable
-fun TimePicker(context: Context,type: String){
+fun TimePicker(context: Context,type: String,initial: RequiredInputState){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,7 +41,7 @@ fun TimePicker(context: Context,type: String){
                 Text("时间")
             }
             Spacer(modifier = Modifier.size(5.dp))
-            TimePickerDemo(context = context)
+            TimePickerDemo(context,initial)
             if(type == "Short"){
                 Row(
                     modifier = Modifier.fillMaxHeight(),
@@ -49,7 +49,7 @@ fun TimePicker(context: Context,type: String){
                 ){
                     Text(text = "   -   ")
                     Spacer(modifier = Modifier.size(8.dp))
-                    TimePickerDemo(context = context)
+                    TimePickerDemo(context,initial)
                 }
             }
         }
@@ -58,9 +58,10 @@ fun TimePicker(context: Context,type: String){
 }
 
 @Composable
-fun TimePickerDemo(context: Context){
+fun TimePickerDemo(context: Context,initial: RequiredInputState){
     val now = Calendar.getInstance()
     val time = remember { mutableStateOf("") }
+    initial.text = time.value
     val mHour = now.get(Calendar.HOUR_OF_DAY)
     val mMinute = now.get(Calendar.MINUTE)
     val timePickerDialog = TimePickerDialog(

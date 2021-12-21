@@ -75,7 +75,7 @@ fun ActivityPublishContent(
                 DatePicker(context = context,"Long")
             }
             item{
-                TimePicker(context = context, type = "Short")
+                TimePicker(context = context, type = "Short",time)
             }
 //            item{
 //                TimeTextField(time,true)
@@ -86,8 +86,11 @@ fun ActivityPublishContent(
 //            item{
 //                FormTextField(form,true)
 //            }
-            item{
-                CapacityTextField(capacity,true)
+//            item{
+//                CapacityTextField(capacity,true)
+//            }
+            item { 
+                NumberPickerDemo(context = context,capacity)
             }
             item{
                 IntroTextField(intro,true)
@@ -147,19 +150,17 @@ fun PublishSubmitButton(
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color(0xD83D59FC)
             ),
-            shape = RoundedCornerShape(50),
+            shape = RoundedCornerShape(35),
             onClick = onClick,
             modifier = Modifier
-//                .fillMaxWidth(0.4f)
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 26.dp),
         ) {
             Text(
                 text = "提交",
                 color = Color.White,
                 style = TextStyle(
-//                fontWeight = FontWeight.SemiBold, //设置字体粗细
-                    fontSize = 20.sp,
-                    letterSpacing = 7.sp
+                    fontSize = 15.sp,
+                    letterSpacing = 20.sp
                 ),
             )
         }

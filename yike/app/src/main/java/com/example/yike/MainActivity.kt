@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = "activity_publish",
+                    startDestination = "activity",
                     route = "root"
                 ) {
                     composable("welcome") {
