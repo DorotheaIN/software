@@ -2,13 +2,17 @@ package com.example.yike.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -53,11 +57,12 @@ fun ActivityScreenContent(
 //        modifier = Modifier.background(color = Color(0xffecedef)),
     ) { paddingValues ->
         if( activityList == null){
-            Loader(paddingValues)
+            filter()
+//            Loader(paddingValues)
         }else{
             LazyColumn(Modifier){
                 item {
-                    ActivityTable()
+                    filter()
                 }
                 item(activityList){
                     Column(){
@@ -74,6 +79,98 @@ fun ActivityScreenContent(
             }
         }
     }
+}
+
+@Composable
+private fun filter(){
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp)
+    ) {
+        Spacer(modifier = Modifier.height(10.dp))
+        Box(
+            Modifier
+                .fillMaxWidth(0.9f)
+                .align(Alignment.CenterHorizontally)
+        ){
+            SearchInput()
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Box(
+            Modifier
+                .fillMaxWidth(0.9f)
+                .align(Alignment.CenterHorizontally)
+        ){
+            Row(){
+                val tags = listOf<String>("学术","联谊","体育","艺术","党建","环保","庆典","志愿","心理")
+                val timeStates = listOf<String>("未开始","进行中","已结束")
+                val subStates = listOf<String>("所有","可报名")
+                DropDownMenu(tags)
+                Spacer(modifier = Modifier.width(15.dp))
+                DropDownMenu(timeStates)
+                Spacer(modifier = Modifier.width(15.dp))
+                DropDownMenu(subStates)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchInput() {
+    var text by remember { mutableStateOf("") }
+    BasicTextField(
+        value = text,
+        onValueChange = {
+            text = it
+        },
+        modifier = Modifier
+            .border(1.dp,Color(0xFFE5E6E7), CircleShape)
+            .height(35.dp)
+            .fillMaxWidth(),
+        decorationBox = { innerTextField ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            ) {
+                Box(
+                    modifier = Modifier.weight(1f).padding(horizontal = 15.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    innerTextField()
+                }
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(18.dp)
+                )
+            }
+        }
+    )
+
+//    OutlinedTextField(
+//        value = "",
+//        onValueChange = {},
+//        label = {
+//            Text("输入活动标题关键词检索")
+//        },
+//        trailingIcon = {
+//            Icon(
+//                Icons.Default.Search,
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .size(18.dp)
+//            )
+//        },
+////        leadingIcon = {
+////
+////        },
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .height(24.dp)
+//            .padding(horizontal = 5.dp),
+//    )
 }
 
 
@@ -96,36 +193,6 @@ private fun Loader(
 
 @Composable
 fun ActivityTable(){
-    Column {
-//        Text(
-//            text = "活动速览",
-//            color = Color.Black,
-//            fontSize = 20.sp,
-////        style = MaterialTheme.typography.h5,
-//            modifier = Modifier.padding(18.dp,16.dp,16.dp,16.dp)
-//        )
-        DropDownMenu()
-//        val context = LocalContext.current
-//        var operatorPos by remember { mutableStateOf(1) }
-//        val operator = remember { listOf("admin", "小明", "小王") }
-//        Spinner(
-//            modifier = Modifier
-//                .weight(1f)
-//                .padding(2.dp),
-//            onSpinnerItemSelected = { operatorPos = it },
-//            position = operatorPos,
-//            itemList = operator,
-//            title = "检测人员",
-//            context = context
-//        )
-
-//        DropDownList(
-//            false,
-//            listOf("x","y","z"),
-//        )
-//        CountrySelection()
-    }
-
 
 }
 

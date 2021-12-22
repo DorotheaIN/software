@@ -1,23 +1,27 @@
 package com.example.yike.component
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DropDownMenu(){
-    val cityList = listOf<String>("a","b","c")
-    Box {
+fun DropDownMenu(
+    tags: List<String>
+){
+    Box(
+    ) {
         // State variables
-        var cityName : String by remember{ mutableStateOf(cityList[0]) }
+        var tagName : String by remember{ mutableStateOf(tags[0]) }
         var expanded by remember { mutableStateOf(false) }
 
         // Back arrow here
@@ -26,19 +30,17 @@ fun DropDownMenu(){
                 expanded = !expanded
             }
         ) { // Anchor view
-            Text(text = cityName,) // City name label
-            Icon(imageVector = Icons.Filled.ArrowDropDown,"")
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = {
                     expanded = false
                 }) {
-                cityList.forEach { city ->
+                tags.forEach { city ->
                     DropdownMenuItem(onClick = {
                         expanded = false
-                        cityName = city
+                        tagName = city
                     }) {
-                        val isSelected = city == cityName
+                        val isSelected = city == tagName
                         val style = if (isSelected) {
                             MaterialTheme.typography.body1.copy(
                                 fontWeight = FontWeight.Bold,
@@ -52,6 +54,19 @@ fun DropDownMenu(){
                         }
                         Text(text= city, style = style)
                     }
+                }
+            }
+            Box(
+                Modifier.border(1.dp, Color(0xFFF2F2F2), RoundedCornerShape(10.dp)).size(width=112.dp,height = 36.dp)
+            ){
+                Row(
+                    Modifier.fillMaxHeight().padding(vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Spacer(modifier = Modifier.width(15.dp))
+                    Text(text = tagName,) // City name label
+                    Spacer(modifier = Modifier.width(15.dp))
+                    Icon(imageVector = Icons.Filled.ArrowDropDown,"")
                 }
             }
         }
