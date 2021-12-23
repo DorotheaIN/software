@@ -428,7 +428,11 @@ object OrgLoginRepository{
                     "unregister" -> -2
                     else -> -1
                 }
-                null
+                if(loginResponse.msg == "密码错误"){
+                    Organization(-1,-1,"","","")
+                }else{
+                    null
+                }
             }
         } catch (e: Exception){
             println(e)

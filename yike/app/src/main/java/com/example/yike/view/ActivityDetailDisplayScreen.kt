@@ -8,36 +8,27 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -45,6 +36,7 @@ import coil.compose.rememberImagePainter
 import com.example.yike.R
 import com.example.yike.component.RequiredInputState
 import com.example.yike.component.ScrollableAppBar
+import com.example.yike.component.FreeTextDialog
 import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.ActivityDetail
 import com.example.yike.viewModel.ActivityDetailViewModel
@@ -56,7 +48,7 @@ import kotlinx.coroutines.launch
 fun NaviIcon(navController: NavController,activityDetailViewModel: ActivityDetailViewModel,like:Boolean,subscribe:Boolean){
     Icon(imageVector = Icons.Filled.ArrowBack,
         modifier = Modifier.clickable {
-            activityDetailViewModel.save(like,subscribe)
+//            activityDetailViewModel.save(like,subscribe)
             navController.popBackStack()
         },
         contentDescription = "ArrowBack",
@@ -85,10 +77,16 @@ fun ActivityDetailDisplayScreen(
         val subRes = viewModel.subRes.observeAsState()
         val delRes = viewModel.delReviewRes.observeAsState()
         val userID = viewModel.getUserID
-        ActivityDetailScreenContent(activityDetail.value,userID,navController,evaluationList.value,
+        ActivityDetailScreenContent(activityDetail.value,userID,navController,evaluationList.value,reviewRes.value,
             likeStatus.value,subscribeStatus.value,viewModel,
-            { like,subscribe->
-                viewModel.save(like,subscribe)
+            { like->
+                viewModel.like(like)
+            },
+            { subscribe ->
+                viewModel.subscribe(subscribe)
+            },
+            { //like,subscribe->
+//                viewModel.save(like,subscribe)
                 navController.popBackStack()
             },
             { text->
@@ -109,17 +107,26 @@ fun ActivityDetailScreenContent(
     navController: NavController,
     evaluationList:ArrayList<Evaluation>?,
 //    activityList:ArrayList<Activity>?,
+    reviewStatus:Boolean?,
     likeStatus: Boolean?,
     subscribeStatus: Boolean?,
     activityDetailViewModel: ActivityDetailViewModel,
-    clickEvent:(like:Boolean,subscribe:Boolean) -> Unit,
+    likeEvent:(like:Boolean) -> Unit,
+    subEvent:(subscribe:Boolean) -> Unit,
+    clickEvent:() -> Unit,
     reviewEvent: (text:String) -> Unit,
     delReviwEvent:() -> Unit
 ){
+    val openDialog = remember { mutableStateOf(false) }
+    val dialogText = remember { mutableStateOf("") }
     val likeSelected = remember{mutableStateOf(false)}
     val subscribeSelected = remember{mutableStateOf(false)}
     val state = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val scope = rememberCoroutineScope()
+    if(reviewStatus==false){
+        dialogText.value = "评论失败，请确认已经报名"
+        openDialog.value = true
+    }
     ModalBottomSheetLayout(
         sheetState = state,
         sheetContent = {
@@ -135,7 +142,7 @@ fun ActivityDetailScreenContent(
                     if(likeStatus!=null && subscribeStatus!=null){
                         likeSelected.value = likeStatus
                         subscribeSelected.value = subscribeStatus
-                        Bottom(activityDetail,evaluationList,likeSelected,subscribeSelected){
+                        Bottom(activityDetail,evaluationList,likeSelected,subscribeSelected,dialogText,openDialog,likeEvent,subEvent){
                             scope.launch { state.show() }
                         }
                     }
@@ -163,17 +170,18 @@ fun ActivityDetailScreenContent(
                                     available: Offset,
                                     source: NestedScrollSource
                                 ): Offset {
-                                    println("tollbarOffsetHeightPx:"+toolbarOffsetHeightPx.value.toString())
+//                                    println("tollbarOffsetHeightPx:"+toolbarOffsetHeightPx.value.toString())
                                     val delta = consumed.y
-                                    println("avaliable.y:"+available.y.toString())
+//                                    println("avaliable.y:"+available.y.toString())
                                     val newOffset = toolbarOffsetHeightPx.value + delta
-                                    println("newOffset:"+newOffset.toString())
+//                                    println("newOffset:"+newOffset.toString())
                                     toolbarOffsetHeightPx.value = newOffset.coerceIn(-maxUpPx, minUpPx)
-                                    println("tollbarOffsetHeightPx:"+toolbarOffsetHeightPx.value.toString())
+//                                    println("tollbarOffsetHeightPx:"+toolbarOffsetHeightPx.value.toString())
                                     return Offset.Zero
                                 }
                             }
                         }
+                        FreeTextDialog(dialogText, openDialog)
                         Box(
                             Modifier
                                 .fillMaxSize()
@@ -196,7 +204,7 @@ fun ActivityDetailScreenContent(
                                             shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
                                             elevation = 5.dp,
                                             modifier = Modifier
-                                                .padding(0.dp, 0.dp,0.dp,3.dp)
+                                                .padding(0.dp, 0.dp, 0.dp, 3.dp)
                                                 .fillMaxWidth(),
                                             color = Color.White
                                         ) {
@@ -233,6 +241,10 @@ fun Bottom(
     evaluationList: ArrayList<Evaluation>?,
     likeStatus:MutableState<Boolean>,
     subscribeStatus:MutableState<Boolean>,
+    isSubSuccess: MutableState<String>,
+    openSubDialog: MutableState<Boolean>,
+    likeEvent:(like:Boolean) -> Unit,
+    subEvent:(subscribe:Boolean) -> Unit,
     clickEvent: () -> Unit = {},
 ){
     Row(
@@ -242,8 +254,8 @@ fun Bottom(
             .border(1.dp, Color(0xFFE4E4E4))
             .fillMaxWidth()
     ) {
-        SubscribeIcon(activityDetail,subscribeStatus)
-        LikeIcon(activityDetail,likeStatus)
+        SubscribeIcon(activityDetail,isSubSuccess,openSubDialog,subscribeStatus,subEvent)
+        LikeIcon(activityDetail,likeStatus,likeEvent)
         if(evaluationList != null){
             EvaluateIcon(evaluationList.size,clickEvent)
         }else {
@@ -254,7 +266,11 @@ fun Bottom(
 }
 
 @Composable
-fun LikeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>){
+fun LikeIcon(
+    activityDetail: ActivityDetail,
+    selected:MutableState<Boolean>,
+    likeEvent:(like:Boolean) -> Unit,
+){
     val likenum = remember{mutableStateOf(activityDetail.likeNum)}
     val change = remember{mutableStateOf(false)}
     val buttonSize by animateDpAsState(
@@ -275,6 +291,9 @@ fun LikeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>){
                 }
                 change.value = true
                 selected.value = !selected.value
+                run{
+                    likeEvent(selected.value)
+                }
             }) {
                 Icon(painter = painterResource(id = if(selected.value) R.drawable.like_selected else R.drawable.like),
                     contentDescription = null,
@@ -319,14 +338,19 @@ fun EvaluateIcon(
                     modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
                 )
             }
-
         }
     }
 }
 
 
 @Composable
-fun SubscribeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>){
+fun SubscribeIcon(
+    activityDetail: ActivityDetail,
+    isSubSuccess: MutableState<String>,
+    openSubDialog: MutableState<Boolean>,
+    selected:MutableState<Boolean>,
+    subEvent:(subscribe:Boolean) -> Unit,
+){
     var subscriberList = activityDetail.subscriberNum
     var change by remember{mutableStateOf(false)}
     val buttonSize by animateDpAsState(
@@ -336,12 +360,29 @@ fun SubscribeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>)
         change = false
     }
     Box(
-        modifier = Modifier.padding(20.dp,5.dp,15.dp,5.dp).fillMaxWidth(0.27f)
+        modifier = Modifier
+            .padding(20.dp, 5.dp, 15.dp, 5.dp)
+            .fillMaxWidth(0.27f)
     ){
         Row(){
             IconButton(onClick = {
-                change = true
-                selected.value = !selected.value
+                if(activityDetail.status == -1){ //不可报名状态
+                    isSubSuccess.value = "报名失败"
+                    openSubDialog.value = true
+                } else {
+                    change = true
+                    selected.value = !selected.value
+                    run{
+                        subEvent(selected.value)
+                    }
+                    if(selected.value){
+                        isSubSuccess.value = "报名成功"
+                        openSubDialog.value = true
+                    }else {
+                        isSubSuccess.value = "取消报名成功"
+                        openSubDialog.value = true
+                    }
+                }
             }) {
                 Icon(painter = painterResource(id = if(selected.value) R.drawable.collect_selected else R.drawable.collect),
                     contentDescription = null,
@@ -354,7 +395,9 @@ fun SubscribeIcon(activityDetail: ActivityDetail,selected:MutableState<Boolean>)
                     text = "报名",
                     color = Color.DarkGray,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp).clickable {  }
+                    modifier = Modifier
+                        .padding(0.dp, 8.dp, 0.dp, 0.dp)
+                        .clickable { }
                 )
             }
         }
@@ -604,7 +647,7 @@ fun InfoDisplay(item:ActivityDetail){
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
         modifier = Modifier
-            .padding(0.dp, 0.dp,0.dp,5.dp)
+            .padding(0.dp, 0.dp, 0.dp, 5.dp)
             .fillMaxWidth(),
         color = Color.White
     ) {
@@ -614,7 +657,7 @@ fun InfoDisplay(item:ActivityDetail){
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
         modifier = Modifier
-            .padding(0.dp, 0.dp,0.dp,5.dp)
+            .padding(0.dp, 0.dp, 0.dp, 5.dp)
             .fillMaxWidth(),
         color = Color.White
     ) {
@@ -624,7 +667,7 @@ fun InfoDisplay(item:ActivityDetail){
         shape = MaterialTheme.shapes.medium, // 使用 MaterialTheme 自带的形状
         elevation = 5.dp,
         modifier = Modifier
-            .padding(0.dp, 0.dp,0.dp,5.dp)
+            .padding(0.dp, 0.dp, 0.dp, 5.dp)
             .fillMaxWidth(),
         color = Color.White
     ) {
@@ -682,7 +725,8 @@ fun EvaluationItem(
     delReviwEvent:() -> Unit
 ){
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(20.dp, 0.dp, 0.dp, 0.dp)
             .clickable { }
             .background(Color.White)

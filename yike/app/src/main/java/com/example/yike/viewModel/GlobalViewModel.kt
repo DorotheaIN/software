@@ -42,13 +42,13 @@ object GlobalViewModel: ViewModel() {
     }
 
     fun getUserInfo(): UserInfo? { //为啥用这个 因为observe有问题 不知道为何？ 可以再试试
-//        return globalUserInfo.value
-        return UserInfo("1@126.com","hcy1658339245",1,"","")
+        return globalUserInfo.value
+//        return UserInfo("1@126.com","hcy1658339245",1,"","")
     }
 
     fun getOrgInfo():Organization?{
-//        return globalOrgInfo.value
-        return Organization(79355314,1,"","同济小软家","")
+        return globalOrgInfo.value
+//        return Organization(79355314,1,"","同济小软家","")
     }
 
     fun getQuestion(id: String): Question? {

@@ -1,6 +1,8 @@
 package com.example.yike.view
 
 
+import android.view.Gravity
+import android.widget.Toast
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,12 +14,14 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -31,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.yike.EmailState
 import com.example.yike.PasswordInputState
+import com.example.yike.component.OrgRegisterDialog
 import com.example.yike.component.PrimaryButton
 import com.example.yike.component.RequiredInputState
 import com.example.yike.viewModel.GlobalViewModel
@@ -62,10 +67,17 @@ private fun LoginContent(
     registerEvent: () -> Unit,
     changeEvent:()->Unit = {}
 ){
-    if(orgInfo != null) {
-        println(orgInfo)
-        GlobalViewModel.updateOrgInfo(orgInfo)
-        run(routeEvent)
+//    val openDialog = remember { mutableStateOf(false) }
+//    val isSuccess = remember { mutableStateOf(false) }
+    if(orgInfo != null ) {
+        if(orgInfo==Organization(-1,-1,"","","")){
+            Toast.makeText(LocalContext.current, "密码错误", Toast.LENGTH_SHORT).show()
+        }else {
+            println(orgInfo)
+            GlobalViewModel.updateOrgInfo(orgInfo)
+            Toast.makeText(LocalContext.current, "登录成功", Toast.LENGTH_SHORT).show()
+            run(routeEvent)
+        }
     } else {
         println(orgInfo)
     }
@@ -80,7 +92,7 @@ private fun LoginContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 42.dp,vertical = 20.dp),
+                .padding(horizontal = 42.dp, vertical = 20.dp),
         ) {
 
 //            MyExample()
@@ -109,7 +121,7 @@ private fun LoginContent(
                     }
                 }
             })
-
+//            OrgRegisterDialog(isSuccess, openDialog)
             ChangeLoginEntry(changeEvent)
         }
     }
@@ -321,7 +333,10 @@ private fun ChangeLoginEntry(
         Modifier.fillMaxSize()
     ){
         Box(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(0.dp,20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(0.dp, 20.dp),
             contentAlignment = Alignment.Center,
         ) {
             Text(

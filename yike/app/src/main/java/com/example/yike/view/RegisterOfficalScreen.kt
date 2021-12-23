@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.yike.component.OrgRegisterDialog
 import com.example.yike.view.RegisterButton
 import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.OfficialRegisterViewModel
@@ -51,9 +52,16 @@ fun RegisterOfficialScreenContent(
     val officialNameInput = remember { NameInputState() }
     val officialCodeInput = remember { PasswordInputState() }
     val officialIntroInput = remember { NameInputState() }
+    val isSuccess = remember { mutableStateOf(false)}
+    val openDialog = remember { mutableStateOf(false)}
     if(registerResult !=null){
-        navController.navigate("orgLogin")
+        isSuccess.value = true
+        openDialog.value = true
+        OrgRegisterDialog(isSuccess = isSuccess, openDialog = openDialog){
+            navController.navigate("orgLogin")
+        }
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -71,7 +79,9 @@ fun RegisterOfficialScreenContent(
             OfficialRegisterTable(navController)
         }
         Box(
-            Modifier.fillMaxSize().align(Alignment.Center)
+            Modifier
+                .fillMaxSize()
+                .align(Alignment.Center)
         ){
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -104,7 +114,7 @@ fun RegisterOfficialScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(0.dp,30.dp),
+                .padding(0.dp, 30.dp),
             contentAlignment = Alignment.Center
         ){
             TermsOfServiceLabel(){
