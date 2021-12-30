@@ -50,7 +50,7 @@ fun DetailedScreen(navController: NavController,
 //    println(detailedAnswerViewModel.questionId)
     val questionId = detailedAnswerViewModel.questionId
     val answererId = detailedAnswerViewModel.answerId
-    detailedAnswerViewModel.slectQuesAnswer(detailedAnswerViewModel.answerId,detailedAnswerViewModel.questionId)
+    detailedAnswerViewModel.selectQuesAnswer(detailedAnswerViewModel.answerId,detailedAnswerViewModel.questionId)
     val quesAnswerInfoList = detailedAnswerViewModel.quesAnswerInfoList.observeAsState()
     DetailAnswer(quesAnswerInfoList.value,questionId,answererId,navController)
 }

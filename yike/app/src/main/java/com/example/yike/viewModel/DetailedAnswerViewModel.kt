@@ -53,7 +53,7 @@ class DetailedAnswerViewModel (
     }
 
     //用户方法
-    fun slectQuesAnswer(answerId: String,quesId: String){
+    fun selectQuesAnswer(answerId: String,quesId: String){
         answerQuesId.value = AnswerQuesId(answerId,quesId)
     }
 }

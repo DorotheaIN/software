@@ -634,3 +634,55 @@ object AddQuestionRepository {
         emit(result)
     }
 }
+
+object AdminRepository {
+
+    fun getApplications() = liveData(Dispatchers.IO) {
+        val result = try {
+            val getApplicationsResponse = Network.getApplications()
+            if(getApplicationsResponse.code == 200){
+                getApplicationsResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
+    fun updateOUserStatus(ID:String,flag:String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val updateOUserStatusResponse = Network.updateOUserStatus(ID,flag)
+            if(updateOUserStatusResponse.code == 200){
+                updateOUserStatusResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
+    fun postApplyResult(content:String,title:String,to:String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val postApplyResultResponse = Network.postApplyResult(content, title, to)
+            if(postApplyResultResponse.code == 200){
+                postApplyResultResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
+}
