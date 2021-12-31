@@ -106,6 +106,13 @@ class MainActivity : ComponentActivity() {
                         val questionViewModel = QuestionViewModel(questionId)
                         QuestionScreen(questionViewModel, navController)
                     }
+                    composable(route = "search/{questionKyWd}",
+                        arguments = listOf(navArgument("questionKyWd") { type = NavType.StringType })
+                    ){
+                        val questionKyWd = it.arguments?.getString("questionKyWd")?:""
+                        val searchViewModel = SearchViewModel(questionKyWd)
+                        SearchingResScreen(searchViewModel, navController)
+                    }
                     composable("myactivity"){
                         val infoActivityViewModel = InfoActivityViewModel()
                         InfoActivityScreen(navController,infoActivityViewModel)

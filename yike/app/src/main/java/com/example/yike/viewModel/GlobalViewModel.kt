@@ -112,4 +112,12 @@ object GlobalViewModel: ViewModel() {
     fun checksendStatus(inputEmail: String) {
         emailLiveData.value = EmailInput(inputEmail)
     }
+
+    fun getQuestionList(_questionKyWd: String): ArrayList<Question> {
+        val qL = ArrayList<Question>()
+        globalQuestionList.value?.forEach {
+            if (it.title.contains(_questionKyWd)) qL.add(it)
+        }
+        return qL
+    }
 }

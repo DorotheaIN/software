@@ -1,5 +1,6 @@
 package com.example.yike.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +16,8 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -70,6 +73,10 @@ private fun DiscussScreenScaffold(
                     navController.navigate("question/${question.id}") },
                 { theme ->
                     navController.navigate("question/${theme.id}")
+                },
+                {
+                    KyWd->
+                    navController.navigate("search/${KyWd}")
                 }
             )
         }
@@ -100,8 +107,8 @@ private fun DiscussScreenContent(
     questionTheme: ArrayList<QTheme>,
     navController: NavController,//whl增加
     routeEvent1: (q: Question) -> Unit,
-    routeEvent2: (q: QTheme) -> Unit
-
+    routeEvent2: (q: QTheme) -> Unit,
+    searchEvent: (s:String)->Unit
 ) {
     Surface(
         color = MaterialTheme.colors.background,
@@ -116,7 +123,7 @@ private fun DiscussScreenContent(
         ) {
             Spacer(Modifier.height(40.dp))
 
-            SearchInput()
+            SearchInput(searchEvent)
 
             DiscussThemesSection(
                 questionTheme,
@@ -254,10 +261,17 @@ private fun DiscussThemesSection(
 }
 
 @Composable
-private fun SearchInput() {
+private fun SearchInput(
+    searchEvent: (s:String)->Unit = {}
+) {
+    val value = remember{
+        mutableStateOf<String>("")
+    }
     OutlinedTextField(
-        value = "",
-        onValueChange = {},
+        value = value.value,
+        onValueChange = {
+                        value.value = it
+        },
         label = {
             Text("Search")
         },
@@ -267,6 +281,9 @@ private fun SearchInput() {
                 contentDescription = null,
                 modifier = Modifier
                     .size(18.dp)
+                    .clickable {
+                        run {searchEvent(value.value)}
+                    }
             )
         },
         modifier = Modifier
