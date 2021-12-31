@@ -5,6 +5,7 @@ import com.example.yike.model.CheckResponse
 import com.example.yike.model.QuestionResponse
 import com.example.yike.viewModel.*
 import kotlinx.coroutines.Dispatchers
+import okhttp3.RequestBody
 import java.lang.Exception
 
 //repo中函函数名与VM中相同 表用户方法
@@ -600,9 +601,27 @@ object MyRepository {
 }
 
 object OfficialRepository {
+    fun fileUpload(requestBody: RequestBody) = liveData(Dispatchers.IO) {
+        val result = try {
+            val uploadResponse = Network.fileUpload(requestBody)
+            println("getRes:$uploadResponse")
+            if(uploadResponse.code == 200){
+                uploadResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
     fun officialRegister(avator:String,certification:String,introduction:String,password:String,userName:String) = liveData(Dispatchers.IO) {
         val result = try {
             val officialRegisterResponse = Network.officialRegister(avator, certification, introduction, password, userName)
+            println(officialRegisterResponse)
             if(officialRegisterResponse.code == 200){
                 officialRegisterResponse.result
             }else {

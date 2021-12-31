@@ -1,5 +1,6 @@
 package com.example.yike.service
 
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -11,12 +12,17 @@ import kotlin.coroutines.suspendCoroutine
 
 //Token的使用?
 
+const val path: String = "DZY"
+
 object Network {
 
     //service:
     private val userService = ServiceCreator.create<UserService>()
 
     //suspend fun:
+    suspend fun fileUpload(requestBody: RequestBody) =
+        userService.fileUpload(path, requestBody).await()
+
     suspend fun getLoginStatus(userEmail: String, passWord: String) =
         userService.getLoginStatus(userEmail, passWord).await()
 

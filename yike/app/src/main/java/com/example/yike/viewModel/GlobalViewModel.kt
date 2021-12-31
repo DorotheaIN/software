@@ -1,9 +1,15 @@
 package com.example.yike.viewModel
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.example.yike.service.OfficialRepository
 import com.example.yike.service.SendEmailRepository
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 object GlobalViewModel: ViewModel() {
     private val globalUserInfo: MutableLiveData<UserInfo> = MutableLiveData<UserInfo>()
@@ -13,7 +19,35 @@ object GlobalViewModel: ViewModel() {
     private val globalEmail: MutableLiveData<String> = MutableLiveData<String>()
     private val globalVerifyCode: MutableLiveData<String> = MutableLiveData<String>()
 
+    private val registerImg = MutableLiveData<RequestBody>()
+    private val registerDoc = MutableLiveData<RequestBody>()
 
+    val imgUri = Transformations.switchMap(registerImg){
+        OfficialRepository.fileUpload(registerImg.value!!)
+    }
+    val docUri = Transformations.switchMap(registerDoc){
+        OfficialRepository.fileUpload(registerDoc.value!!)
+    }
+
+    fun updateImg(uri: String) {
+        val file = File(uri)
+        val requestBody = RequestBody.create(MediaType.parse("image/*"), file)
+        val multipartBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("myFile", file.name, requestBody)
+            .build()
+        registerImg.value = multipartBody
+    }
+
+    fun  updateDoc(uri: String) {
+        val file = File(uri)
+        val requestBody = RequestBody.create(MediaType.parse("application/*"), file)
+        val multipartBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("myFile", file.name, requestBody)
+            .build()
+        registerDoc.value = multipartBody
+    }
 
     fun updateUserInfo(userId:String, userName: String, userStatus: Int, avatar: String, introduction: String) {
         globalUserInfo.value = UserInfo(userId, userName, userStatus, introduction, avatar)//反了？
