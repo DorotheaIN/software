@@ -137,6 +137,15 @@ object Network {
     suspend fun postApplyResult(content:String,title:String,to:String)=
         userService.postApplyResult(content, title, to).await()
 
+    suspend fun adminLogin(ID:String,password: String)=
+        userService.adminLogin(ID, password).await()
+
+    suspend fun getReports()=
+        userService.getReports().await()
+
+    suspend fun updateIUserStatus(ID: String,flag: String)=
+        userService.updateIUserStatus(ID, flag).await()
+
 
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之

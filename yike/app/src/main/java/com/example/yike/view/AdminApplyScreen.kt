@@ -35,26 +35,12 @@ import com.example.yike.viewModel.*
 fun AdminApplyScreen(
     adminApplyViewModel: AdminApplyViewModel,
     updateApplyViewModel: UpdateApplyViewModel,
+    change2ReportEvent:()->Unit
 ){
     adminApplyViewModel.init()
     val applicationInfoList = adminApplyViewModel.applicationInfoList.observeAsState()
 
     val changeApplyStatus = updateApplyViewModel.changeApplyStatus.observeAsState()
-
-    AdminApplyScreenContent(applicationInfoList.value,updateApplyViewModel,adminApplyViewModel)
-
-}
-
-@Composable
-fun AdminApplyScreenContent(
-    applicationInfoList: ArrayList<ApplyInfo>?,
-    updateApplyViewModel: UpdateApplyViewModel,
-    adminApplyViewModel:AdminApplyViewModel
-){
-
-    val postApplyViewModel = PostApplyResultViewModel()
-
-    val sendPostInfo = postApplyViewModel.sendPostInfo.observeAsState()
 
     var openApproveDialog: MutableState<Boolean> = remember {
         mutableStateOf(false)
@@ -62,15 +48,32 @@ fun AdminApplyScreenContent(
 
     var openRejectDialog: MutableState<Boolean> = remember {
         mutableStateOf(false)
-    }
+    }//记录是否打开拒绝框
+
+    AdminApplyScreenContent(applicationInfoList.value,updateApplyViewModel,adminApplyViewModel,change2ReportEvent,openApproveDialog,openRejectDialog)
+
+}
+
+@Composable
+fun AdminApplyScreenContent(
+    applicationInfoList: ArrayList<ApplyInfo>?,
+    updateApplyViewModel: UpdateApplyViewModel,
+    adminApplyViewModel:AdminApplyViewModel,
+    change2ReportEvent:()->Unit,
+    openApproveDialog: MutableState<Boolean>,
+    openRejectDialog: MutableState<Boolean>,
+
+){
+
+    val postApplyViewModel = PostApplyResultViewModel()
+
+    val sendPostInfo = postApplyViewModel.sendPostInfo.observeAsState()
+
 
     var tempApplyInfo: MutableState<ApplyInfo>? = remember {
         mutableStateOf(ApplyInfo(0,0,"","","","",""))
     }//信息传到弹框
 
-    var ID:MutableState<String> = remember {
-        mutableStateOf("-1")
-    }
 
 
 //    var isUpdate:MutableState<Boolean> = remember{
@@ -86,8 +89,8 @@ fun AdminApplyScreenContent(
     LazyColumn(
         Modifier.background(Color(0xFFDBDBDB))
     ){
-        item { top() }
-        item { AdminInfo()}
+        item { top(change2ReportEvent) }
+        item { adminInfo()}
         item { Split()}
 
         item {
@@ -123,16 +126,17 @@ fun AdminApplyScreenContent(
                     println(applicationInfo.id)
                     println(applicationInfo.status)
                     isUpdate.value=true
-                    item{ApplyInfo(openApproveDialog,openRejectDialog,applicationInfo,tempApplyInfo)}
+                    item{applyInfo(openApproveDialog,openRejectDialog,applicationInfo,tempApplyInfo)}
                 }
             }
         }
     }
 }
 
-@Preview
 @Composable
-fun top(){
+private fun top(
+    change2ReportEvent:()->Unit
+){
     TopAppBar(
         modifier =Modifier,
         backgroundColor = Color(0xB2D3D2D6),
@@ -154,7 +158,7 @@ fun top(){
                     menuExpanded = false
                 },
             ) {
-                DropdownMenuItem(onClick = {}) {
+                DropdownMenuItem(onClick = {change2ReportEvent}) {
                     Text("处理举报")
                 }
             }
@@ -163,7 +167,7 @@ fun top(){
 }
 
 @Composable
-fun AdminInfo(){
+fun adminInfo(){
     Surface(
         modifier = Modifier
             .padding(bottom = 7.dp)
@@ -189,21 +193,26 @@ fun AdminInfo(){
                     .size(550.dp, 85.dp)
                     .padding(15.dp, 0.dp)
             ){
-//                val getImg = GlobalViewModel.getUserInfo()?.avator
-                val getIntro = GlobalViewModel.getUserInfo()?.introduction
+                val getImg = GlobalViewModel.getAdminInfo()?.avator
+//                val getIntro = GlobalViewModel.getUserInfo()?.introduction
 //                val img = if(getImg == ""){
 //                    "http://101.132.138.14/files/user/"+ (1..199).random().toString()+".jpg"
 //                }else{
 //                    getImg
 //                }
-                val intro = if(getIntro == null){
-                    "还未填写简介"
+//                val intro = if(getIntro == null){
+//                    "还未填写简介"
+//                }else{
+//                    getIntro
+//                }
+                val img = if(getImg == ""){
+                    R.drawable.admin
                 }else{
-                    getIntro
+                    getImg
                 }
                 Row(modifier = Modifier.padding(all = 8.dp)) {
                     Image(
-                        painterResource(R.drawable.admin),//管理员头像
+                        rememberImagePainter(img),//管理员头像
                         contentDescription = null,
                         modifier = Modifier
                             .padding(0.dp, 5.dp)
@@ -215,12 +224,14 @@ fun AdminInfo(){
                     Spacer(modifier = Modifier.width(15.dp))
 
                     Column (modifier = Modifier.size(300.dp,65.dp)){
-                        Text(
-                            text ="管理员1号",//管理员下面小字介绍
-                            color = Color.White,
-                            style = MaterialTheme.typography.h6,
-                            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
-                        )
+                        GlobalViewModel.getAdminInfo()?.let {
+                            Text(
+                                text = it.username,//管理员名称
+                                color = Color.White,
+                                style = MaterialTheme.typography.h6,
+                                modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(4.dp))
 
@@ -251,7 +262,7 @@ fun AdminInfo(){
 
 @Preview
 @Composable
-fun Split(){
+private fun Split(){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -282,7 +293,7 @@ fun Split(){
 }
 
 @Composable
-fun ApplyInfo(
+fun applyInfo(
     openApproveDialog: MutableState<Boolean>,
     openRejectDialog: MutableState<Boolean>,
     applyInfo: ApplyInfo,
@@ -293,7 +304,9 @@ fun ApplyInfo(
     var isExpanded by remember { mutableStateOf(false) } // 创建一个能够检测卡片是否被展开的变量
 
     var isIntroExpanded by remember { mutableStateOf(false) } // 创建一个能够检测组织简介是否被展开的变量
-    Surface() {
+    Surface(
+        Modifier.background(Color(0xFFDBDBDB))
+    ) {
         Column(
             modifier = Modifier
                 .padding(bottom = 7.dp)
@@ -337,13 +350,15 @@ fun ApplyInfo(
                             Text(
                                 "申请组织名称:",
                                 color = Color(0xF23F3D38),
-                                style = MaterialTheme.typography.body2
+                                style = MaterialTheme.typography.body1,
+                                fontSize = 18.sp
                             )
                             Spacer(Modifier.width(5.dp))
                             Text(
                                 text = applyInfo.username,//组织名称
                                 color = Color(0xD53D3A3A),
-                                style = MaterialTheme.typography.body2,
+                                style = MaterialTheme.typography.body1,
+                                fontSize = 18.sp,
                                 modifier = Modifier
                                     .clickable { // 添加一个新的 Modifier 扩展方法，可以让元素具有点击的效果
                                         isExpanded = !isExpanded // 编写点击的事件内容
@@ -366,15 +381,41 @@ fun ApplyInfo(
                         style = MaterialTheme.typography.h6
                     )
                     Spacer(modifier = Modifier.height(5.dp))
+                    Box(Modifier.padding(horizontal = 5.dp)) {
+                        Text(
+                            text = applyInfo.introduction,
+                            color = Color(0xD53D3A3A),
+                            style = MaterialTheme.typography.body2,
+                            modifier = Modifier.clickable {
+                                isIntroExpanded = !isIntroExpanded
+                            },
+                            maxLines = if (isIntroExpanded) Int.MAX_VALUE else 5
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(15.dp))
+
+            Box(){
+                Column() {
                     Text(
-                        text = applyInfo.introduction,
-                        color = Color(0xD53D3A3A),
-                        style = MaterialTheme.typography.body2,
-                        modifier = Modifier.clickable{
-                            isIntroExpanded = !isIntroExpanded
-                        },
-                        maxLines = if (isIntroExpanded) Int.MAX_VALUE else 5
+                        text = "申请组织提交材料：",
+                        color = Color(0xF23F3D38),
+                        style = MaterialTheme.typography.h6
                     )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Box(Modifier.padding(horizontal = 5.dp)) {
+                        Text(
+                            text = applyInfo.certification,
+                            color = Color(0xD53D3A3A),
+                            style = MaterialTheme.typography.body2,
+                            modifier = Modifier.clickable {
+                                isIntroExpanded = !isIntroExpanded
+                            },
+                            maxLines = if (isIntroExpanded) Int.MAX_VALUE else 1
+                        )
+                    }
                 }
             }
 
@@ -461,7 +502,7 @@ fun ApplyInfo(
 }
 
 @Composable
-fun addApproveAlterDialog(
+private fun addApproveAlterDialog(
     openApproveDialog: MutableState<Boolean>,
     tempApplyInfo:MutableState<ApplyInfo>?,
     adminApplyViewModel:AdminApplyViewModel,
@@ -502,7 +543,7 @@ fun addApproveAlterDialog(
 }
 
 @Composable
-fun addRejectAlterDialog(
+private fun addRejectAlterDialog(
     openRejectDialog: MutableState<Boolean>,
     replyContentInput:NameInputState,
     tempApplyInfo: MutableState<ApplyInfo>?,

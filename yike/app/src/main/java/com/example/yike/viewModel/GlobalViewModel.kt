@@ -13,6 +13,8 @@ object GlobalViewModel: ViewModel() {
     private val globalEmail: MutableLiveData<String> = MutableLiveData<String>()
     private val globalVerifyCode: MutableLiveData<String> = MutableLiveData<String>()
 
+    private val globalAdminInfo:MutableLiveData<AdminInfo> = MutableLiveData<AdminInfo>()
+
 
 
     fun updateUserInfo(userId:String, userName: String, userStatus: Int, avatar: String, introduction: String) {
@@ -41,6 +43,10 @@ object GlobalViewModel: ViewModel() {
         println(verifyCode)
     }
 
+    fun updateAdminInfo(adminInfo: AdminInfo){
+        globalAdminInfo.value = adminInfo
+    }
+
     fun getUserInfo(): UserInfo? { //为啥用这个 因为observe有问题 不知道为何？ 可以再试试
         return globalUserInfo.value
     }
@@ -63,6 +69,10 @@ object GlobalViewModel: ViewModel() {
 
     fun getVerifyCode(): String? { //为啥用这个 因为observe有问题 不知道为何？ 可以再试试
         return globalVerifyCode.value
+    }
+
+    fun getAdminInfo():AdminInfo?{
+        return globalAdminInfo.value
     }
 
 

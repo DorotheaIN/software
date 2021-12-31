@@ -685,4 +685,52 @@ object AdminRepository {
         emit(result)
     }
 
+    fun adminLogin(ID:String,password: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val adminLoginResponse = Network.adminLogin(ID, password)
+            if(adminLoginResponse.code == 200){
+                adminLoginResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
+    fun getReports() = liveData(Dispatchers.IO) {
+        val result = try {
+            val getReportsResponse = Network.getReports()
+            if(getReportsResponse.code == 200){
+                getReportsResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
+    fun updateIUserStatus(ID: String,flag: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val updateIUserStatusResponse = Network.updateIUserStatus(ID, flag)
+            if(updateIUserStatusResponse.code == 200){
+                updateIUserStatusResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
 }

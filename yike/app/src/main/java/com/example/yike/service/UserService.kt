@@ -148,5 +148,14 @@ interface UserService {
 
     @POST("/")
     fun postApplyResult(@Query("content")content:String,@Query("title")title:String,@Query("to")to:String):Call<PostApplyResultResponse>
+
+    @POST("/AdminLogin")
+    fun adminLogin(@Query("ID")ID:String,@Query("password")password: String):Call<AdminLoginResponse>
+
+    @GET("/getReports")
+    fun getReports():Call<GetReportsResponse>
+
+    @POST("/updateIUserStatus")
+    fun updateIUserStatus(@Query("ID")ID: String,@Query("flag")flag: String):Call<UpdateIUserStatusResponse>
 }
 

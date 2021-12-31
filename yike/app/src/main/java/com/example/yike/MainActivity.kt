@@ -201,9 +201,47 @@ class MainActivity : ComponentActivity() {
 //            }
 //            MainInfoScreen()
 //            RegisterUI()
-            val adminApplyViewModel =AdminApplyViewModel()
-            val updateApplyViewModel = UpdateApplyViewModel()
-            AdminApplyScreen(adminApplyViewModel,updateApplyViewModel)
+//            val adminApplyViewModel =AdminApplyViewModel()
+//            val updateApplyViewModel = UpdateApplyViewModel()
+//            AdminApplyScreen(adminApplyViewModel,updateApplyViewModel)
+
+            val navController = rememberNavController()
+            NavHost(
+                navController = navController,
+                startDestination = "adminLogin",
+                route = "root"
+            ) {
+                composable("adminLogin") {
+                    val adminLoginViewModel = AdminLoginViewModel()
+                    adminLoginScreen(adminLoginViewModel,
+                        {
+                            navController.navigate("adminApply_screen")
+                        },
+                        {
+                            navController.navigate("login")
+                        },
+                        {
+                            navController.navigate("orgLogin")
+                        }
+                    )
+                }
+                
+                composable("adminApply_screen"){
+                    val adminApplyViewModel =AdminApplyViewModel()
+                    val updateApplyViewModel = UpdateApplyViewModel()
+                    AdminApplyScreen(adminApplyViewModel,updateApplyViewModel,
+                    ) {
+                        navController.navigate("adminReport_screen")
+                    }
+                }
+
+                composable("adminReport_screen"){
+                    val adminGetReportsViewModel = AdminGetReportsViewModel()
+                    val adminUpdateIUserViewModel = AdminUpdateIUserViewModel()
+                    AdminReportScreen(adminGetReportsViewModel,adminUpdateIUserViewModel)
+                }
+            }
+
         }
     }
 }
