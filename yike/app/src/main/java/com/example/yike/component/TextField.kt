@@ -415,9 +415,6 @@ fun GenresTextField(initial: RequiredInputState,enabled:Boolean){
         leadingIcon = {
             Text("类型")
         },
-        label = {
-            Text("请自定义三个,隔开")
-        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(20.dp, 5.dp)

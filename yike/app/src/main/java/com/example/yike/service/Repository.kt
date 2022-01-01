@@ -116,9 +116,13 @@ object AnswerRepository {
 }
 
 object ActivityRepository{
-    fun getActivityList() = liveData(Dispatchers.IO){
+    fun getActivityList(filterInput: FilterInput) = liveData(Dispatchers.IO){
         val result = try {
-            val activityList = Network.getActivityList()
+            val activityList = if(filterInput==FilterInput("","","","")){//调用推荐活动
+                Network.getActivityList()
+            } else{//调用筛选活动
+                Network.filterActivity(filterInput.genres,filterInput.isAbleToRe,filterInput.key,filterInput.status)
+            }
             if(activityList.code == 200) {
                 activityList.result
             } else {

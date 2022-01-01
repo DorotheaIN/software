@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -20,12 +21,15 @@ import java.util.Calendar.MINUTE
 
 
 @Composable
-fun TimePicker(context: Context,type: String,initial: RequiredInputState){
+fun TimePicker(context: Context,initial: RequiredInputState){
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
+        val startTime = remember { mutableStateOf("") }
+        val endTime = remember { mutableStateOf("") }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -41,27 +45,32 @@ fun TimePicker(context: Context,type: String,initial: RequiredInputState){
                 Text("时间")
             }
             Spacer(modifier = Modifier.size(5.dp))
-            TimePickerDemo(context,initial)
-            if(type == "Short"){
-                Row(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(text = "   -   ")
-                    Spacer(modifier = Modifier.size(8.dp))
-                    TimePickerDemo(context,initial)
-                }
+            TimePickerDemo(context,startTime)
+            Row(
+                modifier = Modifier.fillMaxHeight(),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(text = "   -   ")
+                Spacer(modifier = Modifier.size(8.dp))
+                TimePickerDemo(context,endTime)
             }
         }
+        initial.text = startTime.value+"-"+ endTime.value
         Divider(modifier = Modifier.height(2.dp))
     }
 }
 
 @Composable
-fun TimePickerDemo(context: Context,initial: RequiredInputState){
+fun TimePickerDemo(
+    context: Context,
+    time: MutableState<String>
+){
     val now = Calendar.getInstance()
-    val time = remember { mutableStateOf("") }
-    initial.text = time.value
+    if(time.value == ""){
+        time.value = getFormattedTime(now.time,"HH:mm")
+    }
+
+
     val mHour = now.get(Calendar.HOUR_OF_DAY)
     val mMinute = now.get(Calendar.MINUTE)
     val timePickerDialog = TimePickerDialog(

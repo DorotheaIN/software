@@ -42,7 +42,7 @@ fun NumberPickerDemo(context: Context,initial: RequiredInputState){
             Spacer(modifier = Modifier.size(5.dp))
             HorizontalNumberPicker(
                 min = 10,
-                max = 100,
+                max = 1000,
                 default = 50,
                 onValueChange = { value->
                     Toast.makeText(context,value.toString(),Toast.LENGTH_SHORT).show()

@@ -16,7 +16,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun DropDownMenu(
-    tags: List<String>
+    tags: List<String>,
+    type:String,
+    event: (value:String)->Unit,
 ){
     Box(
     ) {
@@ -35,12 +37,19 @@ fun DropDownMenu(
                 onDismissRequest = {
                     expanded = false
                 }) {
-                tags.forEach { city ->
+                tags.forEach { item ->
                     DropdownMenuItem(onClick = {
                         expanded = false
-                        tagName = city
+                        tagName = item
+                        run{
+                            if(tagName=="所有"){
+                                event("")
+                            }else{
+                                event(tagName)
+                            }
+                        }
                     }) {
-                        val isSelected = city == tagName
+                        val isSelected = item == tagName
                         val style = if (isSelected) {
                             MaterialTheme.typography.body1.copy(
                                 fontWeight = FontWeight.Bold,
@@ -52,7 +61,7 @@ fun DropDownMenu(
                                 color = MaterialTheme.colors.onSurface
                             )
                         }
-                        Text(text= city, style = style)
+                        Text(text= item, style = style)
                     }
                 }
             }

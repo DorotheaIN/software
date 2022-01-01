@@ -55,27 +55,36 @@ fun ActivityPublishContent(
     ) {
         //val activity = remember { mutableStateOf(Activity("","","","","","","","",0,0,1,0, organization,0)) }
         val title = remember { RequiredInputState()}
+
+        val date = remember { RequiredInputState() }
+
         val time = remember { RequiredInputState() }
+        val timeTemp = remember { RequiredInputState() }
         val place = remember { RequiredInputState() }
         val form = remember { RequiredInputState() }
         val capacity = remember { RequiredInputState() }
         val content = remember { RequiredInputState() }
         val intro = remember { RequiredInputState() }
         val genres = remember { RequiredInputState() }
-
+        val selectedPlace = remember { mutableStateOf("") }
+        val selectedTime = remember { mutableStateOf("") }
+        val openDialog = remember { mutableStateOf(false) }
+        val dialogText = remember { mutableStateOf("") }
         // 形式：长期-日期+日期，短期-日期+时间+时间，线下-地点，线上-平台名+号码
         LazyColumn(Modifier){
             item{
                 TitleTextField(title,true)
             }
             item{
-                RadioGroupDemo()
+                RadioGroupDemo(selectedPlace,selectedTime,date)
             }
             item{
-                DatePicker(context = context,"Long")
+                DatePicker(context,selectedTime.value,date)
             }
-            item{
-                TimePicker(context = context, type = "Short",time)
+            if(selectedTime.value == "短期"){
+                item{
+                    TimePicker(context,timeTemp)
+                }
             }
 //            item{
 //                TimeTextField(time,true)
@@ -90,7 +99,7 @@ fun ActivityPublishContent(
 //                CapacityTextField(capacity,true)
 //            }
             item { 
-                NumberPickerDemo(context = context,capacity)
+                NumberPickerDemo(context,capacity)
             }
             item{
                 IntroTextField(intro,true)
@@ -99,12 +108,26 @@ fun ActivityPublishContent(
                 ContentTextField(content,true)
             }
             item {
-                CheckBoxTest()
+                CheckBoxTest(genres)
             }
             item{
                 Spacer(Modifier.height(15.dp))
                 PublishSubmitButton(){
-                    if(title.isValid && time.isValid && place.isValid && form.isValid &&
+                    dialogText.value = "请完整填写活动详细信息再提交！"
+                    if(selectedPlace.value!="" && selectedTime.value!=""){
+                        form.text = selectedPlace.value+"-"+selectedTime.value
+                    }
+                    if(selectedTime.value == "长期"){
+                        if(date.text.contains('至')){
+                            time.text = date.text
+                        }else {
+                            dialogText.value = date.text
+                            time.text = ""
+                        }
+                    }else {
+                        time.text = date.text + " "+timeTemp.text
+                    }
+                    if(form.isValid && title.isValid && time.isValid && place.isValid &&
                             capacity.isValid && content.isValid && intro.isValid && genres.isValid){
                         run{
                             val activity = Activity(title.text,
@@ -125,8 +148,13 @@ fun ActivityPublishContent(
                             clickEvent(activity)
                             navController.navigate("organization")
                         }
+                    }else {
+                        openDialog.value = true
                     }
                 }
+            }
+            item{
+                FreeTextDialog(dialogText,openDialog)
             }
             item{
                 Spacer(Modifier.height(60.dp))

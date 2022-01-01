@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -18,16 +19,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
 @Composable
-fun DatePicker(context: Context, type: String){
+fun DatePicker(context: Context, type: String,initial:RequiredInputState){
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
+        val startDate = remember { mutableStateOf("") }
+        val endDate = remember { mutableStateOf("") }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -43,16 +48,27 @@ fun DatePicker(context: Context, type: String){
                 Text("日期")
             }
             Spacer(modifier = Modifier.size(5.dp))
-            DatePickerDemo(context = context)
-            if(type == "Long"){
+            DatePickerDemo(context,startDate)
+            if(type == "长期"){
                 Row(
                     modifier = Modifier.fillMaxHeight(),
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(text = "   -   ")
                     Spacer(modifier = Modifier.size(8.dp))
-                    DatePickerDemo(context = context)
+                    DatePickerDemo(context = context,endDate)
+                    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                    val start = formatter.parse(startDate.value)
+                    val end = formatter.parse(endDate.value)
+                    if(start.before(end)){
+                        initial.text = startDate.value + " 至 " + endDate.value
+                    }else {
+                        initial.text = "日期填写不符合长期活动要求"
+                    }
+
                 }
+            }else {
+                initial.text = startDate.value
             }
         }
         Divider(modifier = Modifier.height(2.dp))
@@ -60,7 +76,10 @@ fun DatePicker(context: Context, type: String){
 }
 
 @Composable
-fun DatePickerDemo(context: Context) {
+fun DatePickerDemo(
+    context: Context,
+    date:MutableState<String>
+) {
     val mYear: Int
     val mMonth: Int
     val mDay: Int
@@ -69,8 +88,9 @@ fun DatePickerDemo(context: Context) {
     mMonth = now.get(Calendar.MONTH)
     mDay = now.get(Calendar.DAY_OF_MONTH)
     now.time = Date()
-
-    val date = remember { mutableStateOf("") }
+    if(date.value==""){
+        date.value = getFormattedDate(now.time, "yyyy-MM-dd")
+    }
     val datePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
@@ -79,8 +99,6 @@ fun DatePickerDemo(context: Context) {
             date.value = getFormattedDate(cal.time, "yyyy-MM-dd")
         }, mYear, mMonth, mDay
     )
-
-
 //    val day1= Calendar.getInstance()
 //    day1.set(Calendar.DAY_OF_MONTH, 1)
 //    datePickerDialog.datePicker.minDate = day1.timeInMillis

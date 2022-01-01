@@ -15,11 +15,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RadioGroupDemo(){
+fun RadioGroupDemo(
+    selectedPlace:MutableState<String>,
+    selectedTime:MutableState<String>,
+    initial:RequiredInputState
+){
     val tagsPlace = arrayListOf("线下","线上")
     val tagsTime = arrayListOf("短期","长期")
-    val selectedPlace = remember { mutableStateOf("线下") }
-    val selectedTime = remember { mutableStateOf("短期") }
 
     Column(
         modifier = Modifier
@@ -65,6 +67,9 @@ fun RadioGroupDemo(){
                             RadioButton(
                                 selected = it == selectedTime.value,
                                 onClick = {
+                                    if(selectedTime.value != it){
+                                        initial.text = ""
+                                    }
                                     selectedTime.value = it
                                 }
                             )
@@ -83,7 +88,9 @@ fun RadioGroupDemo(){
 
 
 @Composable
-fun CheckBoxTest(){
+fun CheckBoxTest(
+    genres:RequiredInputState
+){
     val tags = arrayListOf("学术","联谊","体育","艺术","党建","环保","庆典","志愿","心理")
     val values = arrayListOf<MutableState<Boolean>>()
     Column(
@@ -111,7 +118,7 @@ fun CheckBoxTest(){
                             mutableStateOf(false)
                         }
                         values.add(value)
-                        CheckBoxItem(value, tags[index])
+                        CheckBoxItem(value, tags[index],genres)
                     }
                 }
                 Row(modifier = Modifier.padding(10.dp,10.dp)) {
@@ -120,7 +127,7 @@ fun CheckBoxTest(){
                             mutableStateOf(false)
                         }
                         values.add(value)
-                        CheckBoxItem(value, tags[index])
+                        CheckBoxItem(value, tags[index],genres)
                     }
                 }
                 Row(modifier = Modifier.padding(10.dp,10.dp)) {
@@ -129,7 +136,7 @@ fun CheckBoxTest(){
                             mutableStateOf(false)
                         }
                         values.add(value)
-                        CheckBoxItem(value, tags[index])
+                        CheckBoxItem(value, tags[index],genres)
                     }
                 }
             }
@@ -139,7 +146,7 @@ fun CheckBoxTest(){
 }
 
 @Composable
-fun CheckBoxItem(value: MutableState<Boolean>,it: String) {
+fun CheckBoxItem(value: MutableState<Boolean>,name: String,genres:RequiredInputState) {
     val context = LocalContext.current
     val interactionSource = remember {
         MutableInteractionSource()
@@ -151,6 +158,20 @@ fun CheckBoxItem(value: MutableState<Boolean>,it: String) {
             checked = value.value,
             onCheckedChange = {
                 value.value = it
+                if(value.value){
+                    if(genres.isValid){
+                        genres.text=genres.text+","+name
+                    }else {
+                        genres.text=name
+                    }
+                }else{
+                    println(name)
+                    println(genres.text)
+                    genres.text = genres.text.replace(name+",","")
+                    genres.text = genres.text.replace(","+name,"")
+                    genres.text = genres.text.replace(name,"")
+                    println(genres.text)
+                }
             },
 //                    modifier = Modifier.size(50.dp),
             enabled = true,
@@ -164,7 +185,7 @@ fun CheckBoxItem(value: MutableState<Boolean>,it: String) {
 //                )
         )
         Spacer(modifier = Modifier.width(5.dp))
-        Text(it)
+        Text(name)
         Spacer(modifier = Modifier.width(15.dp))
     }
 }

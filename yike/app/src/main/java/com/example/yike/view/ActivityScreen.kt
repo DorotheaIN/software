@@ -40,14 +40,30 @@ fun ActivityScreen(
         viewModel.getActivityList()
     }else {
         val activityList = viewModel.activityList.observeAsState()
-        ActivityScreenContent(navController,activityList.value)
+        ActivityScreenContent(navController,activityList.value,
+            { key->
+                viewModel.setTitle(key)
+            },
+            {value ->
+                viewModel.setGenres(value)
+            },
+            {value ->
+                viewModel.setSubState(value)
+            },
+            {value ->
+                viewModel.setState(value)
+            })
     }
 }
 
 @Composable
 fun ActivityScreenContent(
     navController: NavController,
-    activityList:ArrayList<Activity>?
+    activityList:ArrayList<Activity>?,
+    searchEvent:(key:String)->Unit,
+    filterGenresEvent:(value:String)->Unit,
+    filterSubStateEvent:(value:String)->Unit,
+    filterStatusEvent:(value:String)->Unit
 ){
     Scaffold(
         modifier = Modifier.background(color = Color(0xffecedef)),
@@ -57,18 +73,22 @@ fun ActivityScreenContent(
 //        modifier = Modifier.background(color = Color(0xffecedef)),
     ) { paddingValues ->
         if( activityList == null){
-            filter()
-//            Loader(paddingValues)
+//            filter()
+            Loader(paddingValues)
         }else{
             LazyColumn(Modifier){
                 item {
-                    filter()
+                    filter(searchEvent, filterGenresEvent, filterSubStateEvent, filterStatusEvent)
                 }
                 item(activityList){
-                    Column(){
-                        activityList.forEach{it->
-                            ActivityItem(it){id->
-                                navController.navigate("activitydetail/${id}")
+                    if(activityList.isEmpty()){
+                        Text("不存在相符的活动！")
+                    }else {
+                        Column(){
+                            activityList.forEach{it->
+                                ActivityItem(it){id->
+                                    navController.navigate("activitydetail/${id}")
+                                }
                             }
                         }
                     }
@@ -82,7 +102,12 @@ fun ActivityScreenContent(
 }
 
 @Composable
-private fun filter(){
+private fun filter(
+    searchEvent:(key:String)->Unit,
+    filterGenresEvent:(value:String)->Unit,
+    filterSubStateEvent:(value:String)->Unit,
+    filterStatusEvent:(value:String)->Unit
+){
     Column(
         Modifier
             .fillMaxWidth()
@@ -94,7 +119,7 @@ private fun filter(){
                 .fillMaxWidth(0.9f)
                 .align(Alignment.CenterHorizontally)
         ){
-            SearchInput()
+            SearchInput(searchEvent)
         }
         Spacer(modifier = Modifier.height(10.dp))
         Box(
@@ -103,21 +128,23 @@ private fun filter(){
                 .align(Alignment.CenterHorizontally)
         ){
             Row(){
-                val tags = listOf<String>("学术","联谊","体育","艺术","党建","环保","庆典","志愿","心理")
-                val timeStates = listOf<String>("未开始","进行中","已结束")
+                val tags = listOf<String>("所有","学术","联谊","体育","艺术","党建","环保","庆典","志愿","心理")
+                val timeStates = listOf<String>("所有","未开始","进行中","已结束")
                 val subStates = listOf<String>("所有","可报名")
-                DropDownMenu(tags)
+                DropDownMenu(tags,"-活动类型-",filterGenresEvent)
                 Spacer(modifier = Modifier.width(15.dp))
-                DropDownMenu(timeStates)
+                DropDownMenu(timeStates,"-活动状态-",filterStatusEvent)
                 Spacer(modifier = Modifier.width(15.dp))
-                DropDownMenu(subStates)
+                DropDownMenu(subStates,"-报名状态-",filterSubStateEvent)
             }
         }
     }
 }
 
 @Composable
-private fun SearchInput() {
+private fun SearchInput(
+    searchEvent:(key:String)->Unit,
+) {
     var text by remember { mutableStateOf("") }
     BasicTextField(
         value = text,
@@ -143,7 +170,11 @@ private fun SearchInput() {
                     Icons.Default.Search,
                     contentDescription = null,
                     modifier = Modifier
-                        .size(18.dp)
+                        .size(18.dp).clickable {
+                            run{
+                                searchEvent(text)
+                            }
+                        }
                 )
             }
         }
