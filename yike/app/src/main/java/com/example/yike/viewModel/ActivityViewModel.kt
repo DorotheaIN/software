@@ -14,11 +14,11 @@ import com.example.yike.service.ActivityRepository
 //)
 
 data class Organization(
-    val id: Int,
-    val status:Int,
-    val avator:String,
-    val username:String,
-    val introduction:String,
+    val id: Int = -1,
+    val status:Int = -2,
+    val avator:String = "",
+    val username:String = "",
+    val introduction:String = "",
 )
 
 data class FilterInput(

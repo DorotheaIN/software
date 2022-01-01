@@ -70,13 +70,22 @@ private fun LoginContent(
 //    val openDialog = remember { mutableStateOf(false) }
 //    val isSuccess = remember { mutableStateOf(false) }
     if(orgInfo != null ) {
-        if(orgInfo==Organization(-1,-1,"","","")){
-            Toast.makeText(LocalContext.current, "密码错误", Toast.LENGTH_SHORT).show()
+        if(orgInfo.id == -1){
+            Toast.makeText(LocalContext.current, "该账户尚未注册", Toast.LENGTH_SHORT).show()
         }else {
-            println(orgInfo)
-            GlobalViewModel.updateOrgInfo(orgInfo)
-            Toast.makeText(LocalContext.current, "登录成功", Toast.LENGTH_SHORT).show()
-            run(routeEvent)
+            if(orgInfo.status == -2){
+                Toast.makeText(LocalContext.current, "密码错误", Toast.LENGTH_SHORT).show()
+            }else if(orgInfo.status == 0){
+                Toast.makeText(LocalContext.current, "该组织还未通过审核", Toast.LENGTH_SHORT).show()
+            }else if(orgInfo.status == -1){
+                Toast.makeText(LocalContext.current, "组织用户申请被拒绝，详情可见邮箱", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                println(orgInfo)
+                GlobalViewModel.updateOrgInfo(orgInfo)
+                Toast.makeText(LocalContext.current, "登录成功", Toast.LENGTH_SHORT).show()
+                run(routeEvent)
+            }
         }
     } else {
         println(orgInfo)

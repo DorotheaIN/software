@@ -15,8 +15,14 @@ object LoginRepository {
         val result = try {
             val loginResponse = Network.getLoginStatus(userEmail, passWord)
             if (loginResponse.code == 200) {
-                UserInfo(loginResponse.result.id, loginResponse.result.user_NAME, loginResponse.result.status,
-                    loginResponse.result.introduction, loginResponse.result.avator)
+                if(loginResponse.msg == "该用户尚未注册"){
+                    UserInfo()
+                }else if(loginResponse.msg == "密码错误"){
+                    UserInfo(id=userEmail)
+                }else {
+                    UserInfo(loginResponse.result.id, loginResponse.result.user_NAME, loginResponse.result.status,
+                        loginResponse.result.introduction, loginResponse.result.avator)
+                }
             } else {
                 println("response code is ${loginResponse.code} error msg is ${loginResponse.msg}")
                 val s = when(loginResponse.msg) {
@@ -425,7 +431,19 @@ object OrgLoginRepository{
         val result = try {
             val loginResponse = Network.getOrgLoginStatus(id, passWord)
             if (loginResponse.code == 200) {
-                Organization(loginResponse.result.id,loginResponse.result.status,loginResponse.result.avator,loginResponse.result.username,loginResponse.result.introduction)
+                if(loginResponse.msg == "该组织还未注册"){
+                    Organization()
+                }else if(loginResponse.msg == "密码错误"){
+                    Organization(id)
+                }else if(loginResponse.msg == "该组织申请被拒绝"){
+                    Organization(id,-1)
+                }
+                else if(loginResponse.msg == "该组织还未通过审核"){
+                    Organization(id,0)
+                }
+                else {
+                    Organization(loginResponse.result.id,loginResponse.result.status,loginResponse.result.avator,loginResponse.result.username,loginResponse.result.introduction)
+                }
             } else {
                 println("response code is ${loginResponse.code} error msg is ${loginResponse.msg}")
                 val s = when(loginResponse.msg) {
