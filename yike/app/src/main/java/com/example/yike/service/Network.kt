@@ -1,5 +1,7 @@
 package com.example.yike.service
 
+import com.example.yike.viewModel.GlobalViewModel
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -11,12 +13,17 @@ import kotlin.coroutines.suspendCoroutine
 
 //Token的使用?
 
+const val path: String = "DZY"
+
 object Network {
 
     //service:
     private val userService = ServiceCreator.create<UserService>()
 
     //suspend fun:
+    suspend fun fileUpload(requestBody: RequestBody) =
+        userService.fileUpload(path, requestBody).await()
+
     suspend fun getLoginStatus(userEmail: String, passWord: String) =
         userService.getLoginStatus(userEmail, passWord).await()
 
@@ -70,7 +77,7 @@ object Network {
         userService.postDislikeActivity(activityID,userID).await()
 
     suspend fun postSubActivity(activityID: Int,userID: String) =
-        userService.postSubActivity(activityID,userID).await()
+        userService.postSubActivity(activityID,userID,GlobalViewModel.getToken()).await()
 
     suspend fun postDisSubActivity(activityID: Int,userID: String) =
         userService.postDisSubActivity(activityID,userID).await()

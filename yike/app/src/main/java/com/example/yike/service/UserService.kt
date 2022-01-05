@@ -1,24 +1,17 @@
 package com.example.yike.service
 
 import com.example.yike.model.*
+import okhttp3.RequestBody
 import retrofit2.Call
-import retrofit2.http.GET
+import retrofit2.http.*
 
-import retrofit2.http.POST
-import retrofit2.http.Query
+//token在此处统一添加即可
+
+
 
 interface UserService {
-//    @GET("login")
-//    fun getLoginStatus(@Query("email") userEmail: String, @Query("password") passWord: String): Call<LoginResponse>
-//
-//    @GET("discuss")
-//    fun getQuestionList(): Call<QuestionResponse>
-//
-//    @GET("recommenddis")
-//    fun getQuestionByTheme(): Call<QThemeResponse>
-//
-//    @GET("answer")
-//    fun getAnswerList(@Query("questionId") questionId: String): Call<AnswerResponse>
+    @POST("addFile")//可以加Path关键字 进一步说明地址
+    fun fileUpload(@Query("addPath") path: String, @Body requestBody: RequestBody):Call<UploadResponse>
 
     @POST("discuss/takeAntiFocusQuestion")
     fun postQuestionStatus(@Query("questionId") questionId: String, @Query("userId") userId: String): Call<PostResponse>
@@ -72,8 +65,8 @@ interface UserService {
     @POST("unlikelikeActivity")
     fun postDislikeActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String):Call<CheckResponse>
 
-    @POST("signUpActivity")
-    fun postSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String): Call<CheckResponse>
+    @POST("signUpActivity")//token测试接口
+    fun postSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String,@Query("token")token:String?): Call<CheckResponse>
 
     @POST("cancleSignUp")
     fun postDisSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String): Call<CheckResponse>

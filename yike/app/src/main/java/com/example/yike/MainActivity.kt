@@ -1,14 +1,20 @@
 package com.example.yike
 
+import android.Manifest
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import br.com.onimur.handlepathoz.HandlePathOz
+import br.com.onimur.handlepathoz.HandlePathOzListener
+import br.com.onimur.handlepathoz.model.PathOz
 import com.example.yike.ui.screens.ActivityDetailDisplayScreen
 import com.example.yike.ui.screens.ActivityScreen
 
@@ -16,11 +22,38 @@ import com.example.yike.ui.theme.YikeTheme
 import com.example.yike.view.*
 import com.example.yike.viewModel.*
 
-
 class MainActivity : ComponentActivity() {
+    private lateinit var handlePathOz: HandlePathOz
+    private val listener = object: HandlePathOzListener.SingleUri{
+        override fun onRequestHandlePathOz(pathOz: PathOz, tr: Throwable?) {
+            println("The real path is: ${pathOz.path}")
+            val sq = pathOz.path.split("/", ".")
+            println(sq)
+            when(sq[sq.lastIndex]){
+                "jpg" -> GlobalViewModel.updateImg(pathOz.path)
+                "png" -> GlobalViewModel.updateImg(pathOz.path)
+                "pdf" -> GlobalViewModel.updateDoc(pathOz.path)
+                "docx" -> GlobalViewModel.updateDoc(pathOz.path)
+                else -> null
+            }
+            tr?.let {
+                println("${it.message}")
+            }
+        }
+    }
+
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val permission =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                // true: 用户同意   false：用户不同意 or 用户不处理
+                for(i in it){
+                    if(i.value) Toast.makeText(this, "SUCCESSFUL", Toast.LENGTH_LONG).show()
+                }
+            }
+        permission.launch(arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE))
+        handlePathOz = HandlePathOz(this, listener)
         setContent {
             YikeTheme {
                 val navController = rememberNavController()
@@ -73,15 +106,6 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
-//                    composable(
-//                        route = "register/{start}",
-//                        arguments = listOf(navArgument("start") { type = NavType.StringType })
-//                    ) {
-//                        val start = it.arguments?.getString("start")?:""
-//                        if(start == "personRegister_screen"){
-//
-//                        }
-//                    }
                     composable("discuss") {
                         val viewModel = DiscussViewModel()
                         DiscussScreen(viewModel, navController)
@@ -93,6 +117,13 @@ class MainActivity : ComponentActivity() {
                         val questionId = it.arguments?.getString("questionId")?:""
                         val questionViewModel = QuestionViewModel(questionId)
                         QuestionScreen(questionViewModel, navController)
+                    }
+                    composable(route = "search/{questionKyWd}",
+                        arguments = listOf(navArgument("questionKyWd") { type = NavType.StringType })
+                    ){
+                        val questionKyWd = it.arguments?.getString("questionKyWd")?:""
+                        val searchViewModel = SearchViewModel(questionKyWd)
+                        SearchingResScreen(searchViewModel, navController)
                     }
                     composable("myactivity"){
                         val infoActivityViewModel = InfoActivityViewModel()
@@ -167,17 +198,14 @@ class MainActivity : ComponentActivity() {
                         DetailedScreen(navController = navController,detailedAnswerViewModel,reportViewModel)
                     }
                     composable(
-//                        route = "publishAnswer_screen/{questionId}/{questionTitle}/{answerId}",
                         route = "publishAnswer_screen/{questionId}/{questionTitle}",
                         arguments = listOf(
                             navArgument("questionId") { type = NavType.StringType},
                             navArgument("questionTitle") { type = NavType.StringType},
-//                            navArgument("answerId") { type = NavType.StringType}
                             )
                     ){
                         val questionId = it.arguments?.getString("questionId")?:""
                         val questionTitle = it.arguments?.getString("questionTitle")?:""
-//                        val answerId = it.arguments?.getString("answerId")?:""
                         val addAnswerViewModel = AddAnswerViewModel(questionId,questionTitle)
                         AnswerScreen(navController = navController,addAnswerViewModel)
                     }
@@ -201,7 +229,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("officialRegister_screen"){
                         val officialRegisterViewModel = OfficialRegisterViewModel()
-                        RegisterOfficialScreen(navController,officialRegisterViewModel)
+                        RegisterOfficialScreen(navController,officialRegisterViewModel,handlePathOz)
                     }
                     composable(
                         route = "personRegister2_screen",
@@ -245,49 +273,7 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
-//            MainInfoScreen()
-//            RegisterUI()
-//            val adminApplyViewModel =AdminApplyViewModel()
-//            val updateApplyViewModel = UpdateApplyViewModel()
-//            AdminApplyScreen(adminApplyViewModel,updateApplyViewModel)
-
-//            val navController = rememberNavController()
-//            NavHost(
-//                navController = navController,
-//                startDestination = "adminLogin",
-//                route = "root"
-//            ) {
-//                composable("adminLogin") {
-//                    val adminLoginViewModel = AdminLoginViewModel()
-//                    adminLoginScreen(adminLoginViewModel,
-//                        {
-//                            navController.navigate("adminApply_screen")
-//                        },
-//                        {
-//                            navController.navigate("login")
-//                        },
-//                        {
-//                            navController.navigate("orgLogin")
-//                        }
-//                    )
-//                }
-//
-//                composable("adminApply_screen"){
-//                    val adminApplyViewModel =AdminApplyViewModel()
-//                    val updateApplyViewModel = UpdateApplyViewModel()
-//                    AdminApplyScreen(adminApplyViewModel,updateApplyViewModel,navController,
-//                    ) {
-//                        navController.navigate("adminReport_screen")
-//                    }
-//                }
-//
-//                composable("adminReport_screen"){
-//                    val adminGetReportsViewModel = AdminGetReportsViewModel()
-//                    val adminUpdateIUserViewModel = AdminUpdateIUserViewModel()
-//                    AdminReportScreen(adminGetReportsViewModel,adminUpdateIUserViewModel,navController)
-//                }
-//            }
-
         }
     }
 }
+

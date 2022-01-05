@@ -1,8 +1,18 @@
-package com.example.yike
+package com.example.yike.view
 
+import androidx.compose.foundation.Image
+import android.net.Uri
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.ActivityResultRegistryOwner
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import com.example.yike.R
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
@@ -13,10 +23,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -25,7 +37,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.yike.view.RegisterButton
+import br.com.onimur.handlepathoz.HandlePathOz
+import coil.compose.rememberImagePainter
+import com.example.yike.NameInputState
+import com.example.yike.PasswordInputState
 import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.OfficialRegisterViewModel
 
@@ -33,20 +48,38 @@ import com.example.yike.viewModel.OfficialRegisterViewModel
 @Composable
 fun RegisterOfficialScreen(
     navController: NavController,
-    officialRegisterViewModel: OfficialRegisterViewModel){
+    officialRegisterViewModel: OfficialRegisterViewModel,
+    handlePathOz: HandlePathOz){
 
     val officialRegister = officialRegisterViewModel.officialRegisterInfo.observeAsState()
-
-    RegisterOfficialScreenContent(navController,officialRegister.value){
-        avator, certification, introduction, password, userName ->  officialRegisterViewModel.checkOfficialRegisterStatus(avator, certification, introduction, password, userName)
+    val imgUri = GlobalViewModel.imgUri.observeAsState()
+    println("!!!imgURi")
+    println(imgUri)
+    val docUri = GlobalViewModel.docUri.observeAsState()
+    println("!!!docUri")
+    println(docUri)
+    var clickEvent:(s1: String, s2: String, s3: String)-> Unit = {
+            _, _, _ -> {}
     }
+    if(imgUri.value != null && docUri.value != null) {
+        println("changeCE")
+        clickEvent= { introduction, password, userName ->
+            officialRegisterViewModel.checkOfficialRegisterStatus(imgUri.value!!, docUri.value!!, introduction, password, userName)
+        }
+    }
+    RegisterOfficialScreenContent(navController,officialRegister.value,
+    clickEvent = clickEvent,
+    updateEvent = { uri ->
+        handlePathOz.getRealPath(uri)
+    })
 }
 
 @Composable
 fun RegisterOfficialScreenContent(
     navController: NavController,
     registerResult:String?,
-    clickEvent:(avator:String,certification:String,introduction:String,password:String,userName:String) ->Unit
+    clickEvent:(introduction:String,password:String,userName:String) ->Unit,
+    updateEvent: (uri: Uri) -> Unit = {},
 ){
     val officialNameInput = remember { NameInputState() }
     val officialCodeInput = remember { PasswordInputState() }
@@ -71,7 +104,9 @@ fun RegisterOfficialScreenContent(
             OfficialRegisterTable(navController)
         }
         Box(
-            Modifier.fillMaxSize().align(Alignment.Center)
+            Modifier
+                .fillMaxSize()
+                .align(Alignment.Center)
         ){
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -87,24 +122,23 @@ fun RegisterOfficialScreenContent(
                 OfficialTextCode(officialCodeInput)
                 Spacer(Modifier.height(10.dp))
                 TextIntro(officialIntroInput)
-//        Spacer(Modifier.height(10.dp))
-//        UploadPicFile()
+                Spacer(Modifier.height(10.dp))
+                UploadPicFile(updateEvent)
                 Spacer(Modifier.height(10.dp))
                 OfficialRegisterButton(
                     onClick = {
                         if(officialNameInput.isValid && officialCodeInput.isValid && officialNameInput.isValid){
-                            clickEvent("","",officialIntroInput.text,officialCodeInput.text,officialNameInput.text)
+                            clickEvent(officialIntroInput.text,officialCodeInput.text,officialNameInput.text)
                         }
                     }
                 )
-
             }
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(0.dp,30.dp),
+                .padding(0.dp, 30.dp),
             contentAlignment = Alignment.Center
         ){
             TermsOfServiceLabel(){
@@ -192,7 +226,7 @@ fun RegistOfficialDescript(){
 }
 
 @Composable
-fun OfficialTextName(nameInput:NameInputState){
+fun OfficialTextName(nameInput: NameInputState){
     val textName = remember {
         NameInputState()
     }
@@ -229,7 +263,7 @@ fun OfficialTextName(nameInput:NameInputState){
 }
 
 @Composable
-fun OfficialTextCode(passwordInput:PasswordInputState){
+fun OfficialTextCode(passwordInput: PasswordInputState){
     val textCode = remember {
         PasswordInputState()
     }
@@ -266,7 +300,7 @@ fun OfficialTextCode(passwordInput:PasswordInputState){
 }
 
 @Composable
-fun TextIntro(officialIntroInput:NameInputState){
+fun TextIntro(officialIntroInput: NameInputState){
     val textIntro = remember {
         NameInputState()
     }
@@ -303,33 +337,72 @@ fun TextIntro(officialIntroInput:NameInputState){
     }
 }
 
+
 @Preview
 @Composable
-fun UploadPicFile(){
-Row(
+fun UploadPicFile(
+    updateEvent: (uri: Uri) -> Unit = {},
+){
+    val image = remember { mutableStateOf<Uri?>(null) }
+    val document = remember { mutableStateOf<Uri?>(null) }
+    val imgLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+        image.value = it
+    }
+    val documentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+        document.value = it
+    }
+    Row(
     modifier = Modifier
         .fillMaxWidth()
         .padding(start = 120.dp, end = 100.dp)
 ) {
-    IconButton(onClick = { /*TODO*/ }) {
-        Icon(
-            Icons.Sharp.Face,
-            contentDescription = "uploadPic",
-            modifier = Modifier
-                .size(250.dp)
-        )
-    }
-    Box(modifier = Modifier.width(70.dp))
-    IconButton(onClick = { /*TODO*/ }) {
-        Icon(
-            Icons.Sharp.NoteAdd,
-            contentDescription = "uploadFile",
-            modifier = Modifier
-                .size(250.dp)
-        )
-    }
+        IconButton(onClick = {
+//            imgLauncher.launch(arrayOf("image/*")) //OpenDocument
+            imgLauncher.launch("image/*")
+        }) {
+            if(image.value != null){
+                Image(
+                    rememberImagePainter(image.value.toString()),
+                    contentDescription = "official avatar",
+                    modifier = Modifier
+                        .size(50.dp) // 改变 Image 元素的大小
+                        .clip(CircleShape) // 将图片裁剪成圆形
+                )
+                updateEvent(image.value!!)
+            }else{
+                Icon(
+                    Icons.Sharp.Face,
+                    contentDescription = "uploadPic",
+                    modifier = Modifier
+                        .size(250.dp)
+                )
+            }
+        }
+        Box(modifier = Modifier.width(70.dp))
+        IconButton(onClick = {
+            documentLauncher.launch("application/*")
+        }) {
+            if(document.value != null){
+                Image(
+                    painterResource(id = R.drawable.pdf),
+                    contentDescription = "pdf icon",
+                    modifier = Modifier
+                        .size(250.dp) // 改变 Image 元素的大小
+                )
+                updateEvent(document.value!!)
+            }else{
+                Icon(
+                    Icons.Sharp.NoteAdd,
+                    contentDescription = "uploadFile",
+                    modifier = Modifier
+                        .size(250.dp)
+                )
+            }
+        }
 }
 }
+
+
 
 
 @Composable
