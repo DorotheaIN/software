@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.yike.NameInputState
 import com.example.yike.R
@@ -35,6 +36,7 @@ import com.example.yike.viewModel.*
 fun AdminApplyScreen(
     adminApplyViewModel: AdminApplyViewModel,
     updateApplyViewModel: UpdateApplyViewModel,
+    navController:NavController,
     change2ReportEvent:()->Unit
 ){
     adminApplyViewModel.init()
@@ -93,26 +95,6 @@ fun AdminApplyScreenContent(
         item { adminInfo()}
         item { Split()}
 
-        item {
-            addApproveAlterDialog(openApproveDialog,tempApplyInfo,adminApplyViewModel,
-                {
-                        ID,status-> updateApplyViewModel.updateApplyStatus(ID, status)
-                },
-                {
-                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
-                }
-                )
-        }
-        item {
-            addRejectAlterDialog(openRejectDialog,replyContentInput,tempApplyInfo,adminApplyViewModel,
-                {
-                        ID,status-> updateApplyViewModel.updateApplyStatus(ID, status)
-                },
-                {
-                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
-                }
-                )
-        }
 
         if (applicationInfoList != null) {
             for(applicationInfo in applicationInfoList){
@@ -130,6 +112,28 @@ fun AdminApplyScreenContent(
                 }
             }
         }
+
+        item {
+            addApproveAlterDialog(openApproveDialog,tempApplyInfo,adminApplyViewModel,
+                {
+                        ID,status-> updateApplyViewModel.updateApplyStatus(ID, status)
+                },
+                {
+                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
+                }
+            )
+        }
+        item {
+            addRejectAlterDialog(openRejectDialog,replyContentInput,tempApplyInfo,adminApplyViewModel,
+                {
+                        ID,status-> updateApplyViewModel.updateApplyStatus(ID, status)
+                },
+                {
+                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
+                }
+            )
+        }
+
     }
 }
 
@@ -158,7 +162,7 @@ private fun top(
                     menuExpanded = false
                 },
             ) {
-                DropdownMenuItem(onClick = {change2ReportEvent}) {
+                DropdownMenuItem(onClick = change2ReportEvent) {
                     Text("处理举报")
                 }
             }

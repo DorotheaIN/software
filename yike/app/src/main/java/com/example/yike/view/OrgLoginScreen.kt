@@ -42,7 +42,9 @@ fun OrgLoginScreen(
     viewModel: OrgLoginViewModel,
     routeEvent:()->Unit = {},
     changeEvent:()->Unit = {},
-    registerEvent: () -> Unit = {}
+    registerEvent: () -> Unit = {},
+    findBackEvent: () -> Unit = {},//跳转到找回密码界面
+    adminEvent:()->Unit = {},//跳转到管理员登陆界面
 ){
     val orgInfo = viewModel.orgInfo.observeAsState()
     LoginContent(orgInfo = orgInfo.value, routeEvent,
@@ -50,7 +52,9 @@ fun OrgLoginScreen(
             viewModel.checkLoginStatus(id,password)
         },
         registerEvent,
-        changeEvent
+        findBackEvent,
+        changeEvent,
+        adminEvent
     )
 }
 
@@ -60,7 +64,9 @@ private fun LoginContent(
     routeEvent:()->Unit = {},
     clickEvent:(id:Int,password:String) -> Unit,
     registerEvent: () -> Unit,
-    changeEvent:()->Unit = {}
+    findBackEvent: () -> Unit = {},
+    changeEvent:()->Unit = {},
+    adminEvent:()->Unit = {},//跳转到管理员登陆界面
 ){
     if(orgInfo != null) {
         println(orgInfo)
@@ -98,6 +104,8 @@ private fun LoginContent(
 
             TermsOfServiceLabel(registerEvent)
 
+            findBackLabel(findBackEvent)
+
             Spacer(Modifier.height(16.dp))
 
 
@@ -110,7 +118,7 @@ private fun LoginContent(
                 }
             })
 
-            ChangeLoginEntry(changeEvent)
+            ChangeLoginEntry(changeEvent,adminEvent)
         }
     }
 }
@@ -315,10 +323,11 @@ private fun LogInHeader() {
 
 @Composable
 private fun ChangeLoginEntry(
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    adminEvent:()->Unit = {},//跳转到管理员登陆界面
 ){
     Box(
-        Modifier.fillMaxSize()
+//        Modifier.fillMaxSize()
     ){
         Box(
             modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(0.dp,20.dp),
@@ -336,6 +345,31 @@ private fun ChangeLoginEntry(
             )
         }
 
+    }
+
+    Box(
+//            Modifier.fillMaxSize()
+    ){
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center)
+                .padding(0.dp, 0.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "管理员登录入口",
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Center,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier
+                    .paddingFromBaseline(top = 24.dp)
+                    .clickable { adminEvent() },
+                color = Color(0xFF227AFF)
+//                color = Color(0xFF172A8F),
+
+            )
+        }
     }
 
 }

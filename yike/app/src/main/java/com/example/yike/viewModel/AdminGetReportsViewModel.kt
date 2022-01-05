@@ -8,6 +8,8 @@ import com.example.yike.service.AdminRepository
 data class ReportInfo(
     val isReportedID:String,
     val reason:String,
+    val question_ID:String,
+    val answer_ID:String,
     val whistleblowerID:String
 )
 

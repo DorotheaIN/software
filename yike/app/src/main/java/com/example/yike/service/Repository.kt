@@ -494,6 +494,26 @@ object SendEmailRepository {
         }
         emit(result)
     }
+
+    fun verifyCode(inputCode: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            println(inputCode)
+            val verifyCodeResponse = Network.verifyCode(inputCode)
+            if (verifyCodeResponse.code == 200) {
+                println("verifyCodeResponse.result="+verifyCodeResponse.result)
+                verifyCodeResponse.result
+            } else {
+                println("verifyCodeResponse.result="+verifyCodeResponse.result)
+                println("response status is not ok!")
+            }
+            null
+        } catch (e: Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+
 }
 
 object GetPersonRegisterRepository {
@@ -733,4 +753,22 @@ object AdminRepository {
         emit(result)
     }
 
+}
+
+object ReportRepository{
+    fun reportUser(rID:String,reason:String,wID:String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val reportUserResponse = Network.reportUser(rID, reason, wID)
+            if(reportUserResponse.code == 200){
+                reportUserResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
 }

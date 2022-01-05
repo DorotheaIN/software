@@ -46,17 +46,20 @@ fun LoginScreen(
     viewModel: LoginViewModel,
     routeEvent: () -> Unit = {},
     changeEvent:()->Unit = {},
-    registerEvent:()->Unit = {}//跳转到组织登录
+    registerEvent:()->Unit = {},//跳转到组织登录
+    findBackEvent: () -> Unit = {},//跳转到找回密码界面
+    adminEvent:()->Unit = {},//跳转到管理员登陆界面
 ) {
     val userInfo = viewModel.userInfo.observeAsState()
-    LoginContent(userInfo = userInfo.value, routeEvent,changeEvent,registerEvent) { email, password ->
+    LoginContent(userInfo = userInfo.value, routeEvent,changeEvent,registerEvent,findBackEvent,adminEvent) { email, password ->
         viewModel.checkLoginStatus(email, password)
     }
 }
 
 @Composable
-private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},changeEvent:()->Unit = {},registerEvent:()->Unit = {},
-                         clickEvent: (email: String, password: String) -> Unit
+private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},changeEvent:()->Unit = {},registerEvent:()->Unit = {},findBackEvent: () -> Unit = {},
+                         adminEvent:()->Unit = {},//跳转到管理员登陆界面
+                         clickEvent: (email: String, password: String) -> Unit,
 ) {
     val loginStatus = userInfo?.status
     if(loginStatus == 1) {
@@ -80,7 +83,7 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 42.dp,vertical = 20.dp),
+                .padding(horizontal = 42.dp, vertical = 20.dp),
         ) {
 
 //            MyExample()
@@ -98,6 +101,8 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
 
             TermsOfServiceLabel(registerEvent)
 
+            findBackLabel(findBackEvent)
+
             Spacer(Modifier.height(16.dp))
 
 
@@ -110,7 +115,10 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
                 }
             })
 
-            ChangeLoginEntry(changeEvent)
+
+            ChangeLoginEntry(changeEvent,adminEvent)
+
+
         }
     }
 }
@@ -320,31 +328,60 @@ private fun LogInHeader() {
 
 @Composable
 private fun ChangeLoginEntry(
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    adminEvent:()->Unit = {},//跳转到管理员登陆界面
 ){
-    Box(
-        Modifier.fillMaxSize()
-    ){
+    Column() {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(0.dp, 20.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "组织用户登录入口",
-                style = MaterialTheme.typography.body1,
-                textAlign = TextAlign.Center,
-                textDecoration = TextDecoration.Underline,
+//            Modifier.fillMaxSize()
+        ){
+            Box(
                 modifier = Modifier
-                    .paddingFromBaseline(top = 24.dp)
-                    .clickable { onClick() },
-                color = Color(0xFF227AFF)
+                    .fillMaxWidth()
+                    .align(Alignment.Center)
+                    .padding(0.dp, 10.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "组织用户登录入口",
+                    style = MaterialTheme.typography.body1,
+                    textAlign = TextAlign.Center,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier
+                        .paddingFromBaseline(top = 24.dp)
+                        .clickable { onClick() },
+                    color = Color(0xFF227AFF)
 //                color = Color(0xFF172A8F),
 
-            )
+                )
+            }
         }
+
+        Box(
+//            Modifier.fillMaxSize()
+        ){
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center)
+                    .padding(0.dp, 0.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "管理员登录入口",
+                    style = MaterialTheme.typography.body1,
+                    textAlign = TextAlign.Center,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier
+                        .paddingFromBaseline(top = 24.dp)
+                        .clickable { adminEvent() },
+                    color = Color(0xFF227AFF)
+//                color = Color(0xFF172A8F),
+
+                )
+            }
+        }
+
     }
 }
 
@@ -390,3 +427,45 @@ private fun ChangeLoginEntry(
 //        LoginScreen()
 //    }
 //}
+
+@Composable
+fun findBackLabel(
+    findBackEvent: () -> Unit = {}
+) {
+    val text = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = Color(0xFFC7C7C7),
+                fontSize = 16.sp
+            )
+        ){
+            append("忘记密码？")
+        }
+        pushStringAnnotation(
+            tag = "tag",
+            annotation = "转到注册界面"
+        )
+        withStyle(
+            style = SpanStyle(
+                color = Color(0xFF227AFF),
+                fontSize = 16.sp
+            )
+        ) {
+            append("找回密码")
+        }
+        pop()
+    }
+    ClickableText(
+        text = text,
+        modifier = Modifier
+            .paddingFromBaseline(top = 24.dp),
+        onClick = { offset ->
+            text.getStringAnnotations(
+                tag = "tag", start = offset,
+                end = offset
+            ).firstOrNull()?.let { annotation ->
+                run(findBackEvent)
+            }
+        },
+    )
+}

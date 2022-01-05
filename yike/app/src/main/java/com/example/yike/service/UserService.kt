@@ -117,7 +117,7 @@ interface UserService {
     fun getPublishQuestionList(@Query("ID") id:String):Call<PublishQuestionResponse>
 
     @POST("sendEmail")
-    fun sendEmail(@Query("to")email:String):Call<SendEmailResponse>
+    fun sendEmail(@Query("email")email:String):Call<SendEmailResponse>
 
     @POST("signUp")
     fun getPersonRegister(@Query("email")email:String,@Query("name")name:String,@Query("password")password:String):Call<getPersonRegistResponse>
@@ -157,5 +157,11 @@ interface UserService {
 
     @POST("/updateIUserStatus")
     fun updateIUserStatus(@Query("ID")ID: String,@Query("flag")flag: String):Call<UpdateIUserStatusResponse>
+
+    @POST("/reportUser")
+    fun reportUser(@Query("rID")rID:String,@Query("reason")reason:String,@Query("wID")wID:String):Call<ReportUserResponse>
+
+    @GET("/verifyCode")
+    fun verifyCode(@Query("inputCode")inputCode: String):Call<VerifyCodeResponse>
 }
 

@@ -11,6 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.sharp.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,12 +38,14 @@ import com.example.yike.component.NavBottomBar
 import com.example.yike.data.Taylor
 import com.example.yike.ui.screens.ActivityDetailDisplayScreen
 import com.example.yike.view.InfoFollowQuesScreen
-import com.example.yike.viewModel.FollowQuestionViewModel
-import com.example.yike.viewModel.GlobalViewModel
-import com.example.yike.viewModel.PublishQuestionViewModel
+import com.example.yike.viewModel.*
 
 @Composable
 fun MainInfo(navController: NavController){
+
+    var openDialog: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }//记录是否打开通过申请框
     Scaffold(bottomBar = {
         NavBottomBar(navController, "Info")
     }) {
@@ -54,7 +59,8 @@ fun MainInfo(navController: NavController){
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                UserInfo(navController)
+                reconfirmAlterDialog(openDialog,navController)
+                UserInfo(navController,openDialog)
                 Spacer(Modifier.height(20.dp))
                 ToActivity(navController)
                 Spacer(Modifier.height(40.dp))
@@ -70,7 +76,8 @@ fun MainInfo(navController: NavController){
 
 @Composable
 fun UserInfo(
-    navController: NavController
+    navController: NavController,
+    openDialog:MutableState<Boolean>
 ){
     Surface(
         modifier = Modifier
@@ -90,7 +97,7 @@ fun UserInfo(
                     )
                 )
         ) {
-            LoginOutItem(navController)
+            LoginOutItem(navController,openDialog)
             Spacer(Modifier.height(20.dp))
             Box(
                 modifier = Modifier
@@ -159,14 +166,19 @@ fun UserInfo(
 }
 
 @Composable
-private fun LoginOutItem(navController: NavController){
+private fun LoginOutItem(
+    navController: NavController,
+    openDialog:MutableState<Boolean>
+){
     Box(
         Modifier
             .fillMaxWidth()
             .clickable { }){
         Box(modifier = Modifier
             .align(Alignment.TopEnd)){
-            IconButton(onClick = { navController.navigate("login") }) {
+            IconButton(onClick = {
+                openDialog.value = true
+            }) {
                 Icon(
                     painter = painterResource(id = R.drawable.loginout),
                     contentDescription = "login out",
@@ -324,6 +336,39 @@ fun ToCollect(navController: NavController){
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun reconfirmAlterDialog(
+    openDialog: MutableState<Boolean>,
+    navController:NavController
+) {
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            title = { Text(text = "退出登录确认") },
+            text = {
+                Text(
+                    text = "你确定退出登录吗",
+                    style = MaterialTheme.typography.body1
+                )
+            }, confirmButton = {
+                TextButton(onClick = {
+                    openDialog.value = false
+                    navController.navigate("login")
+                }) {
+                    Text(text = "确认",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            }, dismissButton = {
+                TextButton(onClick = { openDialog.value = false }) {
+                    Text(text = "取消",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            })
     }
 }
 

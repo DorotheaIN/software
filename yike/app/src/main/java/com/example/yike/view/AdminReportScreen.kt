@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.yike.NameInputState
 import com.example.yike.viewModel.*
 
@@ -28,7 +29,8 @@ import com.example.yike.viewModel.*
 @Composable
 fun AdminReportScreen(
     adminGetReportsViewModel: AdminGetReportsViewModel,
-    adminUpdateIUserViewModel: AdminUpdateIUserViewModel
+    adminUpdateIUserViewModel: AdminUpdateIUserViewModel,
+    navController:NavController
 ){
     adminGetReportsViewModel.init()
 
@@ -44,7 +46,11 @@ fun AdminReportScreen(
         mutableStateOf(false)
     }//记录是否打开拒绝框
 
-    AdminReportScreenContent(openApproveDialog,openRejectDialog,reportsList.value,adminUpdateIUserViewModel)
+    var openReportDialog: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }//记录是否打开举报详情框
+
+    AdminReportScreenContent(openApproveDialog,openRejectDialog,reportsList.value,adminUpdateIUserViewModel, navController,openReportDialog)
 }
 
 
@@ -53,7 +59,9 @@ fun AdminReportScreenContent(
     openApproveDialog: MutableState<Boolean>,
     openRejectDialog: MutableState<Boolean>,
     reportsList:ArrayList<ReportInfo>?,
-    adminUpdateIUserViewModel: AdminUpdateIUserViewModel
+    adminUpdateIUserViewModel: AdminUpdateIUserViewModel,
+    navController:NavController,
+    openReportDialog: MutableState<Boolean>
 ){
 
     val postApplyViewModel = PostApplyResultViewModel()
@@ -61,15 +69,49 @@ fun AdminReportScreenContent(
     val sendPostInfo = postApplyViewModel.sendPostInfo.observeAsState()
 
     var tempReportsInfo:MutableState<ReportInfo>?= remember {
-        mutableStateOf(ReportInfo("","",""))
+        mutableStateOf(ReportInfo("","","","",""))
     }//信息传到弹框
+
+    val detailedAnswerViewModel = tempReportsInfo?.value?.let {
+        DetailedAnswerViewModel(
+            it.question_ID,
+        tempReportsInfo?.value.answer_ID)
+    }
+
+    if (detailedAnswerViewModel != null) {
+        detailedAnswerViewModel.selectQuesAnswer(detailedAnswerViewModel.answerId,detailedAnswerViewModel.questionId)
+    }
+
+    val quesAnswerInfoList= detailedAnswerViewModel?.quesAnswerInfoList?.observeAsState()
+
+
 
     LazyColumn(
         Modifier.background(Color(0xFFDBDBDB))
     ){
-        item { top() }
+        item { top(navController) }
         item { adminInfo()}
         item { split()}
+
+
+        item(reportsList){
+            if (reportsList != null) {
+                reportsList.forEach {
+                    if (quesAnswerInfoList != null) {
+
+                            reportCard(openApproveDialog, openRejectDialog,openReportDialog, it,tempReportsInfo,
+                            )
+
+//                        quesAnswerInfoList.value?.let { it1 ->
+//                            addReportAlterDialog(openReportDialog,tempReportsInfo,
+//                                it1
+//                            )
+//                        }
+                    }
+                }
+            }
+        }
+
         item {
             addApproveAlterDialog(openApproveDialog, tempReportsInfo,
                 clickEvent = {
@@ -92,19 +134,26 @@ fun AdminReportScreenContent(
             )
         }
 
-        item(reportsList){
-            if (reportsList != null) {
-                reportsList.forEach {
-                    reportCard(openApproveDialog, openRejectDialog, it,tempReportsInfo)
+        item {
+            if (quesAnswerInfoList != null) {
+                quesAnswerInfoList.value?.let {
+                    addReportAlterDialog(openReportDialog,tempReportsInfo,
+                        it
+                    )
                 }
             }
         }
+
+
+
     }
 }
 
-@Preview
+
 @Composable
-private fun top(){
+private fun top(
+    navController:NavController
+){
     TopAppBar(
         modifier =Modifier,
         backgroundColor = Color(0xB2D3D2D6),
@@ -126,7 +175,7 @@ private fun top(){
                     menuExpanded = false
                 },
             ) {
-                DropdownMenuItem(onClick = {}) {
+                DropdownMenuItem(onClick = {navController.popBackStack()}) {
                     Text("处理申请信息")
                 }
             }
@@ -171,8 +220,9 @@ private fun split(){
 private fun reportCard(
     openApproveDialog: MutableState<Boolean>,
     openRejectDialog: MutableState<Boolean>,
+    openReportDialog: MutableState<Boolean>,
     reportsInfo:ReportInfo,
-    tempReportsInfo:MutableState<ReportInfo>?
+    tempReportsInfo:MutableState<ReportInfo>?,
 ){
 
     var isExpanded by remember { mutableStateOf(false) } // 创建一个能够检测卡片是否被展开的变量
@@ -272,8 +322,11 @@ private fun reportCard(
                             text = reportsInfo.reason,
                             color = Color(0xD53D3A3A),
                             style = MaterialTheme.typography.body2,
-                            modifier = Modifier.clickable {
-                                isExpanded = !isExpanded
+                            modifier = Modifier
+                                .clickable {
+                                    tempReportsInfo?.value=reportsInfo
+                                    openReportDialog.value = true
+                                    isExpanded = !isExpanded
                             },
                             maxLines = if (isExpanded) Int.MAX_VALUE else 3
                         )
@@ -362,6 +415,7 @@ private fun reportCard(
 
         }
     }
+
 }
 
 @Composable
@@ -421,11 +475,11 @@ private fun addRejectAlterDialog(
     if (openRejectDialog.value) {
         AlertDialog(
             onDismissRequest = { openRejectDialog.value = false },
-            title = { Text(text = "拒绝申请确认") },
+            title = { Text(text = "驳回举报确认") },
             text = {
                 Column() {
                     Text(
-                        text = "你确定拒绝该组织的申请吗，请输入理由",
+                        text = "你确定驳回该用户的举报吗，请输入理由",
                         style = MaterialTheme.typography.body1
                     )
 
@@ -448,7 +502,7 @@ private fun addRejectAlterDialog(
                         ),
                         placeholder = {
                             Text(
-                                "给提出的问题一些补充吧",
+                                "请输入驳回理由",
                                 modifier = Modifier
                                     .fillMaxWidth(),
                                 color = Color(0xFFBBB4B4),
@@ -479,6 +533,54 @@ private fun addRejectAlterDialog(
                 }
             }, dismissButton = {
                 TextButton(onClick = { openRejectDialog.value = false }) {
+                    Text(text = "取消",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            })
+    }
+}
+
+@Composable
+private fun addReportAlterDialog(
+    openReportDialog: MutableState<Boolean>,
+    tempReportsInfo:MutableState<ReportInfo>?,
+    quesInfo:QuesAnswer,
+) {
+
+    var isExpanded by remember { mutableStateOf(false) } // 创建一个能够检测卡片是否被展开的变量
+    var isQuesExpanded by remember { mutableStateOf(false) } // 创建一个能够检测卡片是否被展开的变量
+
+    if (openReportDialog.value) {
+        AlertDialog(
+            onDismissRequest = { openReportDialog.value = false },
+            title = { Text(text = "被举报回答详情：") },
+            text = {
+                Column {
+                    Text(
+                        text = "相关问题： "+quesInfo.question,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.clickable{isQuesExpanded = !isQuesExpanded},
+                        maxLines = if (isExpanded) Int.MAX_VALUE else 2
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        text = "被举报回答： "+quesInfo.answer,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.clickable{isExpanded = !isExpanded},
+                        maxLines = if (isExpanded) Int.MAX_VALUE else 4
+                    )
+                }
+            }, confirmButton = {
+                TextButton(onClick = {
+                    openReportDialog.value = false
+                }) {
+                    Text(text = "确认",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            }, dismissButton = {
+                TextButton(onClick = { openReportDialog.value = false }) {
                     Text(text = "取消",
                         color = Color(0xF23F3D38),
                     )

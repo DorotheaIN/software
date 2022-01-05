@@ -15,6 +15,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.Icon
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.sharp.ArrowDropDown
 import androidx.compose.runtime.*
@@ -37,13 +38,12 @@ import com.example.yike.data.Answer
 import com.example.yike.data.AnswerData
 import com.example.yike.data.CommentData
 import com.example.yike.data.Taylor
-import com.example.yike.viewModel.CommentInfo
-import com.example.yike.viewModel.DetailedAnswerViewModel
-import com.example.yike.viewModel.QuesAnswer
+import com.example.yike.viewModel.*
 
 @Composable
 fun DetailedScreen(navController: NavController,
-                   detailedAnswerViewModel: DetailedAnswerViewModel
+                   detailedAnswerViewModel: DetailedAnswerViewModel,
+                   reportViewModel: ReportViewModel
                    ) {
 //    println("c111111111111111111111111111111111")
 //    println(detailedAnswerViewModel.answerId)
@@ -52,7 +52,13 @@ fun DetailedScreen(navController: NavController,
     val answererId = detailedAnswerViewModel.answerId
     detailedAnswerViewModel.selectQuesAnswer(detailedAnswerViewModel.answerId,detailedAnswerViewModel.questionId)
     val quesAnswerInfoList = detailedAnswerViewModel.quesAnswerInfoList.observeAsState()
-    DetailAnswer(quesAnswerInfoList.value,questionId,answererId,navController)
+
+    val reportInfo = reportViewModel.reportInfo.observeAsState()
+    var openReportDialog: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }//记录是否打开通过申请框
+
+    DetailAnswer(quesAnswerInfoList.value,questionId,answererId,navController,openReportDialog,reportViewModel)
 }
 
 
@@ -64,7 +70,10 @@ fun DetailAnswer(
     questionId:String,
     answererId:String,
     navController: NavController,
+    openReportDialog: MutableState<Boolean>,
+    reportViewModel: ReportViewModel
     ){
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,6 +94,20 @@ fun DetailAnswer(
                 contentColor = Color(0xFFFFFF),
                 elevation = 0.dp,
                 actions = {
+                    addRejectAlterDialog(openReportDialog,questionAnswerInfoList,
+                    ) { rID, reason, wID ->
+                        reportViewModel.sendReportInfo(rID, reason, wID)
+                    }
+                    IconButton(onClick = {
+                        openReportDialog.value = true
+                    }) {
+                        Icon(
+                            Icons.Filled.ErrorOutline,
+                            null,
+                            tint = Color(0xFFB1A8A1)
+                        )
+                    }
+
                     TextButton(onClick = {
                         val questionId = questionId
                         val questionTitle = questionAnswerInfoList?.question
@@ -136,36 +159,6 @@ fun DetailAnswer(
     }
 }
 
-//@Preview
-//@Composable
-//fun test(){
-//    Surface(
-//
-//    ) {
-//        Row(
-//
-//        ) {
-//            ThumbUpButton()
-////                Box(Modifier.padding(horizontal = 80.dp))
-//            Spacer(Modifier.width(100.dp))
-////                Collect()
-//            IconButton(onClick = { },
-//            modifier = Modifier.align(Alignment.CenterVertically)
-//                )
-//             {
-//                Icon(
-//                    painterResource(id = R.drawable.comment),
-//                    contentDescription = "Comment",
-//                    modifier = Modifier
-//                        .size(30.dp)
-//                        .padding(5.dp, 0.dp),
-//                    tint = Color(0xFF1084E0)
-//                )
-//
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun DetailedUserPart(answerer:QuesAnswer){
@@ -343,14 +336,6 @@ fun CommentCard(com:CommentInfo){
     }
 }
 
-//@Composable
-//fun Conversation(comments: List<Answer>) {
-//    LazyColumn {
-//        items(comments) { comment, ->
-//            CommentCard(com= comment)
-//        }
-//    }
-//}
 
 @Composable
 fun ThumbUpButton(){
@@ -467,6 +452,85 @@ fun CommentButton(
             tint = Color(0xFF1084E0)
         )
 
+    }
+}
+
+@Composable
+private fun addRejectAlterDialog(
+    openReportDialog: MutableState<Boolean>,
+    questionAnswerInfoList:QuesAnswer?,
+    clickEvent:(rID:String,reason:String,wID:String)-> Unit,
+) {
+
+    var textReplyContent = remember {
+        NameInputState()
+    }
+
+    if (openReportDialog.value) {
+        AlertDialog(
+            onDismissRequest = { openReportDialog.value = false },
+            title = { Text(text = "举报确认") },
+            text = {
+                Column() {
+                    Text(
+                        text = "你确定要举报该回答吗，请输入举报理由：",
+                        style = MaterialTheme.typography.body1
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    TextField(
+                        value = textReplyContent.text,
+                        onValueChange = { newString ->
+                            textReplyContent.text = newString
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            textColor = Color(0xFF0D0D0E),
+                            backgroundColor = Color.Transparent,
+                            cursorColor = Color(0xFF045DA0),
+                            focusedIndicatorColor = Color.Transparent,
+
+                            ),
+                        textStyle = androidx.compose.ui.text.TextStyle(
+                            fontSize = 16.sp
+                        ),
+                        placeholder = {
+                            Text(
+                                "请输入举报理由",
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                color = Color(0xFFBBB4B4),
+                                fontSize = 16.sp,
+                            )
+                        },
+                        modifier = Modifier.border(
+                            1.dp,
+                            Color(0xFFBBB4B4),
+                            shape = RoundedCornerShape(0.dp)
+                        ),
+                        maxLines = 3
+                    )
+                }
+            }, confirmButton = {
+                TextButton(onClick = {
+                    openReportDialog.value = false
+                    GlobalViewModel.getUserInfo()?.let {
+                        if (questionAnswerInfoList != null) {
+                            clickEvent(it.id,textReplyContent.text,questionAnswerInfoList.info.id)
+                        }
+                    }
+                }) {
+                    Text(text = "确认",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            }, dismissButton = {
+                TextButton(onClick = { openReportDialog.value = false }) {
+                    Text(text = "取消",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            })
     }
 }
 

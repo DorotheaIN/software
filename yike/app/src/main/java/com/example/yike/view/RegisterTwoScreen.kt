@@ -22,17 +22,39 @@ import com.example.yike.viewModel.GetPersonRegisterViewModel
 import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.GlobalViewModel.sendEmailInfo
 import com.example.yike.viewModel.InputRegisterInfo
+import com.example.yike.viewModel.VerifyCodeViewModel
 
 @Composable
 fun RegisterTwoScreen(
     navController: NavController,
-    getPersonRegisterViewModel: GetPersonRegisterViewModel
+    getPersonRegisterViewModel: GetPersonRegisterViewModel,
+    verifyCodeViewModel: VerifyCodeViewModel
     ) {
-    println(sendEmailInfo.value)
+    println("跳转成功")
+
+    var openDialog: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }//记录是否打开通过提示框
+
     val getPersonRegisterInfo = getPersonRegisterViewModel.personRegisterInfo.observeAsState()
-    RegisterTwoScreenContent(getPersonRegisterInfo.value,navController, GlobalViewModel.getEmail().toString() , verifyCode = GlobalViewModel.getVerifyCode()){
-        email,name,password -> getPersonRegisterViewModel.checkPersonRegisterStatus(email,name,password)
-    }
+
+    val inputVerifyCode = verifyCodeViewModel.inputVerifyCode.observeAsState()
+
+
+    alterDialog(openDialog)
+
+
+
+        RegisterTwoScreenContent(getPersonRegisterInfo.value,navController, GlobalViewModel.getEmail().toString(),inputVerifyCode.value,openDialog,
+        {
+                email,name,password -> getPersonRegisterViewModel.checkPersonRegisterStatus(email,name,password)
+        },
+        {
+                inputCode ->  verifyCodeViewModel.verifyCode(inputCode)
+        }
+    )
+
+
 }
 
 
@@ -41,9 +63,14 @@ fun RegisterTwoScreenContent(
     registerResult: String?,
     navController: NavController,
     email:String,
-    verifyCode:String?,
-    clickEvent: (email:String,name:String,password:String) -> Unit
+//    verifyCode:String?,
+    isSuccess:String?,
+    openDialog: MutableState<Boolean>,
+    clickEvent: (email:String,name:String,password:String) -> Unit,
+    verifyEvent: (inputCode:String) -> Unit
     ){
+
+    println("进入成功")
 
     val nameInput = remember { NameInputState() }
     val passwordInput = remember { PasswordInputState() }
@@ -52,6 +79,16 @@ fun RegisterTwoScreenContent(
         GlobalViewModel.updateUserInfo(email,nameInput.text,1,"","")
         navController.navigate("mainInfo_screen")
     }
+
+    if(isSuccess=="success"){
+        println("2222222isSuccess = $isSuccess")
+        clickEvent(email,nameInput.text,passwordInput.text)
+    }else if(isSuccess=="wrong")
+    {
+        println("2222222isSuccess = $isSuccess")
+        openDialog.value = true
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -89,8 +126,12 @@ fun RegisterTwoScreenContent(
                 Spacer(Modifier.height(10.dp))
                 RegisterButton(
                     onClick = {
-                        if(passwordInput.isValid && nameInput.isValid && verifyCodeInput.isValid && verifyCodeInput.text == verifyCode){
-                            clickEvent(email,nameInput.text,passwordInput.text)
+                        if(passwordInput.isValid && nameInput.isValid && verifyCodeInput.isValid){
+                            verifyEvent(verifyCodeInput.text)
+                            println("isSuccess = $isSuccess")
+                        }
+                        else{
+                            openDialog.value = true
                         }
                     }
                 )
@@ -251,5 +292,36 @@ fun RegisterButton(
             fontSize = 18.sp,
             textAlign = TextAlign.Center
         )
+    }
+}
+
+@Composable
+private fun alterDialog(
+    openDialog: MutableState<Boolean>,
+) {
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            title = { Text(text = "错误提醒") },
+            text = {
+                Text(
+                    text = "输入验证码有误",
+                    style = MaterialTheme.typography.body1
+                )
+            }, confirmButton = {
+                TextButton(onClick = {
+                    openDialog.value = false
+                }) {
+                    Text(text = "确认",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            }, dismissButton = {
+                TextButton(onClick = { openDialog.value = false }) {
+                    Text(text = "取消",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            })
     }
 }

@@ -1,64 +1,42 @@
-package com.example.yike
+package com.example.yike.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key.Companion.Sleep
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
-import androidx.navigation.compose.rememberNavController
-import com.example.yike.view.RegisterTwoScreen
-import com.example.yike.viewModel.*
-import com.example.yike.viewModel.GlobalViewModel.checksendStatus
-import com.example.yike.viewModel.GlobalViewModel.sendEmailInfo
-import kotlinx.coroutines.delay
+import com.example.yike.*
+import com.example.yike.viewModel.GlobalViewModel
 
 
 @Composable
-fun ResgisterScreen(navController: NavController,
-                    sendEmailViewModel: SendEmailViewModel,
-                    ){
-
-    val sendEmailInfo = sendEmailViewModel.sendEmailInfo.observeAsState()
-
-
-    RegisterScreenContent(navController, sendEmailInfo.value){
-        email ->  sendEmailViewModel.checksendStatus(email)
-    }
-
+fun findBackPasswordScreen(
+    navController: NavController
+){
+    findBackPasswordScreenContent(navController)
 
 }
 
-@Composable
-fun RegisterScreenContent(navController: NavController,
-                          code: String?,
-                           clickEvent: (email: String) -> Unit,
-                           ){
 
+
+@Composable
+fun findBackPasswordScreenContent(
+    navController: NavController
+){
 
     val emailInput = remember { EmailState() }
-
 
     Box(
         modifier = Modifier
@@ -71,9 +49,7 @@ fun RegisterScreenContent(navController: NavController,
                 )
             ),
     ) {
-        Box(
-            Modifier.align(Alignment.TopStart)
-        ){
+        Box(Modifier.align(Alignment.TopStart)) {
             RegisterTable(navController)
         }
         Box(
@@ -95,111 +71,31 @@ fun RegisterScreenContent(navController: NavController,
                 Spacer(Modifier.height(10.dp))
                 VerifyButton(
                     onClick = {
-                        if (emailInput.isValid) {
-                            clickEvent(emailInput.text)
-                            GlobalViewModel.updateEmail(emailInput.text)
-                            navController.navigate("personRegister2_screen")
-//                    GlobalViewModel.updateVerifyCode(verifyCode)
-                            println("check!2222222")
-//                    println(GlobalViewModel.getVerifyCode())
-                        }
+//                        if (emailInput.isValid) {
+//                            clickEvent(emailInput.text)
+//                            GlobalViewModel.updateEmail(emailInput.text)
+//                        }
                     }
                 )
 
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(0.dp, 30.dp),
-            contentAlignment = Alignment.Center
-        ){
-            TermsOfServiceLabel(){
-                navController.navigate("login")
-            }
-        }
     }
 
-}
-
-
-@Composable
-private fun TermsOfServiceLabel(
-    registerEvent: () -> Unit = {}
-) {
-    val text = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                color = Color(0xFFC7C7C7),
-                fontSize = 16.sp
-            )
-        ){
-            append("已有账号？")
-        }
-        pushStringAnnotation(
-            tag = "tag",
-            annotation = "转到登录界面"
-        )
-        withStyle(
-            style = SpanStyle(
-                color = Color(0xFF227AFF),
-                fontSize = 16.sp
-            )
-        ) {
-            append("立刻登录")
-        }
-        pop()
-    }
-    ClickableText(
-        text = text,
-        modifier = Modifier
-            .paddingFromBaseline(top = 24.dp),
-        onClick = { offset ->
-            text.getStringAnnotations(
-                tag = "tag", start = offset,
-                end = offset
-            ).firstOrNull()?.let { annotation ->
-                run(registerEvent)
-            }
-        },
-    )
 }
 
 @Composable
 private fun RegisterTable(navController: NavController){
     TextButton(onClick = {
-        navController.navigate("officialRegister_screen")
+        navController.popBackStack()
     }) {
         Text(
-            text = "官方组织注册",
+            text = "返回",
             fontSize =20.sp,
             color = Color(0xFFFFFFFF),
             style = MaterialTheme.typography.button,
             modifier = Modifier.padding(start = 8.dp,end = 8.dp,top = 8.dp)
         )
-    }
-}
-
-@Composable
-fun RegistDescript(){
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Column() {
-            Text(
-                "开启我的大学一刻",
-                color = Color(0xFFFFFFFF),
-                style = MaterialTheme.typography.h5,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-//                .padding(start = 60.dp, end = 60.dp)
-            )
-        }
-
     }
 }
 
@@ -231,14 +127,14 @@ private fun TextEmail(emailInput:EmailState){
                 cursorColor = Color(0xFF045DA0),
             ),
             maxLines = 1,
-            placeholder = { Text("请输入邮箱号进行注册",
+            placeholder = { Text("请输入邮箱号找回密码",
                 modifier = Modifier
 //                    .padding(start = 75.dp ,end =50.dp )
                     .fillMaxWidth(),
                 color = Color(0xFFFFFFFF),
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp,
-                ) },
+            ) },
 //            shape = RoundedCornerShape(30.dp)
         )
     }
@@ -248,8 +144,8 @@ private fun TextEmail(emailInput:EmailState){
 private fun VerifyButton(
 //    navController: NavController,
 //                 emailInput: EmailState,
-                 onClick: () -> Unit
-                 ){
+    onClick: () -> Unit
+){
 
     Surface(
         shape = RoundedCornerShape(30.dp),
@@ -267,12 +163,12 @@ private fun VerifyButton(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("获取邮箱验证码",
+            Text("点击发送邮件找回密码",
                 modifier = Modifier
                     .padding(vertical = 15.dp)
                     .fillMaxWidth()
                     .fillMaxHeight(),
-                style =MaterialTheme.typography.button,
+                style = MaterialTheme.typography.button,
                 color = Color(0xFF0D0D0E),
                 fontSize = 18.sp,
                 textAlign = TextAlign.Center

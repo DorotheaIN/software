@@ -146,6 +146,12 @@ object Network {
     suspend fun updateIUserStatus(ID: String,flag: String)=
         userService.updateIUserStatus(ID, flag).await()
 
+    suspend fun reportUser(rID:String,reason:String,wID:String)=
+        userService.reportUser(rID, reason, wID).await()
+
+    suspend fun verifyCode(inputCode: String)=
+        userService.verifyCode(inputCode).await()
+
 
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之
