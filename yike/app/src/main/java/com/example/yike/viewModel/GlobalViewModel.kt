@@ -49,8 +49,12 @@ object GlobalViewModel: ViewModel() {
         registerDoc.value = multipartBody
     }
 
-    fun updateUserInfo(userId:String, userName: String, userStatus: Int, avatar: String, introduction: String) {
-        globalUserInfo.value = UserInfo(userId, userName, userStatus, introduction, avatar)//反了？
+    fun getToken(): String?{
+        return globalUserInfo.value?.token
+    }
+
+    fun updateUserInfo(userId:String, userName: String, userStatus: Int, avatar: String, introduction: String, token: String) {
+        globalUserInfo.value = UserInfo(userId, userName, userStatus, introduction, avatar, token)//反了？
     }
 
     fun updataQuestionList(questionList: ArrayList<Question>, questionTheme: ArrayList<QTheme>) {

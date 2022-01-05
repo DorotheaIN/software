@@ -5,6 +5,10 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
+//token在此处统一添加即可
+
+
+
 interface UserService {
     @POST("addFile")//可以加Path关键字 进一步说明地址
     fun fileUpload(@Query("addPath") path: String, @Body requestBody: RequestBody):Call<UploadResponse>
@@ -61,8 +65,8 @@ interface UserService {
     @POST("unlikelikeActivity")
     fun postDislikeActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String):Call<CheckResponse>
 
-    @POST("signUpActivity")
-    fun postSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String): Call<CheckResponse>
+    @POST("signUpActivity")//token测试接口
+    fun postSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String,@Query("token")token:String?): Call<CheckResponse>
 
     @POST("cancleSignUp")
     fun postDisSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String): Call<CheckResponse>

@@ -63,7 +63,7 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
         if (userInfo != null) {
             println(userInfo)
             GlobalViewModel.updateUserInfo(userId = userInfo.id, userName =  userInfo.user_NAME,
-                userStatus = userInfo.status, avatar = userInfo.avator, introduction = userInfo.introduction)
+                userStatus = userInfo.status, avatar = userInfo.avator, introduction = userInfo.introduction, token = userInfo.token)
             run(routeEvent)
         }
     } else {

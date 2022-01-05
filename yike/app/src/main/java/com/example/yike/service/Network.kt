@@ -1,5 +1,6 @@
 package com.example.yike.service
 
+import com.example.yike.viewModel.GlobalViewModel
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -76,7 +77,7 @@ object Network {
         userService.postDislikeActivity(activityID,userID).await()
 
     suspend fun postSubActivity(activityID: Int,userID: String) =
-        userService.postSubActivity(activityID,userID).await()
+        userService.postSubActivity(activityID,userID,GlobalViewModel.getToken()).await()
 
     suspend fun postDisSubActivity(activityID: Int,userID: String) =
         userService.postDisSubActivity(activityID,userID).await()
