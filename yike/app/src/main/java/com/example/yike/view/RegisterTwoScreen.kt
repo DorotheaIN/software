@@ -76,7 +76,7 @@ fun RegisterTwoScreenContent(
     val passwordInput = remember { PasswordInputState() }
     val verifyCodeInput = remember { VerifyCodeInputState() }
     if(registerResult == "success"){
-        GlobalViewModel.updateUserInfo(email,nameInput.text,1,"","")
+        GlobalViewModel.updateUserInfo(email,nameInput.text,1,"","","")
         navController.navigate("mainInfo_screen")
     }
 
