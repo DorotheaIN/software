@@ -1,9 +1,8 @@
 package com.example.yike.model
 
-
-data class SendEmailResponse(
+data class ReportUserResponse(
     val code:Int,
     val msg:String,
-    val result:String,
+    val result:Int,
     val dataCount:Int
-    )
+)

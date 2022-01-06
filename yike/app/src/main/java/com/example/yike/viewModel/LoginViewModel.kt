@@ -6,7 +6,7 @@ import com.example.yike.service.LoginRepository
 
 data class LoginInput(val userEmail: String, val passWord: String)
 data class UserInfo(val id: String = "", val user_NAME: String = "", val status: Int = -1,
-val introduction: String = "", val avator: String = "")
+val introduction: String = "", val avator: String = "", val token: String = "")
 
 class LoginViewModel: ViewModel() {
     //观察对象：

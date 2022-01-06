@@ -1,5 +1,7 @@
 package com.example.yike.service
 
+import com.example.yike.viewModel.GlobalViewModel
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -11,12 +13,17 @@ import kotlin.coroutines.suspendCoroutine
 
 //Token的使用?
 
+const val path: String = "DZY"
+
 object Network {
 
     //service:
     private val userService = ServiceCreator.create<UserService>()
 
     //suspend fun:
+    suspend fun fileUpload(requestBody: RequestBody) =
+        userService.fileUpload(path, requestBody).await()
+
     suspend fun getLoginStatus(userEmail: String, passWord: String) =
         userService.getLoginStatus(userEmail, passWord).await()
 
@@ -70,7 +77,7 @@ object Network {
         userService.postDislikeActivity(activityID,userID).await()
 
     suspend fun postSubActivity(activityID: Int,userID: String) =
-        userService.postSubActivity(activityID,userID).await()
+        userService.postSubActivity(activityID,userID,GlobalViewModel.getToken()).await()
 
     suspend fun postDisSubActivity(activityID: Int,userID: String) =
         userService.postDisSubActivity(activityID,userID).await()
@@ -130,6 +137,31 @@ object Network {
 
     suspend fun filterActivity(genres: String,subState:String,key:String,status:String) =
         userService.getFilteredActivity(genres,subState,key,status).await()
+
+    suspend fun getApplications() =
+        userService.getApplications().await()
+
+    suspend fun updateOUserStatus(ID:String,flag:String) =
+        userService.updateOUserStatus(ID,flag).await()
+
+    suspend fun postApplyResult(content:String,title:String,to:String)=
+        userService.postApplyResult(content, title, to).await()
+
+    suspend fun adminLogin(ID:String,password: String)=
+        userService.adminLogin(ID, password).await()
+
+    suspend fun getReports()=
+        userService.getReports().await()
+
+    suspend fun updateIUserStatus(ID: String,flag: String)=
+        userService.updateIUserStatus(ID, flag).await()
+
+    suspend fun reportUser(rID:String,reason:String,wID:String)=
+        userService.reportUser(rID, reason, wID).await()
+
+    suspend fun verifyCode(inputCode: String)=
+        userService.verifyCode(inputCode).await()
+
 
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之

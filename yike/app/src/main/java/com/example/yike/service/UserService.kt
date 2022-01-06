@@ -1,24 +1,17 @@
 package com.example.yike.service
 
 import com.example.yike.model.*
+import okhttp3.RequestBody
 import retrofit2.Call
-import retrofit2.http.GET
+import retrofit2.http.*
 
-import retrofit2.http.POST
-import retrofit2.http.Query
+//token在此处统一添加即可
+
+
 
 interface UserService {
-//    @GET("login")
-//    fun getLoginStatus(@Query("email") userEmail: String, @Query("password") passWord: String): Call<LoginResponse>
-//
-//    @GET("discuss")
-//    fun getQuestionList(): Call<QuestionResponse>
-//
-//    @GET("recommenddis")
-//    fun getQuestionByTheme(): Call<QThemeResponse>
-//
-//    @GET("answer")
-//    fun getAnswerList(@Query("questionId") questionId: String): Call<AnswerResponse>
+    @POST("addFile")//可以加Path关键字 进一步说明地址
+    fun fileUpload(@Query("addPath") path: String, @Body requestBody: RequestBody):Call<UploadResponse>
 
     @POST("discuss/takeAntiFocusQuestion")
     fun postQuestionStatus(@Query("questionId") questionId: String, @Query("userId") userId: String): Call<PostResponse>
@@ -72,8 +65,8 @@ interface UserService {
     @POST("unlikelikeActivity")
     fun postDislikeActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String):Call<CheckResponse>
 
-    @POST("signUpActivity")
-    fun postSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String): Call<CheckResponse>
+    @POST("signUpActivity")//token测试接口
+    fun postSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String,@Query("token")token:String?): Call<CheckResponse>
 
     @POST("cancleSignUp")
     fun postDisSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String): Call<CheckResponse>
@@ -117,7 +110,7 @@ interface UserService {
     fun getPublishQuestionList(@Query("ID") id:String):Call<PublishQuestionResponse>
 
     @POST("sendEmail")
-    fun sendEmail(@Query("to")email:String):Call<SendEmailResponse>
+    fun sendEmail(@Query("email")email:String):Call<SendEmailResponse>
 
     @POST("signUp")
     fun getPersonRegister(@Query("email")email:String,@Query("name")name:String,@Query("password")password:String):Call<getPersonRegistResponse>
@@ -140,7 +133,32 @@ interface UserService {
     @POST("discuss/addQuestion")
     fun addQuestion(@Query("content")content:String,@Query("title")title:String,@Query("userId")userId:String):Call<AddQuestionResponse>
 
-    @GET("filterActivity")
+    @GET("/filterActivity")
     fun getFilteredActivity(@Query("genres")genres: String,@Query("isAbleToRe")subState:String,@Query("key")key:String,@Query("status")state:String):Call<ActivityResponse>
+
+    @GET("/getApplications")
+    fun getApplications():Call<GetApplicationResponse>
+
+    @POST("/updateOUserStatus")
+    fun updateOUserStatus(@Query("ID")ID:String,@Query("flag")flag:String):Call<UpdateOUserStatusResponse>
+
+    @POST("/")
+    fun postApplyResult(@Query("content")content:String,@Query("title")title:String,@Query("to")to:String):Call<PostApplyResultResponse>
+
+    @POST("/AdminLogin")
+    fun adminLogin(@Query("ID")ID:String,@Query("password")password: String):Call<AdminLoginResponse>
+
+    @GET("/getReports")
+    fun getReports():Call<GetReportsResponse>
+
+    @POST("/updateIUserStatus")
+    fun updateIUserStatus(@Query("ID")ID: String,@Query("flag")flag: String):Call<UpdateIUserStatusResponse>
+
+    @POST("/reportUser")
+    fun reportUser(@Query("rID")rID:String,@Query("reason")reason:String,@Query("wID")wID:String):Call<ReportUserResponse>
+
+    @GET("/verifyCode")
+    fun verifyCode(@Query("inputCode")inputCode: String):Call<VerifyCodeResponse>
+
 }
 

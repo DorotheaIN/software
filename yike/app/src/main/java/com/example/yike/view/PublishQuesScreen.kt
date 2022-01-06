@@ -34,7 +34,7 @@ fun PublishScreenContent(
     navController: NavController,
     clickEvent:(content: String,title:String,userId: String) -> Unit
 ){
-    val quesInput = remember {NameInputState()}
+    val quesInput = remember { NameInputState()}
     val quesContentInput = remember {NameInputState()}
     Scaffold(
         Modifier.padding(0.dp),

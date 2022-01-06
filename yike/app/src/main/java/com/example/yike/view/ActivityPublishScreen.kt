@@ -1,5 +1,8 @@
 package com.example.yike.view
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,21 +20,27 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import br.com.onimur.handlepathoz.HandlePathOz
 import com.example.yike.component.OriganizationTopBar
 import com.example.yike.component.*
 import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.ActivityPublishViewModel
+import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.Organization
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun ActivityPublishScreen(
     navController: NavController,
-    viewModel: ActivityPublishViewModel
+    viewModel: ActivityPublishViewModel,
+    handlePathOz: HandlePathOz
 ) {
     viewModel.init()
+
     val organization = viewModel.GetOrgInfo
     organization?.let {
-        ActivityPublishContent(navController, it){ activity ->
+        ActivityPublishContent(navController, it,handlePathOz){ activity ->
         viewModel.publish(activity)
     }
     }
@@ -42,8 +51,12 @@ fun ActivityPublishScreen(
 fun ActivityPublishContent(
     navController: NavController,
     organization: Organization,
-    clickEvent: (activity: Activity) ->Unit
+    handlePathOz: HandlePathOz,
+    clickEvent: (activity: Activity) ->Unit,
 ){
+    val imgUri = GlobalViewModel.imgUri.observeAsState()
+    println("!!!imgURi")
+    println(imgUri)
     val context = LocalContext.current
     Scaffold(
         topBar = {
@@ -111,6 +124,9 @@ fun ActivityPublishContent(
                 CheckBoxTest(genres)
             }
             item{
+                UpdateImg()
+            }
+            item{
                 Spacer(Modifier.height(15.dp))
                 PublishSubmitButton(){
                     dialogText.value = "请完整填写活动详细信息再提交！"
@@ -128,10 +144,10 @@ fun ActivityPublishContent(
                         time.text = date.text + " "+timeTemp.text
                     }
                     if(form.isValid && title.isValid && time.isValid && place.isValid &&
-                            capacity.isValid && content.isValid && intro.isValid && genres.isValid){
+                            capacity.isValid && content.isValid && intro.isValid && genres.isValid && imgUri.value != null){
                         run{
                             val activity = Activity(title.text,
-                                "http://mmbiz.qpic.cn/mmbiz_jpg/D9E2nL2KO2kgKU4ibqPWbIUQDP89y7AXicXwc6QiaPTVuRibyB0CPichvm38w3lc1vS3y2DsUiaZFUrhDic92I0H8psTQ/0?wx_fmt=jpeg",
+                                "http://101.132.138.14/files/DZY/"+imgUri.value,
                                 time.text,
                                 place.text,
                                 form.text,
@@ -160,6 +176,36 @@ fun ActivityPublishContent(
                 Spacer(Modifier.height(60.dp))
             }
         }
+    }
+}
+
+@Composable
+fun UpdateImg(){
+    val image = remember { mutableStateOf<Uri?>(null) }
+    val imgLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+        image.value = it
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 5.dp)
+                .height(40.dp),
+        ){
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.Center
+            ){
+                Text("海报")
+            }
+        }
+        Divider(modifier = Modifier.height(2.dp))
     }
 }
 

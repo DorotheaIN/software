@@ -1,8 +1,5 @@
 package com.example.yike.view
 
-
-import android.view.Gravity
-import android.widget.Toast
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,14 +11,12 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -33,68 +28,45 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.yike.EmailState
 import com.example.yike.PasswordInputState
-import com.example.yike.component.OrgRegisterDialog
-import com.example.yike.component.PrimaryButton
 import com.example.yike.component.RequiredInputState
+import com.example.yike.viewModel.AdminInfo
+import com.example.yike.viewModel.AdminLoginViewModel
 import com.example.yike.viewModel.GlobalViewModel
-import com.example.yike.viewModel.OrgLoginViewModel
 import com.example.yike.viewModel.Organization
 
+
 @Composable
-fun OrgLoginScreen(
-    viewModel: OrgLoginViewModel,
+fun adminLoginScreen(
+    adminLoginViewModel: AdminLoginViewModel,
     routeEvent:()->Unit = {},
-    changeEvent:()->Unit = {},
-    registerEvent: () -> Unit = {},
-    findBackEvent: () -> Unit = {},//跳转到找回密码界面
-    adminEvent:()->Unit = {},//跳转到管理员登陆界面
+    change2PerEvent:()->Unit = {},
+    change2OrgEvent:()->Unit = {}
 ){
-    val orgInfo = viewModel.orgInfo.observeAsState()
-    LoginContent(orgInfo = orgInfo.value, routeEvent,
+    val adminLoginInfo = adminLoginViewModel.adminLoginInfo.observeAsState()
+    loginContent(adminLoginInfo.value, routeEvent,
         { id, password ->
-            viewModel.checkLoginStatus(id,password)
+            adminLoginViewModel.inputAdminLogin(id.toString(),password)
         },
-        registerEvent,
-        findBackEvent,
-        changeEvent,
-        adminEvent
+        change2PerEvent,
+        change2OrgEvent
     )
 }
 
 @Composable
-private fun LoginContent(
-    orgInfo:Organization?,
+private fun loginContent(
+    adminInfo: AdminInfo?,
     routeEvent:()->Unit = {},
     clickEvent:(id:Int,password:String) -> Unit,
-    registerEvent: () -> Unit,
-    findBackEvent: () -> Unit = {},
-    changeEvent:()->Unit = {},
-    adminEvent:()->Unit = {},//跳转到管理员登陆界面
+    change2PerEvent:()->Unit = {},
+    change2OrgEvent:()->Unit = {}
 ){
-//    val openDialog = remember { mutableStateOf(false) }
-//    val isSuccess = remember { mutableStateOf(false) }
-    if(orgInfo != null ) {
-        if(orgInfo.id == -1){
-            Toast.makeText(LocalContext.current, "该账户尚未注册", Toast.LENGTH_SHORT).show()
-        }else {
-            if(orgInfo.status == -2){
-                Toast.makeText(LocalContext.current, "密码错误", Toast.LENGTH_SHORT).show()
-            }else if(orgInfo.status == 0){
-                Toast.makeText(LocalContext.current, "该组织还未通过审核", Toast.LENGTH_SHORT).show()
-            }else if(orgInfo.status == -1){
-                Toast.makeText(LocalContext.current, "组织用户申请被拒绝，详情可见邮箱", Toast.LENGTH_SHORT).show()
-            }
-            else {
-                println(orgInfo)
-                GlobalViewModel.updateOrgInfo(orgInfo)
-                Toast.makeText(LocalContext.current, "登录成功", Toast.LENGTH_SHORT).show()
-                run(routeEvent)
-            }
-        }
+    if(adminInfo != null) {
+        println(adminInfo)
+        GlobalViewModel.updateAdminInfo(adminInfo)
+        run(routeEvent)
     } else {
-        println(orgInfo)
+        println(adminInfo)
     }
     Surface(
         color = MaterialTheme.colors.background,
@@ -123,9 +95,7 @@ private fun LoginContent(
             PasswordInput(passwordInput)
 
 
-            TermsOfServiceLabel(registerEvent)
-
-            findBackLabel(findBackEvent)
+//            TermsOfServiceLabel(registerEvent)
 
             Spacer(Modifier.height(16.dp))
 
@@ -138,12 +108,8 @@ private fun LoginContent(
                     }
                 }
             })
-//<<<<<<< HEAD
-////            OrgRegisterDialog(isSuccess, openDialog)
-//            ChangeLoginEntry(changeEvent)
-//=======
 
-            ChangeLoginEntry(changeEvent,adminEvent)
+            ChangeLoginEntry(change2PerEvent,change2OrgEvent)
         }
     }
 }
@@ -295,7 +261,7 @@ private fun IdInput(idInput: RequiredInputState) {
             idInput.text = textState.text
         },
         label = {
-            Text(text = "Organization ID")
+            Text(text = "Admin ID")
         },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Number,
@@ -348,18 +314,15 @@ private fun LogInHeader() {
 
 @Composable
 private fun ChangeLoginEntry(
-    onClick: () -> Unit = {},
-    adminEvent:()->Unit = {},//跳转到管理员登陆界面
+    change2PerEvent: () -> Unit = {},
+    change2OrgEvent: () -> Unit = {}
 ){
-    Box(
-//        Modifier.fillMaxSize()
-    ){
+    Column() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
                 .padding(0.dp, 20.dp),
-            contentAlignment = Alignment.Center,
+              contentAlignment = Alignment.BottomCenter,
         ) {
             Text(
                 text = "个人用户登录入口",
@@ -368,36 +331,31 @@ private fun ChangeLoginEntry(
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier
                     .paddingFromBaseline(top = 24.dp)
-                    .clickable { onClick() },
+                    .clickable { change2PerEvent() },
                 color = Color(0xFF227AFF)
             )
         }
 
-    }
+        Spacer(modifier = Modifier.height(1.dp))
 
-    Box(
-//            Modifier.fillMaxSize()
-    ){
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.Center)
-                .padding(0.dp, 0.dp),
-            contentAlignment = Alignment.Center,
+//                        .align(Alignment.BottomCenter)
+                .padding(0.dp, 20.dp),
+                contentAlignment = Alignment.BottomCenter,
         ) {
             Text(
-                text = "管理员登录入口",
+                text = "官方组织用户登录入口",
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Center,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier
                     .paddingFromBaseline(top = 24.dp)
-                    .clickable { adminEvent() },
+                    .clickable { change2OrgEvent() },
                 color = Color(0xFF227AFF)
-//                color = Color(0xFF172A8F),
-
             )
         }
-    }
 
+    }
 }
