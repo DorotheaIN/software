@@ -3,10 +3,14 @@ package com.example.yike.view
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
@@ -14,13 +18,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import br.com.onimur.handlepathoz.HandlePathOz
+import coil.compose.rememberImagePainter
 import com.example.yike.component.OriganizationTopBar
 import com.example.yike.component.*
 import com.example.yike.viewModel.Activity
@@ -40,7 +48,10 @@ fun ActivityPublishScreen(
 
     val organization = viewModel.GetOrgInfo
     organization?.let {
-        ActivityPublishContent(navController, it,handlePathOz){ activity ->
+        ActivityPublishContent(navController, it,handlePathOz,
+            updateEvent = { uri ->
+                handlePathOz.getRealPath(uri)
+            }){ activity ->
         viewModel.publish(activity)
     }
     }
@@ -52,6 +63,7 @@ fun ActivityPublishContent(
     navController: NavController,
     organization: Organization,
     handlePathOz: HandlePathOz,
+    updateEvent: (uri: Uri) -> Unit = {},
     clickEvent: (activity: Activity) ->Unit,
 ){
     val imgUri = GlobalViewModel.imgUri.observeAsState()
@@ -124,7 +136,7 @@ fun ActivityPublishContent(
                 CheckBoxTest(genres)
             }
             item{
-                UpdateImg()
+                UpdateImg(updateEvent)
             }
             item{
                 Spacer(Modifier.height(15.dp))
@@ -180,7 +192,9 @@ fun ActivityPublishContent(
 }
 
 @Composable
-fun UpdateImg(){
+fun UpdateImg(
+    updateEvent: (uri: Uri) -> Unit = {},
+){
     val image = remember { mutableStateOf<Uri?>(null) }
     val imgLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
         image.value = it
@@ -205,7 +219,44 @@ fun UpdateImg(){
                 Text("海报")
             }
         }
-        Divider(modifier = Modifier.height(2.dp))
+        Row(
+            Modifier.fillMaxWidth().padding(10.dp,5.dp),
+            horizontalArrangement = Arrangement.Center
+        ){
+            Box(
+                Modifier
+                    .size(620.dp, 170.dp)
+                    .padding(10.dp, 0.dp)
+                    .border(1.dp,Color(0xFFE5E6E7), RoundedCornerShape(15.dp))
+            ){
+                if(image.value !=null){
+                    Surface(
+                        shape = RoundedCornerShape(15.dp)
+                    ){
+                        Image(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .size(600.dp, 170.dp),
+                            painter = rememberImagePainter(image.value),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillWidth
+                        )
+                        updateEvent(image.value!!)
+                    }
+
+                }else {
+                    Box(
+                        Modifier.align(alignment = Alignment.Center)
+                            .clickable {
+                                imgLauncher.launch("image/*")
+                            }
+                    ){
+                        Icon(imageVector = Icons.Outlined.Add,null)
+                    }
+                }
+            }
+        }
+
     }
 }
 

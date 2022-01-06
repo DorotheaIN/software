@@ -82,7 +82,18 @@ fun ActivityScreenContent(
                 }
                 item(activityList){
                     if(activityList.isEmpty()){
-                        Text("不存在相符的活动！")
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues)
+                        ) {
+                            Spacer(modifier = Modifier.height(230.dp))
+                            Text("不存在相符的活动！"
+                                ,modifier = Modifier
+                                    .wrapContentSize()
+                                    .align(Alignment.Center)
+                            )
+                        }
                     }else {
                         Column(){
                             activityList.forEach{it->
@@ -152,7 +163,7 @@ private fun SearchInput(
             text = it
         },
         modifier = Modifier
-            .border(1.dp,Color(0xFFE5E6E7), CircleShape)
+            .border(1.dp, Color(0xFFE5E6E7), CircleShape)
             .height(35.dp)
             .fillMaxWidth(),
         decorationBox = { innerTextField ->
@@ -161,7 +172,9 @@ private fun SearchInput(
                 modifier = Modifier.padding(horizontal = 10.dp)
             ) {
                 Box(
-                    modifier = Modifier.weight(1f).padding(horizontal = 15.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 15.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     innerTextField()
@@ -170,8 +183,9 @@ private fun SearchInput(
                     Icons.Default.Search,
                     contentDescription = null,
                     modifier = Modifier
-                        .size(18.dp).clickable {
-                            run{
+                        .size(18.dp)
+                        .clickable {
+                            run {
                                 searchEvent(text)
                             }
                         }
