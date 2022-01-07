@@ -691,7 +691,7 @@ object OfficialRepository {
     fun officialRegister(avator:String,certification:String,introduction:String,password:String,userName:String) = liveData(Dispatchers.IO) {
         val result = try {
             val officialRegisterResponse = Network.officialRegister(avator, certification, introduction, password, userName)
-            println(officialRegisterResponse)
+            println("thisisres:$officialRegisterResponse")
             if(officialRegisterResponse.code == 200){
                 officialRegisterResponse.result
             }else {
