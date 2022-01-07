@@ -136,7 +136,9 @@ fun RegisterOfficialScreenContent(
                 Spacer(Modifier.height(10.dp))
                 TextIntro(officialIntroInput)
                 Spacer(Modifier.height(10.dp))
-                UploadPicFile(updateEvent)
+                Box(Modifier.align(Alignment.CenterHorizontally)){
+                    UploadPicFile(updateEvent)
+                }
                 Spacer(Modifier.height(10.dp))
                 OfficialRegisterButton(
                     onClick = {
@@ -364,54 +366,61 @@ fun UploadPicFile(
     val documentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
         document.value = it
     }
+
     Row(
-    modifier = Modifier
-        .fillMaxWidth()
-        .padding(start = 120.dp, end = 100.dp)
+//    modifier = Modifier
+//        .fillMaxWidth()
 ) {
-        IconButton(onClick = {
+        Box(Modifier.align(Alignment.CenterVertically)){
+            IconButton(onClick = {
 //            imgLauncher.launch(arrayOf("image/*")) //OpenDocument
-            imgLauncher.launch("image/*")
-        }) {
-            if(image.value != null){
-                Image(
-                    rememberImagePainter(image.value.toString()),
-                    contentDescription = "official avatar",
-                    modifier = Modifier
-                        .size(50.dp) // 改变 Image 元素的大小
-                        .clip(CircleShape) // 将图片裁剪成圆形
-                )
-                updateEvent(image.value!!)
-            }else{
-                Icon(
-                    Icons.Sharp.Face,
-                    contentDescription = "uploadPic",
-                    modifier = Modifier
-                        .size(250.dp)
-                )
+                imgLauncher.launch("image/*")
+            }) {
+                if(image.value != null){
+                    Image(
+                        rememberImagePainter(image.value.toString()),
+                        contentDescription = "official avatar",
+                        modifier = Modifier
+                            .size(50.dp) // 改变 Image 元素的大小
+                            .clip(CircleShape) // 将图片裁剪成圆形
+                    )
+                    updateEvent(image.value!!)
+                }else{
+                    Icon(
+                        Icons.Sharp.Face,
+                        contentDescription = "uploadPic",
+                        modifier = Modifier
+                            .size(250.dp)
+                    )
+                }
             }
         }
+
         Box(modifier = Modifier.width(70.dp))
-        IconButton(onClick = {
-            documentLauncher.launch("application/*")
-        }) {
-            if(document.value != null){
-                Image(
-                    painterResource(id = R.drawable.pdf),
-                    contentDescription = "pdf icon",
-                    modifier = Modifier
-                        .size(250.dp) // 改变 Image 元素的大小
-                )
-                updateEvent(document.value!!)
-            }else{
-                Icon(
-                    Icons.Sharp.NoteAdd,
-                    contentDescription = "uploadFile",
-                    modifier = Modifier
-                        .size(250.dp)
-                )
+
+        Box(Modifier.align(Alignment.CenterVertically)){
+            IconButton(onClick = {
+                documentLauncher.launch("application/*")
+            }) {
+                if(document.value != null){
+                    Image(
+                        painterResource(id = R.drawable.pdf),
+                        contentDescription = "pdf icon",
+                        modifier = Modifier
+                            .size(250.dp) // 改变 Image 元素的大小
+                    )
+                    updateEvent(document.value!!)
+                }else{
+                    Icon(
+                        Icons.Sharp.NoteAdd,
+                        contentDescription = "uploadFile",
+                        modifier = Modifier
+                            .size(250.dp)
+                    )
+                }
             }
         }
+
 }
 }
 
