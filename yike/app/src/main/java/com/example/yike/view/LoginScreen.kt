@@ -72,6 +72,7 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
                 if(userInfo.user_NAME==""){
                     Toast.makeText(LocalContext.current, "密码错误", Toast.LENGTH_SHORT).show()
                 }else {
+                    println("thisisuserinfo!!!!!")
                     println(userInfo)
                     GlobalViewModel.updateUserInfo(userId = userInfo.id, userName =  userInfo.user_NAME,
                         userStatus = userInfo.status, avatar = userInfo.avator, introduction = userInfo.introduction, token = userInfo.token)

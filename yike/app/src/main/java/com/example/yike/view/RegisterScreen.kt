@@ -43,6 +43,9 @@ fun ResgisterScreen(navController: NavController,
     val sendEmailInfo = sendEmailViewModel.sendEmailInfo.observeAsState()
 
 
+
+
+
     RegisterScreenContent(navController, sendEmailInfo.value){
         email ->  sendEmailViewModel.checksendStatus(email)
     }
@@ -59,6 +62,11 @@ fun RegisterScreenContent(navController: NavController,
 
     val emailInput = remember { EmailState() }
 
+    if(!code.isNullOrEmpty()){
+        println("1code=$code")
+        GlobalViewModel.updateVerifyCode(code)
+        navController.navigate("personRegister2_screen")
+    }
 
     Box(
         modifier = Modifier
@@ -98,8 +106,6 @@ fun RegisterScreenContent(navController: NavController,
                         if (emailInput.isValid) {
                             clickEvent(emailInput.text)
                             GlobalViewModel.updateEmail(emailInput.text)
-                            navController.navigate("personRegister2_screen")
-//                    GlobalViewModel.updateVerifyCode(verifyCode)
                             println("check!2222222")
 //                    println(GlobalViewModel.getVerifyCode())
                         }

@@ -31,6 +31,7 @@ fun RegisterTwoScreen(
     verifyCodeViewModel: VerifyCodeViewModel
     ) {
     println("跳转成功")
+    println("code = " + GlobalViewModel.getVerifyCode())
 
     var openDialog: MutableState<Boolean> = remember {
         mutableStateOf(false)
@@ -43,8 +44,6 @@ fun RegisterTwoScreen(
 
     alterDialog(openDialog)
 
-
-
         RegisterTwoScreenContent(getPersonRegisterInfo.value,navController, GlobalViewModel.getEmail().toString(),inputVerifyCode.value,openDialog,
         {
                 email,name,password -> getPersonRegisterViewModel.checkPersonRegisterStatus(email,name,password)
@@ -52,6 +51,7 @@ fun RegisterTwoScreen(
         {
                 inputCode ->  verifyCodeViewModel.verifyCode(inputCode)
         }
+
     )
 
 
@@ -76,12 +76,12 @@ fun RegisterTwoScreenContent(
     val passwordInput = remember { PasswordInputState() }
     val verifyCodeInput = remember { VerifyCodeInputState() }
 
-    if(isSuccess=="success"){
+    if(registerResult=="success"){
         println("2222222isSuccess = $isSuccess")
         clickEvent(email,nameInput.text,passwordInput.text)
         GlobalViewModel.updateUserInfo(email,nameInput.text,1,"","","")
         navController.navigate("login")
-    }else if(isSuccess=="wrong")
+    }else if(registerResult=="wrong")
     {
         println("2222222isSuccess = $isSuccess")
         openDialog.value = true
@@ -131,7 +131,6 @@ fun RegisterTwoScreenContent(
                 RegisterButton(
                     onClick = {
                         if(passwordInput.isValid && nameInput.isValid && verifyCodeInput.isValid){
-                            verifyEvent(verifyCodeInput.text)
                             println("isSuccess = $isSuccess")
                         }
                         else{
@@ -143,6 +142,7 @@ fun RegisterTwoScreenContent(
             }
         }
     }
+
 }
 
 @Composable

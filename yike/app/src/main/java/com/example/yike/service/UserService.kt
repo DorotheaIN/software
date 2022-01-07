@@ -109,7 +109,7 @@ interface UserService {
     @GET("getMyQuestions")
     fun getPublishQuestionList(@Query("ID") id:String):Call<PublishQuestionResponse>
 
-    @POST("sendEmail")
+    @GET("/simpleVerify")
     fun sendEmail(@Query("email")email:String):Call<SendEmailResponse>
 
     @POST("signUp")

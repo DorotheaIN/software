@@ -22,7 +22,7 @@ object LoginRepository {
                     UserInfo(id=userEmail)
                 }else {
                     UserInfo(loginResponse.result.id, loginResponse.result.user_NAME, loginResponse.result.status,
-                        loginResponse.result.introduction, loginResponse.result.avator)
+                        loginResponse.result.introduction, loginResponse.result.avator,loginResponse.result.token)
                 }
             } else {
                 println("response code is ${loginResponse.code} error msg is ${loginResponse.msg}")
@@ -511,6 +511,9 @@ object SendEmailRepository {
                 println(sendEmailResponse.result)
                 sendEmailResponse.result
             } else {
+                println("11111111222222")
+                println(sendEmailResponse.code)
+                println(sendEmailResponse.result)
                 println("response status is not ok!")
                 ""
                 }

@@ -3,6 +3,7 @@ package com.example.yike.view
 import androidx.compose.foundation.Image
 import android.net.Uri
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistryOwner
@@ -48,6 +49,7 @@ import com.example.yike.PasswordInputState
 
 import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.OfficialRegisterViewModel
+import kotlinx.coroutines.currentCoroutineContext
 
 
 @Composable
@@ -55,7 +57,7 @@ fun RegisterOfficialScreen(
     navController: NavController,
     officialRegisterViewModel: OfficialRegisterViewModel,
     handlePathOz: HandlePathOz){
-
+    val path = "http://101.132.138.14/files/DZY/"
     val officialRegister = officialRegisterViewModel.officialRegisterInfo.observeAsState()
     val imgUri = GlobalViewModel.imgUri.observeAsState()
     println("!!!imgURi")
@@ -69,7 +71,8 @@ fun RegisterOfficialScreen(
     if(imgUri.value != null && docUri.value != null) {
         println("changeCE")
         clickEvent= { introduction, password, userName ->
-            officialRegisterViewModel.checkOfficialRegisterStatus(imgUri.value!!, docUri.value!!, introduction, password, userName)
+            officialRegisterViewModel.checkOfficialRegisterStatus(path+imgUri.value!!, path+docUri.value!!, introduction, password, userName)
+            navController.navigate("login")
         }
     }
     RegisterOfficialScreenContent(navController,officialRegister.value,
