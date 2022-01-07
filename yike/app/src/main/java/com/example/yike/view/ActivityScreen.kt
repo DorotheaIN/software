@@ -2,25 +2,30 @@ package com.example.yike.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.yike.component.NavBottomBar
+import com.example.yike.component.*
 import com.example.yike.viewModel.Activity
 import com.example.yike.viewModel.ActivityViewModel
 
@@ -35,14 +40,30 @@ fun ActivityScreen(
         viewModel.getActivityList()
     }else {
         val activityList = viewModel.activityList.observeAsState()
-        ActivityScreenContent(navController,activityList.value)
+        ActivityScreenContent(navController,activityList.value,
+            { key->
+                viewModel.setTitle(key)
+            },
+            {value ->
+                viewModel.setGenres(value)
+            },
+            {value ->
+                viewModel.setSubState(value)
+            },
+            {value ->
+                viewModel.setState(value)
+            })
     }
 }
 
 @Composable
 fun ActivityScreenContent(
     navController: NavController,
-    activityList:ArrayList<Activity>?
+    activityList:ArrayList<Activity>?,
+    searchEvent:(key:String)->Unit,
+    filterGenresEvent:(value:String)->Unit,
+    filterSubStateEvent:(value:String)->Unit,
+    filterStatusEvent:(value:String)->Unit
 ){
     Scaffold(
         modifier = Modifier.background(color = Color(0xffecedef)),
@@ -52,17 +73,33 @@ fun ActivityScreenContent(
 //        modifier = Modifier.background(color = Color(0xffecedef)),
     ) { paddingValues ->
         if( activityList == null){
+//            filter()
             Loader(paddingValues)
         }else{
             LazyColumn(Modifier){
                 item {
-                    ActivityTable()
+                    filter(searchEvent, filterGenresEvent, filterSubStateEvent, filterStatusEvent)
                 }
                 item(activityList){
-                    Column(){
-                        activityList.forEach{it->
-                            ActivityItem(it){id->
-                                navController.navigate("activitydetail/${id}")
+                    if(activityList.isEmpty()){
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues)
+                        ) {
+                            Spacer(modifier = Modifier.height(230.dp))
+                            Text("不存在相符的活动！"
+                                ,modifier = Modifier
+                                    .wrapContentSize()
+                                    .align(Alignment.Center)
+                            )
+                        }
+                    }else {
+                        Column(){
+                            activityList.forEach{it->
+                                ActivityItem(it){id->
+                                    navController.navigate("activitydetail/${id}")
+                                }
                             }
                         }
                     }
@@ -73,6 +110,112 @@ fun ActivityScreenContent(
             }
         }
     }
+}
+
+@Composable
+private fun filter(
+    searchEvent:(key:String)->Unit,
+    filterGenresEvent:(value:String)->Unit,
+    filterSubStateEvent:(value:String)->Unit,
+    filterStatusEvent:(value:String)->Unit
+){
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp)
+    ) {
+        Spacer(modifier = Modifier.height(10.dp))
+        Box(
+            Modifier
+                .fillMaxWidth(0.9f)
+                .align(Alignment.CenterHorizontally)
+        ){
+            SearchInput(searchEvent)
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Box(
+            Modifier
+                .fillMaxWidth(0.9f)
+                .align(Alignment.CenterHorizontally)
+        ){
+            Row(){
+                val tags = listOf<String>("所有","学术","联谊","体育","艺术","党建","环保","庆典","志愿","心理")
+                val timeStates = listOf<String>("所有","未开始","进行中","已结束")
+                val subStates = listOf<String>("所有","可报名")
+                DropDownMenu(tags,"-活动类型-",filterGenresEvent)
+                Spacer(modifier = Modifier.width(15.dp))
+                DropDownMenu(timeStates,"-活动状态-",filterStatusEvent)
+                Spacer(modifier = Modifier.width(15.dp))
+                DropDownMenu(subStates,"-报名状态-",filterSubStateEvent)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchInput(
+    searchEvent:(key:String)->Unit,
+) {
+    var text by remember { mutableStateOf("") }
+    BasicTextField(
+        value = text,
+        onValueChange = {
+            text = it
+        },
+        modifier = Modifier
+            .border(1.dp, Color(0xFFE5E6E7), CircleShape)
+            .height(35.dp)
+            .fillMaxWidth(),
+        decorationBox = { innerTextField ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 15.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    innerTextField()
+                }
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clickable {
+                            run {
+                                searchEvent(text)
+                            }
+                        }
+                )
+            }
+        }
+    )
+
+//    OutlinedTextField(
+//        value = "",
+//        onValueChange = {},
+//        label = {
+//            Text("输入活动标题关键词检索")
+//        },
+//        trailingIcon = {
+//            Icon(
+//                Icons.Default.Search,
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .size(18.dp)
+//            )
+//        },
+////        leadingIcon = {
+////
+////        },
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .height(24.dp)
+//            .padding(horizontal = 5.dp),
+//    )
 }
 
 
@@ -95,13 +238,7 @@ private fun Loader(
 
 @Composable
 fun ActivityTable(){
-    Text(
-        text = "活动速览",
-        color = Color.Black,
-        fontSize = 20.sp,
-//        style = MaterialTheme.typography.h5,
-        modifier = Modifier.padding(18.dp,16.dp,16.dp,16.dp)
-    )
+
 }
 
 
@@ -139,7 +276,8 @@ fun ActivityItem(
                                 .padding(0.dp, 5.dp)
                                 .size(35.dp)
                                 .clip(RoundedCornerShape(10.dp))
-                                .fillMaxSize().clickable {  }
+                                .fillMaxSize()
+                                .clickable { }
                         )
                     }
                     Spacer(modifier = Modifier.width(15.dp))

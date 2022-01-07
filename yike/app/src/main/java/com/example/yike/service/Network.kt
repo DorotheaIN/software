@@ -135,6 +135,9 @@ object Network {
     suspend fun addQuestion(content: String,title:String,userId: String) =
         userService.addQuestion(content, title, userId).await()
 
+    suspend fun filterActivity(genres: String,subState:String,key:String,status:String) =
+        userService.getFilteredActivity(genres,subState,key,status).await()
+
     suspend fun getApplications() =
         userService.getApplications().await()
 

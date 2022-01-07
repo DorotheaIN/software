@@ -133,6 +133,9 @@ interface UserService {
     @POST("discuss/addQuestion")
     fun addQuestion(@Query("content")content:String,@Query("title")title:String,@Query("userId")userId:String):Call<AddQuestionResponse>
 
+    @GET("/filterActivity")
+    fun getFilteredActivity(@Query("genres")genres: String,@Query("isAbleToRe")subState:String,@Query("key")key:String,@Query("status")state:String):Call<ActivityResponse>
+
     @GET("/getApplications")
     fun getApplications():Call<GetApplicationResponse>
 

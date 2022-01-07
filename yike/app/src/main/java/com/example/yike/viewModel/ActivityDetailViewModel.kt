@@ -61,7 +61,8 @@ class ActivityDetailViewModel(
     private val toReview = MutableLiveData<Evaluation>()
     private val _refresh = MutableLiveData<Int>()
     val isGet: LiveData<Boolean> = _isGet
-    private val _isDel = MutableLiveData<Int>(0)
+    private val _isDel = MutableLiveData<Int>()
+    private val isDel = MutableLiveData<Int>(0)
     val getUserID = userID
     private val toLike = MutableLiveData<Int>()
 
@@ -75,11 +76,11 @@ class ActivityDetailViewModel(
         ActivityRepository.getEvaluationList(activityID)
     }
 
-    val likeStatus = Transformations.switchMap(_isGet){
+    val likeStatus = Transformations.switchMap(_refresh){
         UserActivityRepository.checkLike(activityID,userID!!)
     }
 
-    val subscribeStatus = Transformations.switchMap(_isGet){
+    val subscribeStatus = Transformations.switchMap(_refresh){
         UserActivityRepository.checkSubscribe(activityID,userID!!)
     }
 
@@ -108,26 +109,42 @@ class ActivityDetailViewModel(
         _refresh.value = 0
     }
 
-    fun save(like:Boolean,subscribe:Boolean){
-        println(like)
-        println(subscribe)
-        if(likeStatus.value != like && likeStatus!=null){
-            if(like == true){//点赞
-                toLike.value = 1
-                UserActivityRepository.postLikeActivity(activityID,userID!!,1)
-            }else{
-                toLike.value = 0
-                UserActivityRepository.postLikeActivity(activityID,userID!!,0)
-            }
+//    fun save(like:Boolean,subscribe:Boolean){
+//        println(like)
+//        println(subscribe)
+//        if(likeStatus.value != like && likeStatus!=null){
+//            if(like == true){//点赞
+//                toLike.value = 1
+//                UserActivityRepository.postLikeActivity(activityID,userID!!,1)
+//            }else{
+//                toLike.value = 0
+//                UserActivityRepository.postLikeActivity(activityID,userID!!,0)
+//            }
+//        }
+//        if(subscribeStatus.value != subscribe && subscribeStatus!=null){
+//            if(subscribe == true){
+//                toSub.value = 1
+//                UserActivityRepository.postSubActivity(activityID,userID!!,1)
+//            }else {
+//                toSub.value = 0
+//                UserActivityRepository.postSubActivity(activityID,userID!!,0)
+//            }
+//        }
+//    }
+
+    fun like(like:Boolean){
+        if(like == true){ // 点赞
+            toLike.value = 1
+        }else {
+            toLike.value = 0
         }
-        if(subscribeStatus.value != subscribe && subscribeStatus!=null){
-            if(subscribe == true){
-                toSub.value = 1
-                UserActivityRepository.postSubActivity(activityID,userID!!,1)
-            }else {
-                toSub.value = 0
-                UserActivityRepository.postSubActivity(activityID,userID!!,0)
-            }
+    }
+
+    fun subscribe(sub:Boolean){
+        if(sub == true){
+            toSub.value = 1
+        }else {
+            toSub.value = 0
         }
     }
 
@@ -147,8 +164,9 @@ class ActivityDetailViewModel(
 
     fun deleteReview() = runBlocking {
         val del = launch {
-            _isDel.value = _isDel.value?.plus(1)
-            delay(250)
+            isDel.value = isDel.value?.plus(1)
+            _isDel.value = isDel.value
+            delay(1000) // 好像时间很看后端速度
         }
         del.join()
         val ref = launch {

@@ -2,6 +2,7 @@ package com.example.yike.view
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -64,10 +66,24 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
     val loginStatus = userInfo?.status
     if(loginStatus == 1) {
         if (userInfo != null) {
-            println(userInfo)
-            GlobalViewModel.updateUserInfo(userId = userInfo.id, userName =  userInfo.user_NAME,
-                userStatus = userInfo.status, avatar = userInfo.avator, introduction = userInfo.introduction, token = userInfo.token)
-            run(routeEvent)
+            if(userInfo.id==""){
+                Toast.makeText(LocalContext.current, "该账号尚未注册", Toast.LENGTH_SHORT).show()
+            }else{
+                if(userInfo.user_NAME==""){
+                    Toast.makeText(LocalContext.current, "密码错误", Toast.LENGTH_SHORT).show()
+                }else {
+                    println(userInfo)
+                    GlobalViewModel.updateUserInfo(userId = userInfo.id, userName =  userInfo.user_NAME,
+                        userStatus = userInfo.status, avatar = userInfo.avator, introduction = userInfo.introduction, token = userInfo.token)
+                    run(routeEvent)
+                }
+            }
+//=======
+//            println(userInfo)
+//            GlobalViewModel.updateUserInfo(userId = userInfo.id, userName =  userInfo.user_NAME,
+//                userStatus = userInfo.status, avatar = userInfo.avator, introduction = userInfo.introduction, token = userInfo.token)
+//            run(routeEvent)
+//>>>>>>> master
         }
     } else {
         println(loginStatus)

@@ -161,7 +161,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("activity_publish"){
                         val activityPublishViewModel = ActivityPublishViewModel()
-                        ActivityPublishScreen(navController = navController,activityPublishViewModel)
+                        ActivityPublishScreen(navController = navController,activityPublishViewModel,handlePathOz)
                     }
                     composable(
                         "activityreflect/{id}",
