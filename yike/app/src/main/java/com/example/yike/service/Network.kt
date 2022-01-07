@@ -159,6 +159,9 @@ object Network {
     suspend fun verifyCode(inputCode: String)=
         userService.verifyCode(inputCode).await()
 
+    suspend fun editPassword(ID: String,password: String)=
+        userService.editPassword(ID, password).await()
+
 
     //为call添加扩展函数 await
     //这样所有返回call的函数都可以调用之

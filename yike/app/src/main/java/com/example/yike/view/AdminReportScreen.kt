@@ -50,12 +50,60 @@ fun AdminReportScreen(
         mutableStateOf(false)
     }//记录是否打开举报详情框
 
-    AdminReportScreenContent(openApproveDialog,openRejectDialog,reportsList.value,adminUpdateIUserViewModel, navController,openReportDialog)
+    var tempReportsInfo:MutableState<ReportInfo>?= remember {
+        mutableStateOf(ReportInfo("","","","",""))
+    }//信息传到弹框
+
+    val postApplyViewModel = PostApplyResultViewModel()
+
+    val sendPostInfo = postApplyViewModel.sendPostInfo.observeAsState()
+
+    val detailedAnswerViewModel = tempReportsInfo?.value?.let {
+        DetailedAnswerViewModel(
+            it.question_ID,
+            tempReportsInfo?.value.answer_ID)
+    }//传入问题ID和回答ID展示回答详情
+
+    if (detailedAnswerViewModel != null) {
+        detailedAnswerViewModel.selectQuesAnswer(detailedAnswerViewModel.answerId,detailedAnswerViewModel.questionId)
+    }//调用函数
+
+    val quesAnswerInfoList= detailedAnswerViewModel?.quesAnswerInfoList?.observeAsState()
+
+    addApproveAlterDialog(openApproveDialog, tempReportsInfo,
+        clickEvent = {
+                ID,status->adminUpdateIUserViewModel.updateIUserStatus(ID, status)
+        },
+        postEmailEvent = {
+                content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
+        }
+    )//同意举报弹窗
+
+    addRejectAlterDialog(openRejectDialog, tempReportsInfo,
+        {
+                ID,status-> adminUpdateIUserViewModel.updateIUserStatus(ID, status)
+        },
+        {
+                content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
+        }
+    )//驳回举报弹窗
+
+    if (quesAnswerInfoList != null) {
+        quesAnswerInfoList.value?.let {
+            addReportAlterDialog(openReportDialog,tempReportsInfo,
+                it
+            )
+        }
+    }//展示详细信息弹窗
+
+    AdminReportScreenContent(quesAnswerInfoList,tempReportsInfo,openApproveDialog,openRejectDialog,reportsList.value,adminUpdateIUserViewModel, navController,openReportDialog)
 }
 
 
 @Composable
 fun AdminReportScreenContent(
+    quesAnswerInfoList:State<QuesAnswer?>?,
+    tempReportsInfo:MutableState<ReportInfo>?,
     openApproveDialog: MutableState<Boolean>,
     openRejectDialog: MutableState<Boolean>,
     reportsList:ArrayList<ReportInfo>?,
@@ -64,25 +112,25 @@ fun AdminReportScreenContent(
     openReportDialog: MutableState<Boolean>
 ){
 
-    val postApplyViewModel = PostApplyResultViewModel()
+//    val postApplyViewModel = PostApplyResultViewModel()
+//
+//    val sendPostInfo = postApplyViewModel.sendPostInfo.observeAsState()
 
-    val sendPostInfo = postApplyViewModel.sendPostInfo.observeAsState()
+//    var tempReportsInfo:MutableState<ReportInfo>?= remember {
+//        mutableStateOf(ReportInfo("","","","",""))
+//    }//信息传到弹框
 
-    var tempReportsInfo:MutableState<ReportInfo>?= remember {
-        mutableStateOf(ReportInfo("","","","",""))
-    }//信息传到弹框
+//    val detailedAnswerViewModel = tempReportsInfo?.value?.let {
+//        DetailedAnswerViewModel(
+//            it.question_ID,
+//        tempReportsInfo?.value.answer_ID)
+//    }
 
-    val detailedAnswerViewModel = tempReportsInfo?.value?.let {
-        DetailedAnswerViewModel(
-            it.question_ID,
-        tempReportsInfo?.value.answer_ID)
-    }
-
-    if (detailedAnswerViewModel != null) {
-        detailedAnswerViewModel.selectQuesAnswer(detailedAnswerViewModel.answerId,detailedAnswerViewModel.questionId)
-    }
-
-    val quesAnswerInfoList= detailedAnswerViewModel?.quesAnswerInfoList?.observeAsState()
+//    if (detailedAnswerViewModel != null) {
+//        detailedAnswerViewModel.selectQuesAnswer(detailedAnswerViewModel.answerId,detailedAnswerViewModel.questionId)
+//    }
+//
+//    val quesAnswerInfoList= detailedAnswerViewModel?.quesAnswerInfoList?.observeAsState()
 
 
 
@@ -112,37 +160,37 @@ fun AdminReportScreenContent(
             }
         }
 
-        item {
-            addApproveAlterDialog(openApproveDialog, tempReportsInfo,
-                clickEvent = {
-                        ID,status->adminUpdateIUserViewModel.updateIUserStatus(ID, status)
-                },
-                postEmailEvent = {
-                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
-                }
-            )
-        }
+//        item {
+//            addApproveAlterDialog(openApproveDialog, tempReportsInfo,
+//                clickEvent = {
+//                        ID,status->adminUpdateIUserViewModel.updateIUserStatus(ID, status)
+//                },
+//                postEmailEvent = {
+//                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
+//                }
+//            )
+//        }
 
-        item {
-            addRejectAlterDialog(openRejectDialog, tempReportsInfo,
-                {
-                        ID,status-> adminUpdateIUserViewModel.updateIUserStatus(ID, status)
-                },
-                {
-                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
-                }
-            )
-        }
+//        item {
+//            addRejectAlterDialog(openRejectDialog, tempReportsInfo,
+//                {
+//                        ID,status-> adminUpdateIUserViewModel.updateIUserStatus(ID, status)
+//                },
+//                {
+//                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
+//                }
+//            )
+//        }
 
-        item {
-            if (quesAnswerInfoList != null) {
-                quesAnswerInfoList.value?.let {
-                    addReportAlterDialog(openReportDialog,tempReportsInfo,
-                        it
-                    )
-                }
-            }
-        }
+//        item {
+//            if (quesAnswerInfoList != null) {
+//                quesAnswerInfoList.value?.let {
+//                    addReportAlterDialog(openReportDialog,tempReportsInfo,
+//                        it
+//                    )
+//                }
+//            }
+//        }
 
 
 

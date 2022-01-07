@@ -44,6 +44,10 @@ fun AdminApplyScreen(
 
     val changeApplyStatus = updateApplyViewModel.changeApplyStatus.observeAsState()
 
+    val postApplyViewModel = PostApplyResultViewModel()
+
+    val sendPostInfo = postApplyViewModel.sendPostInfo.observeAsState()
+
     var openApproveDialog: MutableState<Boolean> = remember {
         mutableStateOf(false)
     }//记录是否打开通过申请框
@@ -52,40 +56,57 @@ fun AdminApplyScreen(
         mutableStateOf(false)
     }//记录是否打开拒绝框
 
-    AdminApplyScreenContent(applicationInfoList.value,updateApplyViewModel,adminApplyViewModel,change2ReportEvent,openApproveDialog,openRejectDialog)
+    var tempApplyInfo: MutableState<ApplyInfo>? = remember {
+        mutableStateOf(ApplyInfo(0,0,"","","","",""))
+    }//信息传到弹框
+
+    val replyContentInput = remember { NameInputState() }//记录输入
+
+    addApproveAlterDialog(openApproveDialog,tempApplyInfo,adminApplyViewModel,
+        {
+                ID,status-> updateApplyViewModel.updateApplyStatus(ID, status)
+        },
+        {
+                content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
+        }
+    )
+
+    addRejectAlterDialog(openRejectDialog,replyContentInput,tempApplyInfo,adminApplyViewModel,
+        {
+                ID,status-> updateApplyViewModel.updateApplyStatus(ID, status)
+        },
+        {
+                content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
+        }
+    )
+
+
+
+    AdminApplyScreenContent(tempApplyInfo,applicationInfoList.value,change2ReportEvent,openApproveDialog,openRejectDialog)
 
 }
 
 @Composable
 fun AdminApplyScreenContent(
+    tempApplyInfo: MutableState<ApplyInfo>?,
     applicationInfoList: ArrayList<ApplyInfo>?,
-    updateApplyViewModel: UpdateApplyViewModel,
-    adminApplyViewModel:AdminApplyViewModel,
     change2ReportEvent:()->Unit,
     openApproveDialog: MutableState<Boolean>,
     openRejectDialog: MutableState<Boolean>,
 
 ){
 
-    val postApplyViewModel = PostApplyResultViewModel()
+//    val postApplyViewModel = PostApplyResultViewModel()
+//
+//    val sendPostInfo = postApplyViewModel.sendPostInfo.observeAsState()
+//
+//
+//    var tempApplyInfo: MutableState<ApplyInfo>? = remember {
+//        mutableStateOf(ApplyInfo(0,0,"","","","",""))
+//    }//信息传到弹框
 
-    val sendPostInfo = postApplyViewModel.sendPostInfo.observeAsState()
 
-
-    var tempApplyInfo: MutableState<ApplyInfo>? = remember {
-        mutableStateOf(ApplyInfo(0,0,"","","","",""))
-    }//信息传到弹框
-
-
-
-//    var isUpdate:MutableState<Boolean> = remember{
-//        mutableStateOf(false)
-//    }//记录是否更新过页面
-    val isUpdate = MutableLiveData<Boolean>(false)
-
-    val isU=isUpdate.observeAsState()//刷新页面
-
-    val replyContentInput = remember { NameInputState() }//记录输入
+//    val replyContentInput = remember { NameInputState() }//记录输入
 
 
     LazyColumn(
@@ -99,7 +120,6 @@ fun AdminApplyScreenContent(
         if (applicationInfoList != null) {
             for(applicationInfo in applicationInfoList){
                 if (applicationInfo.status == 1 ||applicationInfo.status == -1) {
-                    isUpdate.value=true
                     println(applicationInfo.status)
                     continue
                 }
@@ -107,32 +127,31 @@ fun AdminApplyScreenContent(
                 {
                     println(applicationInfo.id)
                     println(applicationInfo.status)
-                    isUpdate.value=true
                     item{applyInfo(openApproveDialog,openRejectDialog,applicationInfo,tempApplyInfo)}
                 }
             }
         }
 
-        item {
-            addApproveAlterDialog(openApproveDialog,tempApplyInfo,adminApplyViewModel,
-                {
-                        ID,status-> updateApplyViewModel.updateApplyStatus(ID, status)
-                },
-                {
-                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
-                }
-            )
-        }
-        item {
-            addRejectAlterDialog(openRejectDialog,replyContentInput,tempApplyInfo,adminApplyViewModel,
-                {
-                        ID,status-> updateApplyViewModel.updateApplyStatus(ID, status)
-                },
-                {
-                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
-                }
-            )
-        }
+//        item {
+//            addApproveAlterDialog(openApproveDialog,tempApplyInfo,adminApplyViewModel,
+//                {
+//                        ID,status-> updateApplyViewModel.updateApplyStatus(ID, status)
+//                },
+//                {
+//                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
+//                }
+//            )
+//        }
+//        item {
+//            addRejectAlterDialog(openRejectDialog,replyContentInput,tempApplyInfo,adminApplyViewModel,
+//                {
+//                        ID,status-> updateApplyViewModel.updateApplyStatus(ID, status)
+//                },
+//                {
+//                        content,title,to ->postApplyViewModel.PostApplyResult(content, title, to)
+//                }
+//            )
+//        }
 
     }
 }

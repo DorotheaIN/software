@@ -156,5 +156,8 @@ interface UserService {
 
     @GET("/verifyCode")
     fun verifyCode(@Query("inputCode")inputCode: String):Call<VerifyCodeResponse>
+
+    @POST("/editPassword")
+    fun editPassword(@Query("ID")ID: String,@Query("password")password: String):Call<EditPasswordResponse>
 }
 

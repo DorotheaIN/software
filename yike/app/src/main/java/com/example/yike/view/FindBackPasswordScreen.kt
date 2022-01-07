@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,25 +21,70 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.yike.*
+import com.example.yike.viewModel.EditPasswordViewModel
 import com.example.yike.viewModel.GlobalViewModel
+import com.example.yike.viewModel.SendEmailViewModel
+import com.example.yike.viewModel.VerifyCodeViewModel
 
 
 @Composable
 fun findBackPasswordScreen(
+    sendEmailViewModel: SendEmailViewModel,
+    verifyCodeViewModel:VerifyCodeViewModel,
+    editPasswordViewModel: EditPasswordViewModel,
     navController: NavController
 ){
-    findBackPasswordScreenContent(navController)
 
+    val sendEmailInfo = sendEmailViewModel.sendEmailInfo.observeAsState()
+    val inputVerifyCode = verifyCodeViewModel.inputVerifyCode.observeAsState()
+    val getEditInfo = editPasswordViewModel.getEditInfo.observeAsState()
+
+
+    var openDialog: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }//记录是否打开通过提示框
+
+    alterDialog(openDialog)
+
+    findBackPasswordScreenContent(navController,inputVerifyCode.value,openDialog,
+        {
+            email ->  sendEmailViewModel.checksendStatus(email)
+        },
+        {
+            code ->  verifyCodeViewModel.verifyCode(code)
+        },
+        {
+            email, password ->  editPasswordViewModel.sendEditInfo(email, password)
+        }
+        )
 }
 
 
 
 @Composable
 fun findBackPasswordScreenContent(
-    navController: NavController
+    navController: NavController,
+    isSuccess:String?,
+    openDialog: MutableState<Boolean>,
+    sendEmailEvent:(email:String)->Unit,
+    verifyEvent:(code:String)->Unit,
+    updateEvent:(email:String,password:String)->Unit
 ){
 
     val emailInput = remember { EmailState() }
+    val passwordInput = remember {PasswordInputState()}
+    val verifyCodeInput = remember {VerifyCodeInputState()}
+
+
+    if(isSuccess=="success"){
+        println("2222222isSuccess = $isSuccess")
+        updateEvent(emailInput.text,passwordInput.text)
+    }else if(isSuccess=="wrong")
+    {
+        println("2222222isSuccess = $isSuccess")
+        openDialog.value = true
+    }
+
 
     Box(
         modifier = Modifier
@@ -50,7 +98,7 @@ fun findBackPasswordScreenContent(
             ),
     ) {
         Box(Modifier.align(Alignment.TopStart)) {
-            RegisterTable(navController)
+            registerTable(navController)
         }
         Box(
             Modifier
@@ -67,17 +115,27 @@ fun findBackPasswordScreenContent(
                 Spacer(Modifier.height(50.dp))
                 RegistDescript()
                 Spacer(Modifier.height(30.dp))
-                TextEmail(emailInput)
+                textEmail(emailInput)
                 Spacer(Modifier.height(10.dp))
-                VerifyButton(
+                verifyButton(
                     onClick = {
-//                        if (emailInput.isValid) {
-//                            clickEvent(emailInput.text)
-//                            GlobalViewModel.updateEmail(emailInput.text)
-//                        }
+                        if (emailInput.isValid) {
+                            sendEmailEvent(emailInput.text)
+                        }
                     }
                 )
-
+                Spacer(Modifier.height(10.dp))
+                textPassword(passwordInput)
+                Spacer(Modifier.height(10.dp))
+                textVerifyCode(verifyCodeInput)
+                Spacer(Modifier.height(10.dp))
+                findButton(
+                    verifyEvent = {
+                        if(verifyCodeInput.isValid){
+                            verifyEvent(verifyCodeInput.text)
+                        }
+                    }
+                )
             }
         }
     }
@@ -85,7 +143,7 @@ fun findBackPasswordScreenContent(
 }
 
 @Composable
-private fun RegisterTable(navController: NavController){
+private fun registerTable(navController: NavController){
     TextButton(onClick = {
         navController.popBackStack()
     }) {
@@ -100,7 +158,7 @@ private fun RegisterTable(navController: NavController){
 }
 
 @Composable
-private fun TextEmail(emailInput:EmailState){
+private fun textEmail(emailInput:EmailState){
 //    var text by remember{ mutableStateOf("") }
 
     val textState = remember {
@@ -141,7 +199,7 @@ private fun TextEmail(emailInput:EmailState){
 }
 
 @Composable
-private fun VerifyButton(
+private fun verifyButton(
 //    navController: NavController,
 //                 emailInput: EmailState,
     onClick: () -> Unit
@@ -175,6 +233,157 @@ private fun VerifyButton(
             )
         }
 
+    }
+}
+
+@Composable
+private fun textPassword(passwordInput:PasswordInputState){
+//    var text by remember{ mutableStateOf("") }
+
+    val textState = remember {
+        EmailState()
+    }
+
+    Surface(
+        shape = RoundedCornerShape(30.dp),
+        color = Color(0x51E4DFDB),
+        modifier = Modifier
+            .size(width = 700.dp, height = 55.dp)
+            .padding(start = 30.dp, end = 30.dp)
+            .fillMaxWidth()
+    ) {
+        TextField(
+            value = textState.text,
+            onValueChange = { newString ->
+                textState.text = newString
+                passwordInput.text = textState.text
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color(0xFF0D0D0E),
+                backgroundColor = Color.Transparent,
+                cursorColor = Color(0xFF045DA0),
+            ),
+            maxLines = 1,
+            placeholder = { Text("请输入新密码",
+                modifier = Modifier
+//                    .padding(start = 75.dp ,end =50.dp )
+                    .fillMaxWidth(),
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp,
+            ) },
+//            shape = RoundedCornerShape(30.dp)
+        )
+    }
+}
+
+@Composable
+private fun textVerifyCode(verifyCodeInput:VerifyCodeInputState){
+//    var text by remember{ mutableStateOf("") }
+
+    val textState = remember {
+        EmailState()
+    }
+
+    Surface(
+        shape = RoundedCornerShape(30.dp),
+        color = Color(0x51E4DFDB),
+        modifier = Modifier
+            .size(width = 700.dp, height = 55.dp)
+            .padding(start = 30.dp, end = 30.dp)
+            .fillMaxWidth()
+    ) {
+        TextField(
+            value = textState.text,
+            onValueChange = { newString ->
+                textState.text = newString
+                verifyCodeInput.text = textState.text
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color(0xFF0D0D0E),
+                backgroundColor = Color.Transparent,
+                cursorColor = Color(0xFF045DA0),
+            ),
+            maxLines = 1,
+            placeholder = { Text("请输入验证码",
+                modifier = Modifier
+//                    .padding(start = 75.dp ,end =50.dp )
+                    .fillMaxWidth(),
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp,
+            ) },
+//            shape = RoundedCornerShape(30.dp)
+        )
+    }
+}
+
+@Composable
+private fun findButton(
+//    navController: NavController,
+//                 emailInput: EmailState,
+    verifyEvent:()->Unit,
+){
+
+    Surface(
+        shape = RoundedCornerShape(30.dp),
+        color = Color(0xFFFFFFFF),
+        modifier = Modifier
+            .size(width = 700.dp, height = 55.dp)
+            .padding(start = 30.dp, end = 30.dp)
+            .fillMaxWidth()
+            .clickable(
+                onClick = verifyEvent
+            )
+    ) {
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("点击修改密码",
+                modifier = Modifier
+                    .padding(vertical = 15.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                style = MaterialTheme.typography.button,
+                color = Color(0xFF0D0D0E),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+
+    }
+}
+
+@Composable
+private fun alterDialog(
+    openDialog: MutableState<Boolean>,
+) {
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            title = { Text(text = "错误提醒") },
+            text = {
+                Text(
+                    text = "输入验证码有误",
+                    style = MaterialTheme.typography.body1
+                )
+            }, confirmButton = {
+                TextButton(onClick = {
+                    openDialog.value = false
+                }) {
+                    Text(text = "确认",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            }, dismissButton = {
+                TextButton(onClick = { openDialog.value = false }) {
+                    Text(text = "取消",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            })
     }
 }
 

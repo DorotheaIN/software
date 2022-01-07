@@ -75,19 +75,23 @@ fun RegisterTwoScreenContent(
     val nameInput = remember { NameInputState() }
     val passwordInput = remember { PasswordInputState() }
     val verifyCodeInput = remember { VerifyCodeInputState() }
-    if(registerResult == "success"){
-        GlobalViewModel.updateUserInfo(email,nameInput.text,1,"","","")
-        navController.navigate("mainInfo_screen")
-    }
 
     if(isSuccess=="success"){
         println("2222222isSuccess = $isSuccess")
         clickEvent(email,nameInput.text,passwordInput.text)
+        GlobalViewModel.updateUserInfo(email,nameInput.text,1,"","","")
+        navController.navigate("login")
     }else if(isSuccess=="wrong")
     {
         println("2222222isSuccess = $isSuccess")
         openDialog.value = true
     }
+
+
+//    if(registerResult == "success"){
+//
+//    }
+
 
     Box(
         modifier = Modifier

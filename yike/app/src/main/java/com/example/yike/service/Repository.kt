@@ -481,8 +481,8 @@ object SendEmailRepository {
             val sendEmailResponse = Network.sendEmail(email)
             println(sendEmailResponse.result)
             if (sendEmailResponse.code == 200) {
-//                println("111111111111111111")
-//                println(sendEmailResponse.result)
+                println("111111111111111111")
+                println(sendEmailResponse.result)
                 sendEmailResponse.result
             } else {
                 println("response status is not ok!")
@@ -501,11 +501,13 @@ object SendEmailRepository {
             println(inputCode)
             val verifyCodeResponse = Network.verifyCode(inputCode)
             if (verifyCodeResponse.code == 200) {
-                println("verifyCodeResponse.result="+verifyCodeResponse.result)
-                verifyCodeResponse.result
+                println("11111verifyCodeResponse.result="+verifyCodeResponse.result)
+//                verifyCodeResponse.result
+                "success"
             } else {
-                println("verifyCodeResponse.result="+verifyCodeResponse.result)
+                println("23333verifyCodeResponse.result="+verifyCodeResponse.result)
                 println("response status is not ok!")
+                "wrong"
             }
             null
         } catch (e: Exception){
@@ -780,6 +782,23 @@ object ReportRepository{
             val reportUserResponse = Network.reportUser(rID, reason, wID)
             if(reportUserResponse.code == 200){
                 reportUserResponse.result
+            }else {
+                println("response status is not ok!")
+                null
+            }
+        } catch (e:Exception){
+            println(e)
+            null
+        }
+        emit(result)
+    }
+}
+object UpdateRepository{
+    fun editPassword(ID:String,password:String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val editPasswordResponse = Network.editPassword(ID, password)
+            if(editPasswordResponse.code == 200){
+                editPasswordResponse.result
             }else {
                 println("response status is not ok!")
                 null

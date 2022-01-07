@@ -239,7 +239,10 @@ class MainActivity : ComponentActivity() {
                         RegisterTwoScreen(navController,getPersonRegisterViewModel,verifyCodeViewModel)
                     }
                     composable("findBack_screen"){
-                        findBackPasswordScreen(navController)
+                        val sendEmailViewModel = SendEmailViewModel()
+                        val verifyCodeViewModel = VerifyCodeViewModel()
+                        val editPasswordViewModel = EditPasswordViewModel()
+                        findBackPasswordScreen(sendEmailViewModel,verifyCodeViewModel,editPasswordViewModel,navController)
                     }
                     composable("adminLogin") {
                         val adminLoginViewModel = AdminLoginViewModel()
