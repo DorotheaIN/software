@@ -5,6 +5,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Headers
 import retrofit2.http.Query
 import java.lang.RuntimeException
 import kotlin.coroutines.resume
@@ -77,7 +78,7 @@ object Network {
         userService.postDislikeActivity(activityID,userID).await()
 
     suspend fun postSubActivity(activityID: Int,userID: String) =
-        userService.postSubActivity(activityID,userID,GlobalViewModel.getToken()).await()
+        userService.postSubActivity(GlobalViewModel.getToken(),activityID,userID,GlobalViewModel.getToken()).await()
 
     suspend fun postDisSubActivity(activityID: Int,userID: String) =
         userService.postDisSubActivity(activityID,userID).await()

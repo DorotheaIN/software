@@ -60,17 +60,15 @@ fun RegisterOfficialScreen(
     val path = "http://101.132.138.14/files/DZY/"
     val officialRegister = officialRegisterViewModel.officialRegisterInfo.observeAsState()
     val imgUri = GlobalViewModel.imgUri.observeAsState()
-    println("!!!imgURi")
-    println(imgUri)
     val docUri = GlobalViewModel.docUri.observeAsState()
-    println("!!!docUri")
-    println(docUri)
     var clickEvent:(s1: String, s2: String, s3: String)-> Unit = {
             _, _, _ -> {}
     }
     if(imgUri.value != null && docUri.value != null) {
         println("changeCE")
         clickEvent= { introduction, password, userName ->
+            println("test${path+imgUri}")
+            println("test${path+docUri}")
             officialRegisterViewModel.checkOfficialRegisterStatus(path+imgUri.value!!, path+docUri.value!!, introduction, password, userName)
             navController.navigate("login")
         }

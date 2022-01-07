@@ -227,6 +227,8 @@ object UserActivityRepository {
     fun postSubActivity(activityID: Int,userID: String,status:Int) = liveData(Dispatchers.IO){
         val result = try {
             val subResult = if(status == 1){
+                println("thisismytoken")
+                println(GlobalViewModel.getToken())
                 Network.postSubActivity(activityID,userID)
             }else{
                 Network.postDisSubActivity(activityID, userID)

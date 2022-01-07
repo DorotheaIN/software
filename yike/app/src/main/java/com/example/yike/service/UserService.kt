@@ -8,7 +8,6 @@ import retrofit2.http.*
 //token在此处统一添加即可
 
 
-
 interface UserService {
     @POST("addFile")//可以加Path关键字 进一步说明地址
     fun fileUpload(@Query("addPath") path: String, @Body requestBody: RequestBody):Call<UploadResponse>
@@ -66,7 +65,7 @@ interface UserService {
     fun postDislikeActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String):Call<CheckResponse>
 
     @POST("signUpActivity")//token测试接口
-    fun postSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String,@Query("token")token:String?): Call<CheckResponse>
+    fun postSubActivity(@Header("satoken") myToken:String?, @Query("activityID") activityID: Int, @Query("individualUserID") userID: String, @Query("token")token:String?): Call<CheckResponse>
 
     @POST("cancleSignUp")
     fun postDisSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String): Call<CheckResponse>
