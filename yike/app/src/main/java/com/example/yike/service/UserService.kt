@@ -108,7 +108,7 @@ interface UserService {
     @GET("getMyQuestions")
     fun getPublishQuestionList(@Query("ID") id:String):Call<PublishQuestionResponse>
 
-    @GET("/simpleVerify")
+    @GET("/sendEmail")
     fun sendEmail(@Query("email")email:String):Call<SendEmailResponse>
 
     @POST("signUp")
@@ -161,5 +161,6 @@ interface UserService {
 
     @POST("/editPassword")
     fun editPassword(@Query("ID")ID: String,@Query("password")password: String):Call<EditPasswordResponse>
+
 }
 
