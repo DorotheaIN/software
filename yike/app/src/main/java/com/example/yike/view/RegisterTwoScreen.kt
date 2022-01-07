@@ -78,8 +78,8 @@ fun RegisterTwoScreenContent(
 
     if(registerResult=="success"){
         println("2222222isSuccess = $isSuccess")
-        clickEvent(email,nameInput.text,passwordInput.text)
-        GlobalViewModel.updateUserInfo(email,nameInput.text,1,"","","")
+//        clickEvent(email,nameInput.text,passwordInput.text)
+        GlobalViewModel.updateUserInfo(email,nameInput.text,1,"","快填写简介吧","")
         navController.navigate("login")
     }else if(registerResult=="wrong")
     {
@@ -130,7 +130,8 @@ fun RegisterTwoScreenContent(
                 Spacer(Modifier.height(10.dp))
                 RegisterButton(
                     onClick = {
-                        if(passwordInput.isValid && nameInput.isValid && verifyCodeInput.isValid){
+                        if(passwordInput.isValid && nameInput.isValid && verifyCodeInput.isValid && verifyCodeInput.text == GlobalViewModel.getVerifyCode()){
+                            clickEvent(email,nameInput.text,passwordInput.text)
                             println("isSuccess = $isSuccess")
                         }
                         else{

@@ -224,7 +224,7 @@ class MainActivity : ComponentActivity() {
                         PublishQuestionScreen(navController,addQuestionViewModel)
                     }
                     composable("personRegister_screen"){
-                        val viewModel = SendEmailViewModel()
+                        val viewModel = SimpleVerifyViewModel()
                         ResgisterScreen(navController, viewModel)
                     }
                     composable("officialRegister_screen"){

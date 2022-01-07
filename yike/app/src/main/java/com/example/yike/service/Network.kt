@@ -78,7 +78,7 @@ object Network {
         userService.postDislikeActivity(activityID,userID).await()
 
     suspend fun postSubActivity(activityID: Int,userID: String) =
-        userService.postSubActivity(GlobalViewModel.getToken(),activityID,userID,GlobalViewModel.getToken()).await()
+        userService.postSubActivity(GlobalViewModel.getToken(),activityID,userID).await()
 
     suspend fun postDisSubActivity(activityID: Int,userID: String) =
         userService.postDisSubActivity(activityID,userID).await()
@@ -157,14 +157,17 @@ object Network {
     suspend fun updateIUserStatus(ID: String,flag: String)=
         userService.updateIUserStatus(ID, flag).await()
 
-    suspend fun reportUser(rID:String,reason:String,wID:String)=
-        userService.reportUser(rID, reason, wID).await()
+    suspend fun reportUser(aID:String,qID:String,rID:String,reason:String,wID:String)=
+        userService.reportUser(aID,qID,rID, reason, wID).await()
 
     suspend fun verifyCode(inputCode: String)=
         userService.verifyCode(inputCode).await()
 
     suspend fun editPassword(ID: String,password: String)=
         userService.editPassword(ID, password).await()
+
+    suspend fun simpleVerify(to: String)=
+        userService.simpleVerify(to).await()
 
 
     //为call添加扩展函数 await

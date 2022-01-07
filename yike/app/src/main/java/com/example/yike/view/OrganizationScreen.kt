@@ -14,8 +14,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +45,9 @@ fun OrganizationScreen(
     navController: NavController,
     viewModel: OrganizationViewModel
 ){
+    var openDialog: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }//记录是否打开框
     val isGet = viewModel.isGet.observeAsState()
     val refresh = viewModel.refresh.observeAsState()
     if( isGet.value != true ){
@@ -54,8 +56,9 @@ fun OrganizationScreen(
         val organization = viewModel.GetOrgInfo
         val activityList = viewModel.activityList.observeAsState()
         val delRes = viewModel.delRes.observeAsState()
+        reconfirmAlterDialog(openDialog,navController)
         OrganizationScreenContent(
-            navController, organization,activityList.value,
+            openDialog,navController, organization,activityList.value,
             { id->
                 viewModel.delete(id)
             },{id->
@@ -67,6 +70,7 @@ fun OrganizationScreen(
 
 @Composable
 fun OrganizationScreenContent(
+    openDialog: MutableState<Boolean>,
     navController: NavController,
     organization: Organization?,
     activityDetailList:ArrayList<Activity>?,
@@ -87,7 +91,7 @@ fun OrganizationScreenContent(
         ) {
             LazyColumn(Modifier){
                 item {
-                    header(organization,navController)
+                    header(organization,navController,openDialog)
                 }
                 item{
                     PublishItem(navController)
@@ -118,7 +122,11 @@ private fun Loader(
 }
 
 @Composable
-fun header(organization:Organization,navController: NavController){
+fun header(
+    organization:Organization,
+    navController: NavController,
+    openDialog:MutableState<Boolean>
+    ){
     Surface(
         modifier = Modifier
             .padding(bottom = 7.dp)
@@ -137,7 +145,7 @@ fun header(organization:Organization,navController: NavController){
                     )
                 )
         ) {
-            LoginOutItem(navController = navController)
+            LoginOutItem(navController = navController,openDialog)
             Spacer(Modifier.height(20.dp))//
             Box(
                 modifier = Modifier
@@ -344,11 +352,14 @@ fun PublishItem(navController: NavController){
 }
 
 @Composable
-private fun LoginOutItem(navController: NavController){
+private fun LoginOutItem(
+    navController: NavController,
+    openDialog:MutableState<Boolean>
+){
     Box(Modifier.fillMaxSize().clickable {  }){
         Box(modifier = Modifier
             .align(Alignment.TopEnd)){
-            IconButton(onClick = { navController.navigate("orgLogin") }) {
+            IconButton(onClick = { openDialog.value = true }) {
                 Icon(
                     painter = painterResource(id = R.drawable.loginout),
                     contentDescription = "login out",
@@ -408,4 +419,37 @@ fun ActivityPublishItem(item:Activity){
         //颜色
         color = Color(0x56979797),
     )
+}
+
+@Composable
+private fun reconfirmAlterDialog(
+    openDialog: MutableState<Boolean>,
+    navController:NavController
+) {
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            title = { Text(text = "退出登录确认") },
+            text = {
+                Text(
+                    text = "你确定退出登录吗",
+                    style = MaterialTheme.typography.body1
+                )
+            }, confirmButton = {
+                TextButton(onClick = {
+                    openDialog.value = false
+                    navController.navigate("login")
+                }) {
+                    Text(text = "确认",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            }, dismissButton = {
+                TextButton(onClick = { openDialog.value = false }) {
+                    Text(text = "取消",
+                        color = Color(0xF23F3D38),
+                    )
+                }
+            })
+    }
 }

@@ -548,6 +548,23 @@ object SendEmailRepository {
         emit(result)
     }
 
+    fun simpleVerify(to: String) = liveData(Dispatchers.IO) {
+        val result = try {
+            val simpleVerifyResponse = Network.simpleVerify(to)
+            if (simpleVerifyResponse.code == 200) {
+                println("ddddd="+simpleVerifyResponse.result)
+                simpleVerifyResponse.result
+            } else {
+                println("response status is not ok!")
+                ""
+            }
+        } catch (e: Exception){
+            println(e)
+            ""
+        }
+        emit(result)
+    }
+
 }
 
 object GetPersonRegisterRepository {
@@ -808,9 +825,9 @@ object AdminRepository {
 }
 
 object ReportRepository{
-    fun reportUser(rID:String,reason:String,wID:String) = liveData(Dispatchers.IO) {
+    fun reportUser(aID:String,qID:String,rID:String,reason:String,wID:String) = liveData(Dispatchers.IO) {
         val result = try {
-            val reportUserResponse = Network.reportUser(rID, reason, wID)
+            val reportUserResponse = Network.reportUser(aID,qID,rID, reason,wID)
             if(reportUserResponse.code == 200){
                 reportUserResponse.result
             }else {

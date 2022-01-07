@@ -65,7 +65,7 @@ interface UserService {
     fun postDislikeActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String):Call<CheckResponse>
 
     @POST("signUpActivity")//token测试接口
-    fun postSubActivity(@Header("satoken") myToken:String?, @Query("activityID") activityID: Int, @Query("individualUserID") userID: String, @Query("token")token:String?): Call<CheckResponse>
+    fun postSubActivity(@Header("satoken") myToken:String?, @Query("activityID") activityID: Int, @Query("individualUserID") userID: String): Call<CheckResponse>
 
     @POST("cancleSignUp")
     fun postDisSubActivity(@Query("activityID") activityID: Int,@Query("individualUserID") userID: String): Call<CheckResponse>
@@ -141,7 +141,7 @@ interface UserService {
     @POST("/updateOUserStatus")
     fun updateOUserStatus(@Query("ID")ID:String,@Query("flag")flag:String):Call<UpdateOUserStatusResponse>
 
-    @POST("/")
+    @POST("/sendEmailOFresult")
     fun postApplyResult(@Query("content")content:String,@Query("title")title:String,@Query("to")to:String):Call<PostApplyResultResponse>
 
     @POST("/AdminLogin")
@@ -154,7 +154,7 @@ interface UserService {
     fun updateIUserStatus(@Query("ID")ID: String,@Query("flag")flag: String):Call<UpdateIUserStatusResponse>
 
     @POST("/reportUser")
-    fun reportUser(@Query("rID")rID:String,@Query("reason")reason:String,@Query("wID")wID:String):Call<ReportUserResponse>
+    fun reportUser(@Query("aID")aID:String, @Query("qID")qID:String, @Query("rID")rID:String, @Query("reason")reason:String, @Query("wID")wID:String):Call<ReportUserResponse>
 
     @GET("/verifyCode")
     fun verifyCode(@Query("inputCode")inputCode: String):Call<VerifyCodeResponse>
@@ -162,5 +162,7 @@ interface UserService {
     @POST("/editPassword")
     fun editPassword(@Query("ID")ID: String,@Query("password")password: String):Call<EditPasswordResponse>
 
+    @GET("/simpleVerify")
+    fun simpleVerify(@Query("to")to: String):Call<SimpleVerifyResponse>
 }
 

@@ -45,7 +45,7 @@ fun MainInfo(navController: NavController){
 
     var openDialog: MutableState<Boolean> = remember {
         mutableStateOf(false)
-    }//记录是否打开通过申请框
+    }//记录是否打开框
     Scaffold(bottomBar = {
         NavBottomBar(navController, "Info")
     }) {

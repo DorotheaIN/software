@@ -58,6 +58,11 @@ fun DetailedScreen(navController: NavController,
         mutableStateOf(false)
     }//记录是否打开通过申请框
 
+    addRejectAlterDialog(detailedAnswerViewModel,openReportDialog,quesAnswerInfoList.value,
+    ) { aID,qID,rID,reason,wID ->
+        reportViewModel.sendReportInfo(aID,qID,rID,reason,wID)
+    }
+
     DetailAnswer(quesAnswerInfoList.value,questionId,answererId,navController,openReportDialog,reportViewModel)
 }
 
@@ -94,10 +99,10 @@ fun DetailAnswer(
                 contentColor = Color(0xFFFFFF),
                 elevation = 0.dp,
                 actions = {
-                    addRejectAlterDialog(openReportDialog,questionAnswerInfoList,
-                    ) { rID, reason, wID ->
-                        reportViewModel.sendReportInfo(rID, reason, wID)
-                    }
+//                    addRejectAlterDialog(openReportDialog,questionAnswerInfoList,
+//                    ) { aID,qID,rID,reason,wID ->
+//                        reportViewModel.sendReportInfo(aID,qID,rID,reason,wID)
+//                    }
                     IconButton(onClick = {
                         openReportDialog.value = true
                     }) {
@@ -457,9 +462,10 @@ fun CommentButton(
 
 @Composable
 private fun addRejectAlterDialog(
+    detailedAnswerViewModel: DetailedAnswerViewModel,
     openReportDialog: MutableState<Boolean>,
     questionAnswerInfoList:QuesAnswer?,
-    clickEvent:(rID:String,reason:String,wID:String)-> Unit,
+    clickEvent:(aID:String,qID:String,rID:String,reason:String,wID:String)-> Unit,
 ) {
 
     var textReplyContent = remember {
@@ -516,7 +522,7 @@ private fun addRejectAlterDialog(
                     openReportDialog.value = false
                     GlobalViewModel.getUserInfo()?.let {
                         if (questionAnswerInfoList != null) {
-                            clickEvent(it.id,textReplyContent.text,questionAnswerInfoList.info.id)
+                            clickEvent(detailedAnswerViewModel.answerId,detailedAnswerViewModel.questionId,it.id,textReplyContent.text,questionAnswerInfoList.info.id)
                         }
                     }
                 }) {

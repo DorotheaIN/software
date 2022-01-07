@@ -37,17 +37,16 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun ResgisterScreen(navController: NavController,
-                    sendEmailViewModel: SendEmailViewModel,
+                    simpleVerifyViewModel: SimpleVerifyViewModel,
                     ){
 
-    val sendEmailInfo = sendEmailViewModel.sendEmailInfo.observeAsState()
+    val getTo = simpleVerifyViewModel.getTo.observeAsState()
+    if(!getTo.value.isNullOrEmpty()) {
+        println("nowOk${getTo.value}")
+    }
 
-
-
-
-
-    RegisterScreenContent(navController, sendEmailInfo.value){
-        email ->  sendEmailViewModel.checksendStatus(email)
+    RegisterScreenContent(navController,getTo.value){
+        email ->  simpleVerifyViewModel.sendEmail(email)
     }
 
 
@@ -58,10 +57,9 @@ fun RegisterScreenContent(navController: NavController,
                           code: String?,
                            clickEvent: (email: String) -> Unit,
                            ){
-
-
     val emailInput = remember { EmailState() }
 
+    println("122code=$code")
     if(!code.isNullOrEmpty()){
         println("1code=$code")
         GlobalViewModel.updateVerifyCode(code)
