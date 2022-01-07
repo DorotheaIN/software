@@ -126,7 +126,7 @@ interface UserService {
     @GET("getMyActivities")
     fun getMyActivities(@Query("email") email: String):Call<ActivityResponse>
 
-    @GET("signUp")
+    @POST("orgsignUp")
     fun officialRegister(@Query("avator")avator:String,@Query("certification")certification:String,@Query("introduction")introduction:String,@Query("password")password:String,@Query("userName")userName:String):Call<OfficialRegisterResponse>
 
     @POST("discuss/addQuestion")
