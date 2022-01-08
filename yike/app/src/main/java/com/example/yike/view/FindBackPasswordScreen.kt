@@ -21,21 +21,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.yike.*
-import com.example.yike.viewModel.EditPasswordViewModel
-import com.example.yike.viewModel.GlobalViewModel
-import com.example.yike.viewModel.SendEmailViewModel
-import com.example.yike.viewModel.VerifyCodeViewModel
+import com.example.yike.viewModel.*
 
 
 @Composable
 fun findBackPasswordScreen(
-    sendEmailViewModel: SendEmailViewModel,
+    sendEmailViewModel: SimpleVerifyViewModel,
     verifyCodeViewModel:VerifyCodeViewModel,
     editPasswordViewModel: EditPasswordViewModel,
     navController: NavController
 ){
 
-    val sendEmailInfo = sendEmailViewModel.sendEmailInfo.observeAsState()
+    val sendEmailInfo = sendEmailViewModel.getTo.observeAsState()
     val inputVerifyCode = verifyCodeViewModel.inputVerifyCode.observeAsState()
     val getEditInfo = editPasswordViewModel.getEditInfo.observeAsState()
 
@@ -48,11 +45,11 @@ fun findBackPasswordScreen(
 
     findBackPasswordScreenContent(navController,inputVerifyCode.value,openDialog,
         {
-            email ->  sendEmailViewModel.checksendStatus(email)
+            email ->  sendEmailViewModel.sendEmail(email)
         },
-        {
-            code ->  verifyCodeViewModel.verifyCode(code)
-        },
+//        {
+//            code ->  verifyCodeViewModel.verifyCode(code)
+//        },
         {
             email, password ->  editPasswordViewModel.sendEditInfo(email, password)
         }
@@ -67,7 +64,7 @@ fun findBackPasswordScreenContent(
     isSuccess:String?,
     openDialog: MutableState<Boolean>,
     sendEmailEvent:(email:String)->Unit,
-    verifyEvent:(code:String)->Unit,
+//    verifyEvent:(code:String)->Unit,
     updateEvent:(email:String,password:String)->Unit
 ){
 
@@ -130,12 +127,14 @@ fun findBackPasswordScreenContent(
                 textVerifyCode(verifyCodeInput)
                 Spacer(Modifier.height(10.dp))
                 findButton(
-                    verifyEvent = {
-                        if(verifyCodeInput.isValid){
-                            verifyEvent(verifyCodeInput.text)
-                        }
-                    }
-                )
+                    navController
+                ) { updateEvent(emailInput.text, passwordInput.text) }
+//                    verifyEvent = {
+//                        if(verifyCodeInput.isValid){
+//                            verifyEvent(verifyCodeInput.text)
+//                        }
+//                    }
+
             }
         }
     }
@@ -320,9 +319,10 @@ private fun textVerifyCode(verifyCodeInput:VerifyCodeInputState){
 
 @Composable
 private fun findButton(
-//    navController: NavController,
+    navController: NavController,
+    findEvent:()->Unit,
 //                 emailInput: EmailState,
-    verifyEvent:()->Unit,
+//    verifyEvent:()->Unit,
 ){
 
     Surface(
@@ -333,7 +333,7 @@ private fun findButton(
             .padding(start = 30.dp, end = 30.dp)
             .fillMaxWidth()
             .clickable(
-                onClick = verifyEvent
+                onClick = findEvent
             )
     ) {
         Column(
