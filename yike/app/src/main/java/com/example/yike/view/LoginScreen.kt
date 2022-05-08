@@ -333,7 +333,7 @@ private fun TextFieldError(textError: String) {
 @Composable
 private fun LogInHeader() {
     Text(
-        text = "Log in",
+        text = "登录",
         style = MaterialTheme.typography.h1,
         modifier = Modifier
             .paddingFromBaseline(

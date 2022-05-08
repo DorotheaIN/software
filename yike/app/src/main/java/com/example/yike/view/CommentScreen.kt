@@ -1,5 +1,7 @@
 package com.example.yike.view
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,6 +18,8 @@ import com.example.yike.NameInputState
 import com.example.yike.viewModel.CommentViewModel
 import com.example.yike.viewModel.GlobalViewModel
 import org.w3c.dom.Comment
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun CommentScreen(
@@ -32,6 +36,7 @@ fun CommentScreen(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CommentScreenContent(
     navController: NavController,
@@ -66,7 +71,13 @@ fun CommentScreenContent(
                         onClick = {
                                   if(commentInput.isValid){
                                       GlobalViewModel.getUserInfo()?.let {
-                                          clickEvent(answerId,commentInput.text,
+                                          val current = LocalDateTime.now()
+
+                                          val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                          val formatted = current.format(formatter)
+
+                                          println("当前日期和时间为: $formatted")
+                                          clickEvent(answerId, formatted.toString()+"/"+commentInput.text,
                                               it.id)
                                       }
                                       navController.popBackStack()//回退

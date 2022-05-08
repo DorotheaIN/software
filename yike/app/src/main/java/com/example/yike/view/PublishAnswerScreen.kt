@@ -1,5 +1,7 @@
 package com.example.yike
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -16,8 +18,11 @@ import androidx.navigation.NavController
 import com.example.yike.data.AnswerData
 import com.example.yike.viewModel.AddAnswerViewModel
 import com.example.yike.viewModel.GlobalViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun  AnswerScreen(
     navController: NavController,
@@ -32,6 +37,7 @@ fun  AnswerScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnswerScreenContent(
     navController: NavController,
@@ -65,8 +71,14 @@ fun AnswerScreenContent(
                     Button(
                         onClick = {
                             if(answerInput.isValid){
+                                val current = LocalDateTime.now()
+
+                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                val formatted = current.format(formatter)
+
+                                println("当前日期和时间为: $formatted")
                                 GlobalViewModel.getUserInfo()?.let {
-                                    clickEvent(answerInput.text,questionId,
+                                    clickEvent(formatted.toString()+"/"+answerInput.text,questionId,
                                         it.id)
                                 }
 //                                navController.navigate("detailed_screen/${questionId}/${answerId}")

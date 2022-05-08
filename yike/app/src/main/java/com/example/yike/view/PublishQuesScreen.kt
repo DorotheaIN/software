@@ -1,5 +1,7 @@
 package com.example.yike
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -14,7 +16,10 @@ import androidx.navigation.NavController
 import com.example.yike.viewModel.AddAnswerViewModel
 import com.example.yike.viewModel.AddQuestionViewModel
 import com.example.yike.viewModel.GlobalViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PublishQuestionScreen(
     navController: NavController,
@@ -29,6 +34,7 @@ fun PublishQuestionScreen(
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PublishScreenContent(
     navController: NavController,
@@ -61,8 +67,14 @@ fun PublishScreenContent(
                 actions = {
                     Button(onClick = {
                         if (quesInput.isValid && quesContentInput.isValid){
+                            val current = LocalDateTime.now()
+
+                            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                            val formatted = current.format(formatter)
+
+                            println("当前日期和时间为: $formatted")
                             GlobalViewModel.getUserInfo()?.let {
-                                clickEvent(quesContentInput.text,quesInput.text,
+                                clickEvent(formatted.toString()+"/"+quesContentInput.text,quesInput.text,
                                     it.id)
                             }
                             navController.popBackStack()//回退
