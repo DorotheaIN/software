@@ -225,7 +225,7 @@ private fun TextEmail(emailInput:EmailState){
                 cursorColor = Color(0xFF045DA0),
             ),
             maxLines = 1,
-            placeholder = { Text("请输入邮箱号进行注册",
+            placeholder = { Text("请输入邮箱号获取验证码",
                 modifier = Modifier
 //                    .padding(start = 75.dp ,end =50.dp )
                     .fillMaxWidth(),
