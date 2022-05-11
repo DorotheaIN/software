@@ -2,25 +2,29 @@ package com.example.yike.view
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.yike.CommentInputState
 import com.example.yike.NameInputState
+import com.example.yike.RePasswordInputState
 import com.example.yike.viewModel.CommentViewModel
 import com.example.yike.viewModel.GlobalViewModel
 import org.w3c.dom.Comment
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CommentScreen(
     navController: NavController,
@@ -43,7 +47,7 @@ fun CommentScreenContent(
     answerId: String,
     clickEvent:(answerId: String,content:String,userId: String) -> Unit,
 ){
-    val commentInput = remember { NameInputState() }
+    val commentInput = remember { CommentInputState() }
     Scaffold(
         Modifier.padding(0.dp),
         topBar = {
@@ -97,28 +101,61 @@ fun CommentScreenContent(
             )
         },
     ){
-        Surface(
-            color = Color(0x51E4DFDB),
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            TextField(
-                value = commentInput.text,
-                onValueChange = {
-                    commentInput.text = it
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = Color(0xFF0D0D0E),
-                    backgroundColor = Color.Transparent,
-                    cursorColor = Color(0xFF045DA0),
-                ),
-                placeholder = { Text("快来评论吧",
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    color = Color(0xFFBBB4B4)
-                ) },
-                shape = RoundedCornerShape(30.dp)
-            )
+        Column() {
+
+            Surface(
+                color = Color(0x51E4DFDB),
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                TextField(
+                    value = commentInput.text,
+                    onValueChange = {
+                        commentInput.text = it
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = Color(0xFF0D0D0E),
+                        backgroundColor = Color.Transparent,
+                        cursorColor = Color(0xFF045DA0),
+                    ),
+                    placeholder = { Text("快来评论吧",
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        color = Color(0xFFBBB4B4)
+                    ) },
+                    shape = RoundedCornerShape(30.dp),
+                    modifier = Modifier.onFocusChanged {
+                            it ->
+                        val isFocused = it.isFocused
+                        commentInput.onFocusChange(isFocused)
+                        commentInput.enableShowErrors()
+                    },
+                    isError = commentInput.showErrors,
+                )
+            }
+
+            commentInput.getError()?.let { errorMessage ->
+                TextFieldError(textError = errorMessage)
+            }
         }
+
+
+    }
+}
+
+
+@Composable
+private fun TextFieldError(textError: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 30.dp)
+    ) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = textError,
+            modifier = Modifier.fillMaxWidth(),
+            style = LocalTextStyle.current.copy(color = MaterialTheme.colors.error)
+        )
     }
 }
