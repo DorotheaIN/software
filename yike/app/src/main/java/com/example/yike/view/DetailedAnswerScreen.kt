@@ -147,6 +147,13 @@ fun DetailAnswer(
                         DetailedQuestionPart(questionAnswerInfoList)
                         DetailedUserPart(questionAnswerInfoList)
                         ShowAnswer(questionAnswerInfoList)
+                        Spacer(Modifier.height(20.dp))
+                        Text("评论",
+                            modifier = Modifier.padding(horizontal = 10.dp),
+                            style = MaterialTheme.typography.h6,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Spacer(Modifier.height(5.dp))
                     }
                 }
                 if (questionAnswerInfoList != null) {
@@ -212,7 +219,7 @@ fun DetailedQuestionPart(ques:QuesAnswer)
             ) {
                 Text(
                     text = ques.question,//展示问题内容
-                    fontSize = 30.sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.h4,
 //                    modifier = Modifier.padding(start = 5.dp,end = 5.dp)
