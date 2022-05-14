@@ -151,9 +151,9 @@ class ActivityDetailViewModel(
 
     fun review(content: String) = runBlocking {
         val review = launch {
-            print(content)
-            toReview.value = Evaluation(userID!!,activityID,content,5,"","","")
-            delay(200)
+            println(getNow())
+            toReview.value = Evaluation(userID!!,activityID,getNow()+'/'+content,5,"","","")
+            delay(1000)
         }
         review.join()
         val ref = launch {

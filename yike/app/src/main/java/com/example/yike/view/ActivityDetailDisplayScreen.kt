@@ -709,7 +709,10 @@ fun EvaluationDiplay(
             evaluationList.forEach{it->
                 if(it.reviewerID == id){
                     EvaluationItem(it,true,delReviwEvent)
-                }else{
+                }
+            }
+            evaluationList.forEach{it->
+                if(it.reviewerID != id){
                     EvaluationItem(it,false,delReviwEvent)
                 }
             }
