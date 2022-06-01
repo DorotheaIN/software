@@ -10,6 +10,7 @@ import androidx.compose.material.ButtonDefaults.elevation
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -46,7 +47,7 @@ fun AnswerScreenContent(
 //    answerId:String,
     clickEvent:(content:String,questionId: String,userId: String) -> Unit,
 ){
-    val answerInput = remember {NameInputState()}
+    val answerInput = remember {AnswerInputState()}
     Scaffold(
         Modifier.padding(0.dp),
         topBar = {
@@ -129,40 +130,65 @@ fun questionPart(questionTitle: String)
 }
 
 @Composable
-fun TextAnswerPart(answerInput:NameInputState){
+fun TextAnswerPart(answerInput:AnswerInputState){
 //    var text by remember{ mutableStateOf("")}
     val textAnswer = remember {
-        NameInputState()
+        AnswerInputState()
     }
+    Column() {
 
-    Surface(
-        color = Color(0x51E4DFDB),
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        TextField(
-            value = textAnswer.text,
-            onValueChange = { newString ->
-                textAnswer.text = newString
-                answerInput.text = textAnswer.text
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = Color(0xFF0D0D0E),
-                backgroundColor = Color.Transparent,
-                cursorColor = Color(0xFF045DA0),
-            ),
-            placeholder = {
-                Text(
-                    "输入回答内容",
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    color = Color(0xFFBBB4B4)
-                )
-            },
-            shape = RoundedCornerShape(30.dp)
-        )
+        Surface(
+            color = Color(0x51E4DFDB),
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            TextField(
+                value = textAnswer.text,
+                onValueChange = { newString ->
+                    textAnswer.text = newString
+                    answerInput.text = textAnswer.text
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = Color(0xFF0D0D0E),
+                    backgroundColor = Color.Transparent,
+                    cursorColor = Color(0xFF045DA0),
+                ),
+                placeholder = {
+                    Text(
+                        "输入回答内容",
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        color = Color(0xFFBBB4B4)
+                    )
+                },
+                shape = RoundedCornerShape(30.dp),
+                isError = answerInput.showErrors,
+                modifier = Modifier.onFocusChanged { it ->
+                    val isFocused = it.isFocused
+                    answerInput.onFocusChange(isFocused)
+                    answerInput.enableShowErrors()
+                }
+            )
+        }
+        answerInput.getError()?.let { errorMessage ->
+            TextFieldError(textError = errorMessage)
+        }
     }
 
 }
 
-//数据
+@Composable
+private fun TextFieldError(textError: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 30.dp)
+    ) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = textError,
+            modifier = Modifier.fillMaxWidth(),
+            style = LocalTextStyle.current.copy(color = MaterialTheme.colors.error)
+        )
+    }
+}

@@ -12,10 +12,15 @@ class CommentInputState : TextFieldState(
 
 }
 
-private fun commentValidationError(password: String): String {
-    return "超过20字."
+private fun commentValidationError(comment: String): String {
+    return if (comment.isBlank()){
+        "评论不能为空"
+    }else{
+        "超过140字."
+    }
 }
 
 private fun isValidComment(comment: String): Boolean {
-    return comment.length <= 20
+//    return comment.length <= 140
+      return comment.length <= 140 && comment.isNotBlank()
 }
