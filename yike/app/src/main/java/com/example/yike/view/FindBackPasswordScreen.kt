@@ -128,7 +128,9 @@ fun findBackPasswordScreenContent(
                 Spacer(Modifier.height(10.dp))
                 findButton(
                     navController
-                ) { updateEvent(emailInput.text, passwordInput.text) }
+                ) { updateEvent(emailInput.text, passwordInput.text)
+                    navController.navigate("login")
+                }
 //                    verifyEvent = {
 //                        if(verifyCodeInput.isValid){
 //                            verifyEvent(verifyCodeInput.text)
