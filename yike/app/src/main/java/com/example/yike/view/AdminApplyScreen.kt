@@ -673,7 +673,7 @@ private fun addRejectAlterDialog(
                         ),
                         placeholder = {
                             Text(
-                                "给提出的问题一些补充吧",
+                                "请输入拒绝理由",
                                 modifier = Modifier
                                     .fillMaxWidth(),
                                 color = Color(0xFFBBB4B4),

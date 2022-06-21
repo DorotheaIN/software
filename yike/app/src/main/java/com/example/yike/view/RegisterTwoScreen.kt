@@ -262,13 +262,25 @@ fun TextCode(passwordInput:PasswordInputState){
                         )
                     }
                 }
-            }
+            },
+            modifier = Modifier.onFocusChanged {
+                val isFocused = it.isFocused
+                textCode.onFocusChange(isFocused)
+
+                if (!isFocused) {
+                    textCode.enableShowErrors()
+                }
+            },
+            isError = textCode.showErrors,
         )
+    }
+    textCode.getError()?.let { errorMessage ->
+        TextFieldError(textError = errorMessage)
     }
 }
 
 @Composable
-fun ReTextCode(passwordInput:RePasswordInputState){
+private fun ReTextCode(passwordInput:RePasswordInputState){
     val reTextCode = remember {
         RePasswordInputState()
     }
