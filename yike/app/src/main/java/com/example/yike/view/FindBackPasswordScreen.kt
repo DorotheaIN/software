@@ -45,13 +45,14 @@ fun findBackPasswordScreen(
     val getEditInfo = editPasswordViewModel.getEditInfo.observeAsState()
 
 
+
     var openDialog: MutableState<Boolean> = remember {
         mutableStateOf(false)
     }//记录是否打开通过提示框
 
     alterDialog(openDialog)
 
-    findBackPasswordScreenContent(navController,inputVerifyCode.value,openDialog,
+    findBackPasswordScreenContent(navController,sendEmailInfo.value,inputVerifyCode.value,openDialog,
         {
             email ->  sendEmailViewModel.sendEmail(email)
         },
@@ -69,6 +70,7 @@ fun findBackPasswordScreen(
 @Composable
 fun findBackPasswordScreenContent(
     navController: NavController,
+    code: String?,
     isSuccess:String?,
     openDialog: MutableState<Boolean>,
     sendEmailEvent:(email:String)->Unit,
@@ -83,6 +85,10 @@ fun findBackPasswordScreenContent(
 
     GlobalViewModel.updatePassWord(passwordInput.text)
 
+    if(!code.isNullOrEmpty()){
+        println("1code=$code")
+        GlobalViewModel.updateVerifyCode(code)
+    }
 
     if(isSuccess=="success"){
         println("2222222isSuccess = $isSuccess")
@@ -140,10 +146,21 @@ fun findBackPasswordScreenContent(
                 textVerifyCode(verifyCodeInput)
                 Spacer(Modifier.height(10.dp))
                 findButton(
-                    navController
-                ) { updateEvent(emailInput.text, passwordInput.text)
-                    navController.navigate("login")
-                }
+//                    navController
+                    findEvent = {
+                        if(passwordInput.isValid && rePasswordInput.isValid && verifyCodeInput.text == GlobalViewModel.getVerifyCode() && emailInput.isValid){
+                            updateEvent(emailInput.text, passwordInput.text)
+                            navController.navigate("login")
+                        }
+                        else{
+                            openDialog.value = true
+                        }
+                    }
+                )
+//                {
+////                    updateEvent(emailInput.text, passwordInput.text)
+////                    navController.navigate("login")
+//                }
 //                    verifyEvent = {
 //                        if(verifyCodeInput.isValid){
 //                            verifyEvent(verifyCodeInput.text)
@@ -439,7 +456,7 @@ private fun textVerifyCode(verifyCodeInput:VerifyCodeInputState){
 
 @Composable
 private fun findButton(
-    navController: NavController,
+//    navController: NavController,
     findEvent:()->Unit,
 //                 emailInput: EmailState,
 //    verifyEvent:()->Unit,
