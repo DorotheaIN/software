@@ -1,6 +1,7 @@
 package com.example.yike
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,6 +11,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +45,8 @@ fun PublishScreenContent(
 ){
     val quesInput = remember { QuesInputState()}
     val quesContentInput = remember {QuesContentInputState()}
+    val context = LocalContext.current
+
     Scaffold(
         Modifier.padding(0.dp),
         topBar = {
@@ -79,6 +83,9 @@ fun PublishScreenContent(
                                     it.id)
                             }
                             navController.popBackStack()//回退
+                        }
+                        else {
+                            Toast.makeText(context, "问题的标题和回答均不可为空", Toast.LENGTH_LONG).show()
                         }
                     },
                         colors = ButtonDefaults.buttonColors(

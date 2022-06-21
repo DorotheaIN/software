@@ -1,6 +1,7 @@
 package com.example.yike
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +13,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +50,8 @@ fun AnswerScreenContent(
     clickEvent:(content:String,questionId: String,userId: String) -> Unit,
 ){
     val answerInput = remember {AnswerInputState()}
+    val context = LocalContext.current
+
     Scaffold(
         Modifier.padding(0.dp),
         topBar = {
@@ -84,6 +88,9 @@ fun AnswerScreenContent(
                                 }
 //                                navController.navigate("detailed_screen/${questionId}/${answerId}")
                                 navController.popBackStack()//回退
+                            }
+                            else {
+                                Toast.makeText(context, "请输入回答内容", Toast.LENGTH_LONG).show()
                             }
                     },
                         colors = buttonColors(Color(0xFFFFFF),

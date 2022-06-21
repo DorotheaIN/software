@@ -70,7 +70,7 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
             if(userInfo.id==""){
                 Toast.makeText(LocalContext.current, "该账号尚未注册", Toast.LENGTH_SHORT).show()
             }else{
-                if(userInfo.user_NAME==""){
+                if(userInfo.user_NAME=="" && userInfo.user_NAME == null){
                     Toast.makeText(LocalContext.current, "密码错误", Toast.LENGTH_SHORT).show()
                 }else {
                     println("thisisuserinfo!!!!!")
@@ -89,6 +89,13 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
         }
     } else {
         println(loginStatus)
+        if (userInfo != null) {
+            if (userInfo.id == null || userInfo.id == "") {
+                Toast.makeText(LocalContext.current, "该账号尚未注册", Toast.LENGTH_SHORT).show()
+            } else if (userInfo.user_NAME == null || userInfo.user_NAME == "") {
+                Toast.makeText(LocalContext.current, "密码错误", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
     Surface(
         color = MaterialTheme.colors.background,
