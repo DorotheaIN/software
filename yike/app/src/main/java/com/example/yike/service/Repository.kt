@@ -693,7 +693,8 @@ object OfficialRepository {
             val officialRegisterResponse = Network.officialRegister(avator, certification, introduction, password, userName)
             println("thisisres:$officialRegisterResponse")
             if(officialRegisterResponse.code == 200){
-                officialRegisterResponse.result
+//                officialRegisterResponse.result
+                "success"
             }else {
                 println("response status is not ok!")
                 null

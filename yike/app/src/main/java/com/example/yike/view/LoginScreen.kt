@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.yike.EmailState
@@ -69,7 +70,7 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
             if(userInfo.id==""){
                 Toast.makeText(LocalContext.current, "该账号尚未注册", Toast.LENGTH_SHORT).show()
             }else{
-                if(userInfo.user_NAME==""){
+                if(userInfo.user_NAME=="" && userInfo.user_NAME == null){
                     Toast.makeText(LocalContext.current, "密码错误", Toast.LENGTH_SHORT).show()
                 }else {
                     println("thisisuserinfo!!!!!")
@@ -88,6 +89,13 @@ private fun LoginContent(userInfo: UserInfo?, routeEvent: () -> Unit = {},change
         }
     } else {
         println(loginStatus)
+        if (userInfo != null) {
+            if (userInfo.id == null || userInfo.id == "") {
+                Toast.makeText(LocalContext.current, "该账号尚未注册", Toast.LENGTH_SHORT).show()
+            } else if (userInfo.user_NAME == null || userInfo.user_NAME == "") {
+                Toast.makeText(LocalContext.current, "密码错误", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
     Surface(
         color = MaterialTheme.colors.background,
@@ -220,7 +228,7 @@ private fun PasswordInput(passwordInput: PasswordInputState) {
             passwordInput.text = textState.text
         },
         label = {
-            Text(text = "Password (8+ characters)")
+            Text(text = "请输入密码")
         },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Password,
@@ -291,7 +299,7 @@ private fun EmailInput(emailInput: EmailState) {
             emailInput.text = textState.text
         },
         label = {
-            Text(text = "Email address")
+            Text(text = "请输入个人邮箱地址")
         },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Email,
@@ -330,11 +338,13 @@ private fun TextFieldError(textError: String) {
     }
 }
 
+@Preview
 @Composable
 private fun LogInHeader() {
     Text(
-        text = "Log in",
+        text = "登录",
         style = MaterialTheme.typography.h1,
+        letterSpacing = 8.sp,
         modifier = Modifier
             .paddingFromBaseline(
                 top = 184.dp,

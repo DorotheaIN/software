@@ -1,5 +1,8 @@
 package com.example.yike
 
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -8,7 +11,9 @@ import androidx.compose.material.ButtonDefaults.elevation
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,8 +21,11 @@ import androidx.navigation.NavController
 import com.example.yike.data.AnswerData
 import com.example.yike.viewModel.AddAnswerViewModel
 import com.example.yike.viewModel.GlobalViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun  AnswerScreen(
     navController: NavController,
@@ -32,6 +40,7 @@ fun  AnswerScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AnswerScreenContent(
     navController: NavController,
@@ -40,7 +49,9 @@ fun AnswerScreenContent(
 //    answerId:String,
     clickEvent:(content:String,questionId: String,userId: String) -> Unit,
 ){
-    val answerInput = remember {NameInputState()}
+    val answerInput = remember {AnswerInputState()}
+    val context = LocalContext.current
+
     Scaffold(
         Modifier.padding(0.dp),
         topBar = {
@@ -65,12 +76,21 @@ fun AnswerScreenContent(
                     Button(
                         onClick = {
                             if(answerInput.isValid){
+                                val current = LocalDateTime.now()
+
+                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                val formatted = current.format(formatter)
+
+                                println("当前日期和时间为: $formatted")
                                 GlobalViewModel.getUserInfo()?.let {
-                                    clickEvent(answerInput.text,questionId,
+                                    clickEvent(formatted.toString()+"/"+answerInput.text,questionId,
                                         it.id)
                                 }
 //                                navController.navigate("detailed_screen/${questionId}/${answerId}")
                                 navController.popBackStack()//回退
+                            }
+                            else {
+                                Toast.makeText(context, "请输入回答内容", Toast.LENGTH_LONG).show()
                             }
                     },
                         colors = buttonColors(Color(0xFFFFFF),
@@ -117,40 +137,65 @@ fun questionPart(questionTitle: String)
 }
 
 @Composable
-fun TextAnswerPart(answerInput:NameInputState){
+fun TextAnswerPart(answerInput:AnswerInputState){
 //    var text by remember{ mutableStateOf("")}
     val textAnswer = remember {
-        NameInputState()
+        AnswerInputState()
     }
+    Column() {
 
-    Surface(
-        color = Color(0x51E4DFDB),
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        TextField(
-            value = textAnswer.text,
-            onValueChange = { newString ->
-                textAnswer.text = newString
-                answerInput.text = textAnswer.text
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = Color(0xFF0D0D0E),
-                backgroundColor = Color.Transparent,
-                cursorColor = Color(0xFF045DA0),
-            ),
-            placeholder = {
-                Text(
-                    "输入回答内容",
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    color = Color(0xFFBBB4B4)
-                )
-            },
-            shape = RoundedCornerShape(30.dp)
-        )
+        Surface(
+            color = Color(0x51E4DFDB),
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            TextField(
+                value = textAnswer.text,
+                onValueChange = { newString ->
+                    textAnswer.text = newString
+                    answerInput.text = textAnswer.text
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = Color(0xFF0D0D0E),
+                    backgroundColor = Color.Transparent,
+                    cursorColor = Color(0xFF045DA0),
+                ),
+                placeholder = {
+                    Text(
+                        "输入回答内容",
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        color = Color(0xFFBBB4B4)
+                    )
+                },
+                shape = RoundedCornerShape(30.dp),
+                isError = answerInput.showErrors,
+                modifier = Modifier.onFocusChanged { it ->
+                    val isFocused = it.isFocused
+                    answerInput.onFocusChange(isFocused)
+                    answerInput.enableShowErrors()
+                }
+            )
+        }
+        answerInput.getError()?.let { errorMessage ->
+            TextFieldError(textError = errorMessage)
+        }
     }
 
 }
 
-//数据
+@Composable
+private fun TextFieldError(textError: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 30.dp)
+    ) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = textError,
+            modifier = Modifier.fillMaxWidth(),
+            style = LocalTextStyle.current.copy(color = MaterialTheme.colors.error)
+        )
+    }
+}

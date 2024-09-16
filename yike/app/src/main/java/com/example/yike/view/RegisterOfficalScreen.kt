@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistryOwner
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.sharp.Face
 import androidx.compose.material.icons.sharp.NoteAdd
 import androidx.compose.runtime.*
@@ -25,13 +28,17 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +53,7 @@ import br.com.onimur.handlepathoz.HandlePathOz
 import coil.compose.rememberImagePainter
 import com.example.yike.NameInputState
 import com.example.yike.PasswordInputState
+import com.example.yike.RePasswordInputState
 
 import com.example.yike.viewModel.GlobalViewModel
 import com.example.yike.viewModel.OfficialRegisterViewModel
@@ -89,10 +97,15 @@ fun RegisterOfficialScreenContent(
 ){
     val officialNameInput = remember { NameInputState() }
     val officialCodeInput = remember { PasswordInputState() }
+    val rePasswordInput = remember{RePasswordInputState()}
     val officialIntroInput = remember { NameInputState() }
     val isSuccess = remember { mutableStateOf(false)}
     val openDialog = remember { mutableStateOf(false)}
+
+    GlobalViewModel.updatePassWord(officialCodeInput.text)
+    println("$registerResult:+22222222222222222222222222222222222222222222222222222222222")
     if(registerResult !=null){
+        println("22222222222222222222222222222222222222222222222222222222222")
         isSuccess.value = true
         openDialog.value = true
         OrgRegisterDialog(isSuccess = isSuccess, openDialog = openDialog){
@@ -127,12 +140,14 @@ fun RegisterOfficialScreenContent(
                     .fillMaxSize()
                     .padding(horizontal = 22.dp, vertical = 100.dp)
             ) {
-                Spacer(Modifier.height(50.dp))
+                Spacer(Modifier.height(5.dp))
                 RegistOfficialDescript()
                 Spacer(Modifier.height(30.dp))
                 OfficialTextName(officialNameInput)
                 Spacer(Modifier.height(10.dp))
                 OfficialTextCode(officialCodeInput)
+                Spacer(Modifier.height(10.dp))
+                ReTextCode(rePasswordInput)
                 Spacer(Modifier.height(10.dp))
                 TextIntro(officialIntroInput)
                 Spacer(Modifier.height(10.dp))
@@ -309,8 +324,112 @@ fun OfficialTextCode(passwordInput: PasswordInputState){
                 color = Color(0xFFFFFFFF),
                 textAlign = TextAlign.Center
             ) },
-            shape = RoundedCornerShape(30.dp)
+            shape = RoundedCornerShape(30.dp),
+            visualTransformation = if (textCode.shouldHidePassword) {
+                PasswordVisualTransformation()
+            } else {
+                VisualTransformation.None
+            },
+            trailingIcon = {
+                Crossfade(targetState = textCode.shouldHidePassword) { hidePassword ->
+                    if (hidePassword) {
+                        PasswordVisabilityIcon(
+                            iconToUse = Icons.Default.VisibilityOff,
+                            textState = textCode
+                        )
+                    } else {
+                        PasswordVisabilityIcon(
+                            iconToUse = Icons.Default.Visibility,
+                            textState = textCode
+                        )
+                    }
+                }
+            },
+            modifier = Modifier.onFocusChanged {
+                val isFocused = it.isFocused
+                textCode.onFocusChange(isFocused)
+
+                if (!isFocused) {
+                    textCode.enableShowErrors()
+                }
+            },
+            isError = textCode.showErrors,
         )
+    }
+    textCode.getError()?.let { errorMessage ->
+        TextFieldError(textError = errorMessage)
+    }
+}
+
+@Composable
+private fun ReTextCode(passwordInput:RePasswordInputState){
+    val reTextCode = remember {
+        RePasswordInputState()
+    }
+    Surface(
+        shape = RoundedCornerShape(30.dp),
+        color = Color(0x51E4DFDB),
+        modifier = Modifier
+            .size(width = 700.dp, height = 55.dp)
+            .padding(start = 30.dp, end = 30.dp)
+            .fillMaxWidth()
+    ) {
+        OutlinedTextField(
+            value = reTextCode.text,
+            onValueChange = {newText ->
+                reTextCode.text = newText
+                passwordInput.text = reTextCode.text
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color(0xFF0D0D0E),
+                backgroundColor = Color.Transparent,
+                cursorColor = Color(0xFF045DA0),
+            ),
+            maxLines = 1,
+            placeholder = { Text("请再次输入密码确认",
+                modifier = Modifier
+//                    .padding(start = 115.dp, end = 50.dp)
+                    .fillMaxWidth(),
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center
+            ) },
+            shape = RoundedCornerShape(30.dp),
+            modifier = Modifier.onFocusChanged {
+                val isFocused = it.isFocused
+                reTextCode.onFocusChange(isFocused)
+
+                if (!isFocused) {
+                    reTextCode.enableShowErrors()
+                }
+            },
+            isError = reTextCode.showErrors,
+            visualTransformation = if (reTextCode.shouldHidePassword) {
+                PasswordVisualTransformation()
+            } else {
+                VisualTransformation.None
+            },
+            trailingIcon = {
+                Crossfade(targetState = reTextCode.shouldHidePassword) { hidePassword ->
+                    if (hidePassword) {
+                        RePasswordVisabilityIcon(
+                            iconToUse = Icons.Default.VisibilityOff,
+                            textState = reTextCode
+                        )
+                    } else {
+                        RePasswordVisabilityIcon(
+                            iconToUse = Icons.Default.Visibility,
+                            textState = reTextCode
+                        )
+                    }
+                }
+            },
+
+
+            )
+
+    }
+    reTextCode.getError()?.let { errorMessage ->
+        TextFieldError(textError = errorMessage)
     }
 }
 
@@ -458,5 +577,51 @@ fun OfficialRegisterButton(
                 textAlign = TextAlign.Center
             )
         }
+    }
+}
+
+@Composable
+private fun PasswordVisabilityIcon(
+    iconToUse: ImageVector,
+    textState: PasswordInputState
+) {
+    Icon(
+        iconToUse,
+        contentDescription = "Toggle Password Visibility",
+        modifier = Modifier
+            .clickable {
+                textState.shouldHidePassword = !textState.shouldHidePassword
+            },
+    )
+}
+
+@Composable
+private fun RePasswordVisabilityIcon(
+    iconToUse: ImageVector,
+    textState: RePasswordInputState
+) {
+    Icon(
+        iconToUse,
+        contentDescription = "Toggle Password Visibility",
+        modifier = Modifier
+            .clickable {
+                textState.shouldHidePassword = !textState.shouldHidePassword
+            },
+    )
+}
+
+@Composable
+private fun TextFieldError(textError: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp,horizontal = 30.dp)
+    ) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = textError,
+            modifier = Modifier.fillMaxWidth(),
+            style = LocalTextStyle.current.copy(color = MaterialTheme.colors.error)
+        )
     }
 }

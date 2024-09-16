@@ -1,11 +1,13 @@
 package com.example.yike
 
 import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -42,6 +44,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +53,13 @@ class MainActivity : ComponentActivity() {
                 // true: 用户同意   false：用户不同意 or 用户不处理
                 for(i in it){
                     if(i.value) Toast.makeText(this, "SUCCESSFUL", Toast.LENGTH_LONG).show()
+                    else {
+                        println("i.value"+ i.value + "  " + i)
+                        finish()
+                    }
                 }
             }
-        permission.launch(arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE))
+        permission.launch(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
         handlePathOz = HandlePathOz(this, listener)
         setContent {
             YikeTheme {
